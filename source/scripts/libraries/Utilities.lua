@@ -1,21 +1,25 @@
-function math.clamp(value, min, max)
-	if (min > max) then
-		min, max = max, min
+local max <const> = math.max
+local min <const> = math.min
+
+function math.clamp(_value, _min, _max)
+	if (_min > _max) then
+		_min, _max = _max, _min
 	end
-	return math.max(min, math.min(max, value))
+	return max(_min, min(_max, _value))
 end
 
-function math.ring(value, min, max)
-	if (min > max) then
-		min, max = max, min
+function math.ring(_value, _min, _max)
+	if (_min > _max) then
+		_min, _max = _max, _min
 	end
-	return min + (value - min) % (max - min)
+	return _min + (_value - _min) % (_max - _min)
 end
 
-function math.ringInt(value, min, max)
-	return math.ring(value, min, max + 1)
+local ring <const> = math.ring
+function math.ringInt(_value, _min, _max)
+	return ring(_value, _min, _max + 1)
 end
 
-function math.sign(value)
-	return (value >= 0 and 1) or -1
+function math.sign(_value)
+	return (_value >= 0 and 1) or -1
 end
