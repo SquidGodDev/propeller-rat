@@ -13,6 +13,7 @@ import "scripts/libraries/Utilities"
 import "scripts/player/player"
 import "scripts/hazards/spinner"
 import "scripts/hazards/block"
+import "scripts/hazards/turret"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
@@ -28,15 +29,19 @@ levelSprite:moveTo(0, 0)
 local startX, startY = 33, 37
 Player(startX, startY, levelImage)
 
-Block(151, 39, 8, 8, 0, -1, levelImage)
-Block(151, 20, 8, 8, 0, 1, levelImage)
+Turret(167, 8, 0, 2, 4, 1000, levelImage)
+Turret(167+32, 8, 0, 2, 4, 1000, levelImage)
+Turret(167+64, 8, 0, 2, 4, 1000, levelImage)
 
-Block(87, 100, 16, 16, -2, 0, levelImage)
-Block(87, 132, 16, 16, 2, 0, levelImage)
-Block(87, 164, 16, 16, -2, 0, levelImage)
-Block(87, 196, 16, 16, 2, 0, levelImage)
-Block(87, 196+32, 16, 16, -2, 0, levelImage)
-Block(87, 196+64, 16, 16, 2, 0, levelImage)
+-- Block(151, 39, 8, 8, 0, -1, levelImage)
+-- Block(151, 20, 8, 8, 0, 1, levelImage)
+
+-- Block(87, 100, 16, 16, -2, 0, levelImage)
+-- Block(87, 132, 16, 16, 2, 0, levelImage)
+-- Block(87, 164, 16, 16, -2, 0, levelImage)
+-- Block(87, 196, 16, 16, 2, 0, levelImage)
+-- Block(87, 196+32, 16, 16, -2, 0, levelImage)
+-- Block(87, 196+64, 16, 16, 2, 0, levelImage)
 -- Spinner(122, 85)
 -- Spinner(122+96, 85)
 -- Spinner(122+96*2, 85)

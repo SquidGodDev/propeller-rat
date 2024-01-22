@@ -23,3 +23,8 @@ end
 function math.sign(_value)
 	return (_value >= 0 and 1) or -1
 end
+
+local sign <const> = math.sign
+function math.zeroSign(_value)
+	return _value == 0 and 0 or sign(_value)
+end
