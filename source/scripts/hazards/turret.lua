@@ -1,17 +1,17 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-class('Turret').extends(gfx.sprite)
+class('Turret').extends(Hazard)
 
-function Turret:init(x, y, xSpeed, ySpeed, diameter, time, levelImage)
+function Turret:init(x, y, xSpeed, ySpeed, diameter, time)
+    Turret.super.init(self, x, y)
+
     local turretDiameter = 8
     local turretImage = gfx.image.new(turretDiameter, turretDiameter)
     gfx.pushContext(turretImage)
         gfx.drawCircleInRect(0, 0, turretDiameter, turretDiameter)
     gfx.popContext()
     self:setImage(turretImage)
-    self:moveTo(x, y)
-    self:add()
 
     local projectileImage = gfx.image.new(diameter, diameter)
     gfx.pushContext(projectileImage)
@@ -22,7 +22,7 @@ function Turret:init(x, y, xSpeed, ySpeed, diameter, time, levelImage)
     local projectileX = x + turretRadius * math.zeroSign(xSpeed)
     local projectileY = y + turretRadius * math.zeroSign(ySpeed)
     local turretTimer = pd.timer.new(time, function()
-        Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage, levelImage)
+        Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage, self.levelImage)
     end)
 
     turretTimer.repeats = true

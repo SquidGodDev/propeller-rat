@@ -13,23 +13,27 @@ import "scripts/libraries/SceneManager"
 
 -- Game
 import "scripts/player/player"
+
+-- Hazards
+import "scripts/hazards/hazard"
 import "scripts/hazards/spinner"
 import "scripts/hazards/block"
 import "scripts/hazards/turret"
 
+-- Pickups
+import "scripts/pickups/pickup"
+import "scripts/pickups/levelEnd"
+
 -- Levels
+import "data/levels"
 import "scripts/levels/level"
-import "scripts/levels/level1"
-import "scripts/levels/level2"
-import "scripts/levels/level3"
 
 import "scripts/game/gameScene"
 
 TAGS = {
     player = 1,
     hazard = 2,
-    pickup = 3,
-    levelEnd = 4
+    pickup = 3
 }
 
 Z_INDEXES = {

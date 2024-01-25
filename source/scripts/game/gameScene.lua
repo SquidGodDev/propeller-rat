@@ -1,8 +1,6 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-local levels = {Level1, Level2, Level3, Level1, Level2, Level3}
-
 class('GameScene').extends()
 
 function GameScene:init()
@@ -14,10 +12,6 @@ function GameScene:init()
     self.transitionSprite:setZIndex(Z_INDEXES.transition)
     self.transitionSprite:setIgnoresDrawOffset(true)
     self.transitionSprite:add()
-
-    -- Todo:
-    -- Transition from one level to next
-    -- Test enter new level pickup
 end
 
 function GameScene:update()
@@ -26,7 +20,7 @@ end
 
 function GameScene:nextLevel()
     self.curLevelNum += 1
-    if self.curLevelNum <= #levels then
+    if self.curLevelNum <= #LEVEL_DATA then
         self:startLevelTransition()
     end
 end
@@ -42,14 +36,13 @@ function GameScene:clearLevel()
 end
 
 function GameScene:setUpLevel()
-    local levelObject = levels[self.curLevelNum]
-
-    self.curLevel = levelObject()
+    self.curLevel = Level(self.curLevelNum)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY, self.curLevel:getLevelImage())
 end
 
 function GameScene:startLevelTransition()
+    self.transitionSprite:add()
     local playerX, playerY = self.player:getScreenPosition()
     local transitionTime = 700
     local startRadius, endRadius = 0, 500
@@ -78,6 +71,10 @@ function GameScene:startLevelTransition()
             gfx.popContext()
             transitionImage:setMaskImage(transitionMask)
             self.transitionSprite:setImage(transitionImage)
+        end
+
+        transitionTimer.timerEndedCallback = function()
+            self.transitionSprite:remove()
         end
     end
 end

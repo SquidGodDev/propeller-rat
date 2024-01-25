@@ -1,10 +1,19 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-class('Block').extends(gfx.sprite)
+class('Block').extends(Hazard)
 
-function Block:init(x, y, width, height, xSpeed, ySpeed, levelImage)
-    self.levelImage = levelImage
+--- Block Hazard
+--- @param x integer
+--- @param y integer
+--- @param width integer
+--- @param height integer
+--- @param xSpeed number
+--- @param ySpeed number
+--- @param levelImage any
+function Block:init(x, y, width, height, xSpeed, ySpeed)
+    Block.super.init(self, x, y)
+
     self.width = width
     self.height = height
     self.xSpeed = xSpeed
@@ -16,17 +25,8 @@ function Block:init(x, y, width, height, xSpeed, ySpeed, levelImage)
         gfx.fillRoundRect(0, 0, width, height, cornerRadius)
     gfx.popContext()
     self:setImage(blockImage)
-    self:moveTo(x, y)
-    self:add()
 
-    self:setTag(TAGS.hazard)
-    self:setGroups(TAGS.hazard)
-    self:setCollidesWithGroups({TAGS.player})
     self:setCollideRect(0, 0, blockImage:getSize())
-end
-
-function Block:collisionResponse()
-    return gfx.sprite.kCollisionTypeOverlap
 end
 
 function Block:update()

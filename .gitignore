@@ -2,3 +2,4 @@
 builds
 .vscode
 closeSim.ps1
+*.pdx

@@ -43,7 +43,7 @@ function Player:init(gameScene, x, y, levelImage)
 
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
-    self:setCollidesWithGroups({TAGS.hazard, TAGS.pickup, TAGS.levelEnd})
+    self:setCollidesWithGroups({TAGS.hazard, TAGS.pickup})
     self:setCollideRect(0, 0, playerImage:getSize())
 
     self.disabled = false
@@ -97,9 +97,8 @@ function Player:update()
         local collision = collisions[i]
         local collisionSprite = collision.other
         local collisionTag = collisionSprite:getTag()
-        if collisionTag == TAGS.levelEnd then
-            self:disable()
-            self.gameScene:nextLevel()
+        if collisionTag == TAGS.pickup then
+            collisionSprite:pickup(self)
         end
     end
 end
@@ -107,6 +106,11 @@ end
 function Player:getScreenPosition()
     local drawOffsetX, drawOffsetY = getDrawOffset()
     return self.x + drawOffsetX, self.y + drawOffsetY
+end
+
+function Player:nextLevel()
+    self:disable()
+    self.gameScene:nextLevel()
 end
 
 function Player:disable()

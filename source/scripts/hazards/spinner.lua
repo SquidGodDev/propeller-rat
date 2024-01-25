@@ -3,22 +3,15 @@ local gfx <const> = pd.graphics
 
 local spinnerImagetable = gfx.imagetable.new("images/hazards/spinner")
 
-class('Spinner').extends(gfx.sprite)
+class('Spinner').extends(Hazard)
 
 function Spinner:init(x, y)
+    Spinner.super.init(self, x, y)
+
     self.angle = 1
     self.maxAngle = 90
-    self:moveTo(x, y)
-    self:add()
 
-    self:setTag(TAGS.hazard)
-    self:setGroups(TAGS.hazard)
-    self:setCollidesWithGroups({TAGS.player})
     self:setCollideRect(0, 0, spinnerImagetable[1]:getSize())
-end
-
-function Spinner:collisionResponse()
-    return gfx.sprite.kCollisionTypeOverlap
 end
 
 function Spinner:update()
