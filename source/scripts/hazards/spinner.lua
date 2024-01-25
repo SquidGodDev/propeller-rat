@@ -1,7 +1,7 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local spinnerImagetable = gfx.imagetable.new("images/spinner")
+local spinnerImagetable = gfx.imagetable.new("images/hazards/spinner")
 
 class('Spinner').extends(gfx.sprite)
 
