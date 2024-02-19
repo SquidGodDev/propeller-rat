@@ -1,9 +1,22 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local ldtk <const> = LDtk
+
+local usePrecomputedLevels = not pd.isSimulator
+
+ldtk.load("data/world.ldtk", usePrecomputedLevels)
+
+if pd.isSimulator then
+    ldtk.export_to_lua_files()
+end
+
 class('GameScene').extends()
 
 function GameScene:init()
+    gfx.setBackgroundColor(gfx.kColorBlack)
+    gfx.clear()
+
     self.curLevelNum = 1
     self:setUpLevel()
 
@@ -19,8 +32,9 @@ function GameScene:update()
 end
 
 function GameScene:nextLevel()
-    self.curLevelNum += 1
-    if self.curLevelNum <= #LEVEL_DATA then
+    local levelCount = ldtk.get_level_count()
+    self.curLevelNum = math.ringInt(self.curLevelNum + 1, 1, levelCount)
+    if self.curLevelNum <= levelCount then
         self:startLevelTransition()
     end
 end
@@ -50,7 +64,7 @@ function GameScene:startLevelTransition()
     transitionTimer.updateCallback = function()
         local transitionImage = gfx.image.new(400, 240)
         gfx.pushContext(transitionImage)
-            gfx.setColor(gfx.kColorBlack)
+            gfx.setColor(gfx.kColorWhite)
             gfx.fillCircleAtPoint(playerX, playerY, transitionTimer.value)
         gfx.popContext()
         self.transitionSprite:setImage(transitionImage)
@@ -63,7 +77,7 @@ function GameScene:startLevelTransition()
         playerX, playerY = self.player:getScreenPosition()
         transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius)
         transitionTimer.updateCallback = function()
-            local transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
+            local transitionImage = gfx.image.new(400, 240, gfx.kColorWhite)
             local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
             gfx.pushContext(transitionMask)
                 gfx.setColor(gfx.kColorBlack)

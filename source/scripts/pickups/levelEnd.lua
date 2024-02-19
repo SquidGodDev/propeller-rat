@@ -4,6 +4,7 @@ local gfx <const> = pd.graphics
 local levelEndSize = 16
 local levelEndImage = gfx.image.new(levelEndSize, levelEndSize)
 gfx.pushContext(levelEndImage)
+    gfx.setColor(gfx.kColorWhite)
     gfx.drawCircleInRect(0, 0, levelEndSize, levelEndSize)
 gfx.popContext()
 

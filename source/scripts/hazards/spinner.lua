@@ -11,6 +11,7 @@ function Spinner:init(x, y)
     self.angle = 1
     self.maxAngle = 90
 
+    self:setCenter(0.5, 0.5)
     self:setCollideRect(0, 0, spinnerImagetable[1]:getSize())
 end
 

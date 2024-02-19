@@ -3,18 +3,25 @@ local gfx <const> = pd.graphics
 
 class('Turret').extends(Hazard)
 
-function Turret:init(x, y, xSpeed, ySpeed, diameter, time)
+function Turret:init(x, y, entity)
     Turret.super.init(self, x, y)
+
+    local fields = entity.fields
+    local xSpeed, ySpeed = fields.xSpeed, fields.ySpeed
+    local diameter = fields.projectileDiameter
+    local time = fields.time
 
     local turretDiameter = 8
     local turretImage = gfx.image.new(turretDiameter, turretDiameter)
     gfx.pushContext(turretImage)
+        gfx.setColor(gfx.kColorWhite)
         gfx.drawCircleInRect(0, 0, turretDiameter, turretDiameter)
     gfx.popContext()
     self:setImage(turretImage)
 
     local projectileImage = gfx.image.new(diameter, diameter)
     gfx.pushContext(projectileImage)
+        gfx.setColor(gfx.kColorWhite)
         gfx.fillCircleInRect(0, 0, diameter, diameter)
     gfx.popContext()
 
@@ -60,7 +67,7 @@ function Projectile:update()
         end
     end
 
-    if self.levelImage:sample(self.x, self.y) == gfx.kColorBlack then
+    if self.levelImage:sample(self.x, self.y) ~= gfx.kColorClear then
         self:remove()
     end
 end

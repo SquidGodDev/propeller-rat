@@ -10,7 +10,7 @@ local getDrawOffset <const> = gfx.getDrawOffset
 local setDrawOffset <const> = gfx.setDrawOffset
 
 local sample = gfx.image.sample
-local kColorBlack <const> = gfx.kColorBlack
+local kColorClear <const> = gfx.kColorClear
 
 local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
@@ -20,11 +20,12 @@ local smoothSpeed <const> = 0.06
 local unfreezeSensitivity = 0.1
 local resetTime = 500 -- ms
 
-local playerSpeed = 1.2
-local playerDiameter = 8
+local playerSpeed = 1.4
+local playerDiameter = 12
 local playerRadius = playerDiameter / 2
 local playerImage = gfx.image.new(playerDiameter, playerDiameter)
 gfx.pushContext(playerImage)
+    gfx.setColor(gfx.kColorWhite)
     gfx.fillCircleInRect(0, 0, playerDiameter, playerDiameter)
 gfx.popContext()
 
@@ -81,10 +82,10 @@ function Player:update()
 
     local levelImage = self.levelImage
     local x, y = self.x, self.y
-    if sample(levelImage, x + playerRadius, y + playerRadius) == kColorBlack
-    or sample(levelImage, x + playerRadius, y - playerRadius) == kColorBlack
-    or sample(levelImage, x - playerRadius, y + playerRadius) == kColorBlack
-    or sample(levelImage, x - playerRadius, y - playerRadius) == kColorBlack then
+    if sample(levelImage, x + playerRadius, y + playerRadius) ~= kColorClear
+    or sample(levelImage, x + playerRadius, y - playerRadius) ~= kColorClear
+    or sample(levelImage, x - playerRadius, y + playerRadius) ~= kColorClear
+    or sample(levelImage, x - playerRadius, y - playerRadius) ~= kColorClear then
         self:reset()
         return
     end

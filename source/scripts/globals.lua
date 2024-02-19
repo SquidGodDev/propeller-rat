@@ -8,6 +8,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
 -- Libraries
+import "scripts/libraries/LDtk"
 import "scripts/libraries/Utilities"
 import "scripts/libraries/SceneManager"
 
@@ -25,7 +26,6 @@ import "scripts/pickups/pickup"
 import "scripts/pickups/levelEnd"
 
 -- Levels
-import "data/levels"
 import "scripts/levels/level"
 
 import "scripts/game/gameScene"
