@@ -127,4 +127,5 @@ function Player:reset()
     self.resetTimer = pd.timer.new(resetTime, function()
         self.resetTimer = nil
     end)
+    self.frozen = true
 end
