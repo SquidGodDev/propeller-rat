@@ -10,6 +10,7 @@ function Turret:init(x, y, entity)
     local xSpeed, ySpeed = fields.xSpeed, fields.ySpeed
     local diameter = fields.projectileDiameter
     local time = fields.time
+    local startDelay = fields.startDelay
 
     local turretDiameter = 8
     local turretImage = gfx.image.new(turretDiameter, turretDiameter)
@@ -26,13 +27,17 @@ function Turret:init(x, y, entity)
     gfx.popContext()
 
     local turretRadius = turretDiameter / 2
-    local projectileX = x + turretRadius * math.zeroSign(xSpeed)
-    local projectileY = y + turretRadius * math.zeroSign(ySpeed)
-    local turretTimer = pd.timer.new(time, function()
-        Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage, self.levelImage)
+    local projectileX = x + turretRadius + turretRadius * math.zeroSign(xSpeed)
+    local projectileY = y + turretRadius + turretRadius * math.zeroSign(ySpeed)
+
+    pd.timer.new(startDelay, function()
+        local turretTimer = pd.timer.new(time, function()
+            Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage, self.levelImage)
+        end)
+
+        turretTimer.repeats = true
     end)
 
-    turretTimer.repeats = true
 end
 
 class('Projectile').extends(gfx.sprite)
@@ -42,13 +47,14 @@ function Projectile:init(x, y, xSpeed, ySpeed, projectileImage, levelImage)
     self.ySpeed = ySpeed
     self.levelImage = levelImage
 
+    self:setCenter(0.5, 0.5)
     self:setImage(projectileImage)
     self:moveTo(x, y)
     self:add()
 
-    self:setTag(TAGS.hazard)
-    self:setGroups(TAGS.hazard)
-    self:setCollidesWithGroups({TAGS.player})
+    self:setTag(TAGS.projectile)
+    self:setGroups(TAGS.projectile)
+    self:setCollidesWithGroups({TAGS.player, TAGS.hazard})
     self:setCollideRect(0, 0, projectileImage:getSize())
 end
 
@@ -64,6 +70,10 @@ function Projectile:update()
         local collisionTag = collisionSprite:getTag()
         if collisionTag == TAGS.player then
             collisionSprite:reset()
+        end
+
+        if collisionTag == TAGS.hazard then
+            self:remove()
         end
     end
 

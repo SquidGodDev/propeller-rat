@@ -44,7 +44,7 @@ function Player:init(gameScene, x, y, levelImage)
 
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
-    self:setCollidesWithGroups({TAGS.hazard, TAGS.pickup})
+    self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup})
     self:setCollideRect(0, 0, playerImage:getSize())
 
     self.disabled = false

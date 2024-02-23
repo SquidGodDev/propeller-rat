@@ -33,7 +33,8 @@ import "scripts/game/gameScene"
 TAGS = {
     player = 1,
     hazard = 2,
-    pickup = 3
+    projectile = 3,
+    pickup = 4
 }
 
 Z_INDEXES = {
