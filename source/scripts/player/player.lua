@@ -123,9 +123,12 @@ function Player:reset()
         return
     end
 
+    self:setCollisionsEnabled(false)
+
     self:moveTo(self.startX, self.startY)
     self.resetTimer = pd.timer.new(resetTime, function()
         self.resetTimer = nil
+        self:setCollisionsEnabled(true)
     end)
     self.frozen = true
 end

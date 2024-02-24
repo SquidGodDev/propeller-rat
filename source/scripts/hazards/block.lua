@@ -23,7 +23,10 @@ function Block:init(x, y, entity)
     self:setCollideRect(0, 0, blockImage:getSize())
 end
 
-function Block:collisionResponse()
+function Block:collisionResponse(other)
+    if other:getTag() == TAGS.player then
+        return gfx.sprite.kCollisionTypeOverlap
+    end
     return gfx.sprite.kCollisionTypeBounce
 end
 
