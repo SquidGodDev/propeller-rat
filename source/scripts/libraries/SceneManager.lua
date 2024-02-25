@@ -10,14 +10,14 @@ SceneManager = {}
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
 
-function SceneManager.switchScene(scene, x, y)
+function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
     if transitionImage then
         return
     end
 
     newScene = scene
 
-    startTransition(x, y)
+    startTransition(xIn, yIn, xOut, yOut)
 end
 
 function SceneManager.startingScene(scene)
@@ -55,9 +55,11 @@ function cleanupScene()
     end
 end
 
-function startTransition(x, y)
-    x = x and x or 200
-    y = y and y or 120
+function startTransition(xIn, yIn, xOut, yOut)
+    xIn = xIn and xIn or 200
+    yIn = yIn and yIn or 120
+    xOut = xOut and xOut or xIn
+    yOut = yOut and yOut or yIn
 
     local transitionTime = 700
     local startRadius, endRadius = 0, 500
@@ -66,7 +68,7 @@ function startTransition(x, y)
         transitionImage = gfx.image.new(400, 240)
         gfx.pushContext(transitionImage)
             gfx.setColor(gfx.kColorWhite)
-            gfx.fillCircleAtPoint(x, y, transitionTimer.value)
+            gfx.fillCircleAtPoint(xIn, yIn, transitionTimer.value)
         gfx.popContext()
     end
 
@@ -79,7 +81,7 @@ function startTransition(x, y)
             local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
             gfx.pushContext(transitionMask)
                 gfx.setColor(gfx.kColorBlack)
-                gfx.fillCircleAtPoint(x, y, transitionTimer.value)
+                gfx.fillCircleAtPoint(xOut, yOut, transitionTimer.value)
             gfx.popContext()
             transitionImage:setMaskImage(transitionMask)
         end

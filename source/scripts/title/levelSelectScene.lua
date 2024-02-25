@@ -76,7 +76,7 @@ function LevelSelectScene:update()
         local x, y, width, height = gridview:getCellBounds(gridview:getSelection())
         local transitionX = gridviewSprite.x + x + width * 2/3
         local transitionY = gridviewSprite.y + y + height * 2/3
-        SceneManager.switchScene(GameScene, transitionX, transitionY)
+        SceneManager.switchScene(GameScene, transitionX, transitionY, 200, 120)
     end
 
     local gridviewImage = gfx.image.new(384, 192)

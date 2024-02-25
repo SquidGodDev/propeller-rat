@@ -89,6 +89,7 @@ function GameScene:startLevelTransition()
         end
 
         transitionTimer.timerEndedCallback = function()
+            self.transitionSprite:setImage(nil)
             self.transitionSprite:remove()
         end
     end

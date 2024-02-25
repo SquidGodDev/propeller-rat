@@ -37,7 +37,7 @@ function Player:init(gameScene, x, y, levelImage)
     self.startX = x
     self.startY = y
     self.levelImage = levelImage
-    setDrawOffset(x, y)
+    setDrawOffset(-x + 200, -y + 120)
     self:setImage(playerImage)
     self:moveTo(x, y)
     self:add()
