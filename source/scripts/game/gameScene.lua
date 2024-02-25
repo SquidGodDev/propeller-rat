@@ -17,7 +17,7 @@ function GameScene:init()
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
-    self.curLevelNum = 1
+    self.curLevelNum = CUR_LEVEL
     self:setUpLevel()
 
     self.transitionSprite = gfx.sprite.new()
@@ -34,6 +34,7 @@ end
 function GameScene:nextLevel()
     local levelCount = ldtk.get_level_count()
     self.curLevelNum = math.ringInt(self.curLevelNum + 1, 1, levelCount)
+    CUR_LEVEL = self.curLevelNum
     if self.curLevelNum <= levelCount then
         self:startLevelTransition()
     end

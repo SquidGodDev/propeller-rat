@@ -1,9 +1,6 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-local transitionTime = 500
-local transitionMidFrame = 20
-
 local transitionImage = nil
 
 local newScene = nil
@@ -13,24 +10,24 @@ SceneManager = {}
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
 
-function SceneManager.switchScene(scene)
+function SceneManager.switchScene(scene, x, y)
     if transitionImage then
         return
     end
 
     newScene = scene
 
-    startTransition()
+    startTransition(x, y)
 end
 
 function SceneManager.startingScene(scene)
-    scene.init()
+    scene()
     setSceneUpdate(scene)
 end
 
 function loadNewScene()
     cleanupScene()
-    newScene:init()
+    newScene()
     setSceneUpdate(newScene)
 end
 
@@ -58,12 +55,35 @@ function cleanupScene()
     end
 end
 
-function startTransition()
-    local transitionTimer = createTransitionTimer(400, 0)
+function startTransition(x, y)
+    x = x and x or 200
+    y = y and y or 120
+
+    local transitionTime = 700
+    local startRadius, endRadius = 0, 500
+    local transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
+    transitionTimer.updateCallback = function()
+        transitionImage = gfx.image.new(400, 240)
+        gfx.pushContext(transitionImage)
+            gfx.setColor(gfx.kColorWhite)
+            gfx.fillCircleAtPoint(x, y, transitionTimer.value)
+        gfx.popContext()
+    end
 
     transitionTimer.timerEndedCallback = function()
         loadNewScene()
-        transitionTimer = createTransitionTimer(0, 400)
+
+        transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius)
+        transitionTimer.updateCallback = function()
+            transitionImage = gfx.image.new(400, 240, gfx.kColorWhite)
+            local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
+            gfx.pushContext(transitionMask)
+                gfx.setColor(gfx.kColorBlack)
+                gfx.fillCircleAtPoint(x, y, transitionTimer.value)
+            gfx.popContext()
+            transitionImage:setMaskImage(transitionMask)
+        end
+
         transitionTimer.timerEndedCallback = function()
             transitionImage = nil
         end
@@ -76,7 +96,7 @@ function createTransitionTimer(startRadius, endRadius)
     transitionTimer.updateCallback = function(timer)
         transitionImage = gfx.image.new(400, 240)
         gfx.pushContext(transitionImage)
-            gfx.setColor(gfx.kColorBlack)
+            gfx.setColor(gfx.kColorWhite)
             gfx.fillCircleAtPoint(200, 120, timer.value)
         gfx.popContext()
     end
