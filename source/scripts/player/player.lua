@@ -85,7 +85,8 @@ function Player:update()
     if sample(levelImage, x + playerRadius, y + playerRadius) ~= kColorClear
     or sample(levelImage, x + playerRadius, y - playerRadius) ~= kColorClear
     or sample(levelImage, x - playerRadius, y + playerRadius) ~= kColorClear
-    or sample(levelImage, x - playerRadius, y - playerRadius) ~= kColorClear then
+    or sample(levelImage, x - playerRadius, y - playerRadius) ~= kColorClear
+    or sample(levelImage, x, y) ~= kColorClear then
         self:reset()
         return
     end
