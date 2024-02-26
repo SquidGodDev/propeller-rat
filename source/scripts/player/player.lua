@@ -47,7 +47,7 @@ function Player:init(gameScene, x, y, levelImage)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup})
     self:setCollideRect(0, 0, playerImage:getSize())
 
-    self.disabled = false
+    self.disabled = true
     self.frozen = true
     self.resetTimer = nil
 end
@@ -117,6 +117,10 @@ end
 
 function Player:disable()
     self.disabled = true
+end
+
+function Player:enable()
+    self.disabled = false
 end
 
 function Player:reset()
