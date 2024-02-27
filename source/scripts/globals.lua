@@ -7,6 +7,7 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
+import "CoreLibs/animation"
 
 -- Libraries
 import "scripts/libraries/LDtk"

@@ -29,6 +29,8 @@ gfx.pushContext(playerImage)
     gfx.fillCircleInRect(0, 0, playerDiameter, playerDiameter)
 gfx.popContext()
 
+local playerImageTable = gfx.imagetable.new("images/player/player")
+
 class('Player').extends(gfx.sprite)
 
 function Player:init(gameScene, x, y, levelImage)
@@ -38,18 +40,21 @@ function Player:init(gameScene, x, y, levelImage)
     self.startY = y
     self.levelImage = levelImage
     setDrawOffset(-x + 200, -y + 120)
-    self:setImage(playerImage)
+    -- self:setImage(playerImage)
     self:moveTo(x, y)
     self:add()
 
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup})
-    self:setCollideRect(0, 0, playerImage:getSize())
+    self:setCollideRect(6, 15, playerDiameter, playerDiameter)
 
     self.disabled = true
     self.frozen = true
     self.resetTimer = nil
+
+    self.animationLoop = gfx.animation.loop.new(22, playerImageTable, true)
+    self:setImage(self.animationLoop:image())
 end
 
 function Player:collisionResponse()
@@ -57,6 +62,8 @@ function Player:collisionResponse()
 end
 
 function Player:update()
+    self:setImage(self.animationLoop:image())
+
     if self.disabled then
         return
     end

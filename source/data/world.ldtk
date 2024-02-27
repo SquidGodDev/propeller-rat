@@ -11,7 +11,7 @@
 	"iid": "802b1a40-b0a0-11ee-98fb-c78d8ad54e24",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 32,
+	"nextUid": 33,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -555,6 +555,87 @@
 	"levels": [
 		{
 			"identifier": "Level_1",
+			"iid": "437cf300-b0a0-11ee-baa0-e51c4d7e2279",
+			"uid": 32,
+			"worldX": -1,
+			"worldY": -1,
+			"worldDepth": 0,
+			"pxWid": 224,
+			"pxHei": 208,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": "../images/levels/castle.png",
+			"bgPos": "Cover",
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#ADADB5",
+			"__bgPos": { "topLeftPx": [0,0], "scale": [1,1], "cropRect": [0,0,224,208] },
+			"externalRelPath": null,
+			"fieldInstances": [{ "__identifier": "Name", "__type": "String", "__value": "Castle", "__tile": null, "defUid": 21, "realEditorValues": [{
+				"id": "V_String",
+				"params": ["Castle"]
+			}] }],
+			"layerInstances": [
+				{
+					"__identifier": "Hazards",
+					"__type": "Entities",
+					"__cWid": 28,
+					"__cHei": 26,
+					"__gridSize": 8,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "437cf301-b0a0-11ee-baa0-05bf3a0d5a3a",
+					"levelId": 32,
+					"layerDefUid": 3,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 5952207,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "Start",
+							"__grid": [3,4],
+							"__pivot": [0.5,0.5],
+							"__tags": ["Game"],
+							"__tile": null,
+							"__smartColor": "#EAD4AA",
+							"iid": "5764ed50-b0a0-11ee-baa0-2be9dc557ceb",
+							"width": 8,
+							"height": 8,
+							"defUid": 12,
+							"px": [28,39],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "End",
+							"__grid": [23,21],
+							"__pivot": [0.5,0.5],
+							"__tags": ["Game"],
+							"__tile": null,
+							"__smartColor": "#63C74D",
+							"iid": "59a3b9c0-b0a0-11ee-baa0-0b2e621e9c8d",
+							"width": 16,
+							"height": 16,
+							"defUid": 11,
+							"px": [187,168],
+							"fieldInstances": []
+						}
+					]
+				}
+			],
+			"__neighbours": []
+		},
+		{
+			"identifier": "Level_2",
 			"iid": "802b4150-b0a0-11ee-98fb-d5fd29585076",
 			"uid": 0,
 			"worldX": -1,
@@ -635,7 +716,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_2",
+			"identifier": "Level_3",
 			"iid": "3b3ade50-b0a0-11ee-a90d-2591c2d4cc09",
 			"uid": 30,
 			"worldX": -1,
@@ -716,7 +797,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_3",
+			"identifier": "Level_4",
 			"iid": "73b4ee40-b0a0-11ee-80d9-01cc0dc76f89",
 			"uid": 25,
 			"worldX": -1,
@@ -797,7 +878,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_4",
+			"identifier": "Level_5",
 			"iid": "1cb89dc0-b0a0-11ee-9b0b-918b4248b3a3",
 			"uid": 14,
 			"worldX": -1,
@@ -946,7 +1027,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_5",
+			"identifier": "Level_6",
 			"iid": "904b9e70-b0a0-11ee-80d9-07f5d5611631",
 			"uid": 19,
 			"worldX": -1,
@@ -1041,7 +1122,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_6",
+			"identifier": "Level_7",
 			"iid": "b367c030-b0a0-11ee-88d0-d7f8b3fc65aa",
 			"uid": 29,
 			"worldX": -1,
@@ -1156,7 +1237,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_7",
+			"identifier": "Level_8",
 			"iid": "6dd97720-b0a0-11ee-9b0b-5f546276223a",
 			"uid": 13,
 			"worldX": -1,
@@ -1237,7 +1318,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_8",
+			"identifier": "Level_9",
 			"iid": "89509950-b0a0-11ee-9dd7-0dd7cb27627b",
 			"uid": 28,
 			"worldX": -1,
@@ -1335,7 +1416,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_9",
+			"identifier": "Level_10",
 			"iid": "ac885780-b0a0-11ee-a90d-1721136ad9ca",
 			"uid": 31,
 			"worldX": -1,
@@ -1430,7 +1511,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_10",
+			"identifier": "Level_11",
 			"iid": "8c28d2f0-b0a0-11ee-80d9-2be03b7cfa8d",
 			"uid": 22,
 			"worldX": -1,
@@ -1647,7 +1728,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_11",
+			"identifier": "Level_12",
 			"iid": "0c9e3b70-b0a0-11ee-80d9-5b86ac0fe917",
 			"uid": 23,
 			"worldX": -1,
@@ -1865,7 +1946,7 @@
 			"__neighbours": []
 		},
 		{
-			"identifier": "Level_12",
+			"identifier": "Level_13",
 			"iid": "ed8a3a50-b0a0-11ee-9dd7-d164a8103907",
 			"uid": 27,
 			"worldX": -1,
