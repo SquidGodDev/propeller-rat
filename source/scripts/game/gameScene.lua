@@ -19,6 +19,15 @@ function GameScene:init()
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
+    local starsImage = gfx.image.new("images/decoration/stars")
+    self.stars = gfx.sprite.new(starsImage)
+    self.stars:setIgnoresDrawOffset(true)
+    self.stars:moveTo(200, 120)
+    self.stars:add()
+
+    self.planet = Utilities.animatedSprite(365, 45, "images/decoration/planet", 100, true)
+    self.planet:setIgnoresDrawOffset(true)
+
     self.curLevelNum = CUR_LEVEL
     self:setUpLevel()
 

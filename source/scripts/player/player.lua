@@ -21,15 +21,6 @@ local unfreezeSensitivity = 0.1
 local resetTime = 500 -- ms
 
 local playerSpeed = 1.4
-local playerDiameter = 12
-local playerRadius = playerDiameter / 2
-local playerImage = gfx.image.new(playerDiameter, playerDiameter)
-gfx.pushContext(playerImage)
-    gfx.setColor(gfx.kColorWhite)
-    gfx.fillCircleInRect(0, 0, playerDiameter, playerDiameter)
-gfx.popContext()
-
-local playerImageTable = gfx.imagetable.new("images/player/player")
 
 class('Player').extends(gfx.sprite)
 
@@ -40,20 +31,20 @@ function Player:init(gameScene, x, y, levelImage)
     self.startY = y
     self.levelImage = levelImage
     setDrawOffset(-x + 200, -y + 120)
-    -- self:setImage(playerImage)
     self:moveTo(x, y)
     self:add()
 
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup})
-    self:setCollideRect(6, 15, playerDiameter, playerDiameter)
+    self:setCollideRect(4, 3, 15, 21)
 
     self.disabled = true
     self.frozen = true
     self.resetTimer = nil
 
-    self.animationLoop = gfx.animation.loop.new(22, playerImageTable, true)
+    local playerAnimationFrameRate = 50 -- ms
+    self.animationLoop = gfx.animation.loop.new(playerAnimationFrameRate, playerImageTable, true)
     self:setImage(self.animationLoop:image())
 end
 
@@ -101,6 +92,13 @@ function Player:update()
     local crankPosition = rad(getCrankPosition() - 90)
     local crankCos, crankSin = cos(crankPosition), sin(crankPosition)
     local _, _, collisions, length = self:moveWithCollisions(x + playerSpeed * crankCos, y + playerSpeed * crankSin)
+    if crankCos < 0 then
+        self:setImageFlip(gfx.kImageFlippedX)
+        -- self.smoke:setImageFlip(gfx.kImageFlippedX)
+    elseif crankCos > 0 then
+        self:setImageFlip(gfx.kImageUnflipped)
+        -- self.smoke:setImageFlip(gfx.kImageUnflipped)
+    end
 
     for i=1, length do
         local collision = collisions[i]

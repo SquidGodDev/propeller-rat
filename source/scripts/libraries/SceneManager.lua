@@ -27,8 +27,7 @@ end
 
 function loadNewScene()
     cleanupScene()
-    newScene()
-    setSceneUpdate(newScene)
+    setSceneUpdate(newScene())
 end
 
 function setSceneUpdate(scene)

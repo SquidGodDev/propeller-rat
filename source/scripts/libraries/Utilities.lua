@@ -28,3 +28,26 @@ local sign <const> = math.sign
 function math.zeroSign(_value)
 	return _value == 0 and 0 or sign(_value)
 end
+
+local pd <const> = playdate
+local gfx <const> = pd.graphics
+
+Utilities = {}
+
+function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, noRemove)
+    if type(imagetable) == 'string' then
+        imagetable = gfx.imagetable.new(imagetable)
+    end
+    assert(imagetable)
+    local sprite = gfx.sprite.new(imagetable[1])
+    sprite:moveTo(x, y)
+    sprite:add()
+    sprite.animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
+    sprite.update = function(self)
+        self:setImage(self.animationLoop:image())
+        if not self.animationLoop:isValid() and not noRemove then
+            self:remove()
+        end
+    end
+    return sprite
+end
