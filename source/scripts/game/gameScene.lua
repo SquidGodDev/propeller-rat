@@ -13,20 +13,20 @@ if pd.isSimulator then
     ldtk.export_to_lua_files()
 end
 
+local starsImage = gfx.image.new("images/decoration/stars")
+local stars = gfx.sprite.new(starsImage)
+stars:setIgnoresDrawOffset(true)
+stars:moveTo(200, 120)
+
+local planet = Utilities.animatedSprite(365, 45, "images/decoration/planet", 100, true)
+planet:setIgnoresDrawOffset(true)
+planet:remove()
+
 class('GameScene').extends()
 
 function GameScene:init()
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
-
-    local starsImage = gfx.image.new("images/decoration/stars")
-    self.stars = gfx.sprite.new(starsImage)
-    self.stars:setIgnoresDrawOffset(true)
-    self.stars:moveTo(200, 120)
-    self.stars:add()
-
-    self.planet = Utilities.animatedSprite(365, 45, "images/decoration/planet", 100, true)
-    self.planet:setIgnoresDrawOffset(true)
 
     self.curLevelNum = CUR_LEVEL
     self:setUpLevel()
@@ -68,6 +68,8 @@ function GameScene:clearLevel()
 end
 
 function GameScene:setUpLevel()
+    stars:add()
+    planet:add()
     self.curLevel = Level(self.curLevelNum)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
