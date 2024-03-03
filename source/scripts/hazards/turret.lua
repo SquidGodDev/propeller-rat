@@ -32,7 +32,7 @@ function Turret:init(x, y, entity)
 
     pd.timer.new(startDelay, function()
         local turretTimer = pd.timer.new(time, function()
-            Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage, self.levelImage)
+            Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage)
         end)
 
         turretTimer.repeats = true
@@ -42,10 +42,9 @@ end
 
 class('Projectile').extends(gfx.sprite)
 
-function Projectile:init(x, y, xSpeed, ySpeed, projectileImage, levelImage)
+function Projectile:init(x, y, xSpeed, ySpeed, projectileImage)
     self.xSpeed = xSpeed
     self.ySpeed = ySpeed
-    self.levelImage = levelImage
 
     self:setCenter(0.5, 0.5)
     self:setImage(projectileImage)
@@ -54,7 +53,7 @@ function Projectile:init(x, y, xSpeed, ySpeed, projectileImage, levelImage)
 
     self:setTag(TAGS.projectile)
     self:setGroups(TAGS.projectile)
-    self:setCollidesWithGroups({TAGS.player, TAGS.hazard})
+    self:setCollidesWithGroups({TAGS.player, TAGS.hazard, TAGS.wall})
     self:setCollideRect(0, 0, projectileImage:getSize())
 end
 
@@ -72,12 +71,8 @@ function Projectile:update()
             collisionSprite:reset()
         end
 
-        if collisionTag == TAGS.hazard then
+        if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
             self:remove()
         end
-    end
-
-    if self.levelImage:sample(self.x, self.y) ~= gfx.kColorClear then
-        self:remove()
     end
 end

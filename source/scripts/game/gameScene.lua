@@ -70,7 +70,7 @@ end
 function GameScene:setUpLevel()
     self.curLevel = Level(self.curLevelNum)
     local startX, startY = self.curLevel:getStartPos()
-    self.player = Player(self, startX, startY, self.curLevel:getLevelImage())
+    self.player = Player(self, startX, startY)
 
     local titleDelay = 200
     pd.timer.performAfterDelay(titleDelay, function()
@@ -120,8 +120,9 @@ function GameScene:startLevelTransition()
 end
 
 function GameScene:showLevelTitle()
-    self.titleSprite:add()
     local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name")
+
+    self.titleSprite:add()
 
     local titleWidth, titleHeight = 400, 54
     local titleImage = gfx.image.new(titleWidth, titleHeight, gfx.kColorWhite)

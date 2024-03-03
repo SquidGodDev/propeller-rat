@@ -8,39 +8,47 @@ class('Level').extends(gfx.sprite)
 function Level:init(levelIndex)
     local levelName = "Level_" .. levelIndex
 
-    local levelImage = gfx.image.new(ldtk.get_level_bg_path(levelName))
-    self:setImage(levelImage)
-    self:setCenter(0, 0)
-    self:moveTo(0, 0)
-    self:add()
+    for layerName, layer in pairs(ldtk.get_layers(levelName)) do
+        if layer.tiles then
+            local tilemap = ldtk.create_tilemap(levelName, layerName)
+
+            local layerSprite = gfx.sprite.new()
+            layerSprite:setTilemap(tilemap)
+            layerSprite:moveTo(0, 0)
+            layerSprite:setCenter(0, 0)
+            layerSprite:setZIndex(Z_INDEXES.level + layer.zIndex)
+            layerSprite:add()
+
+            local emptyTiles = ldtk.get_empty_tileIDs(levelName, "Solid", layerName)
+            if emptyTiles then
+                local wallSprites = gfx.sprite.addWallSprites(tilemap, emptyTiles)
+                for i=1, #wallSprites do
+                    local wallSprite = wallSprites[i]
+                    wallSprite:setTag(TAGS.wall)
+                    wallSprite:setGroups(TAGS.wall)
+                end
+            end
+        end
+    end
 
     for _, entity in ipairs(ldtk.get_entities(levelName)) do
         local entityX, entityY = entity.position.x, entity.position.y
         local entityName = entity.name
 
-        local hazardInstance = nil
         if entityName == "Start" then
             self.startX, self.startY = entityX, entityY
         elseif entityName == "End" then
             LevelEnd(entityX, entityY)
         elseif entityName == "Block" then
-            hazardInstance = Block(entityX, entityY, entity)
+            Block(entityX, entityY, entity)
         elseif entityName == "Turret" then
-            hazardInstance = Turret(entityX, entityY, entity)
+            Turret(entityX, entityY, entity)
         elseif entityName == "Spinner" then
-            hazardInstance = Spinner(entityX, entityY)
-        end
-
-        if hazardInstance then
-            hazardInstance:setLevelImage(levelImage)
+            Spinner(entityX, entityY)
         end
     end
 end
 
 function Level:getStartPos()
     return self.startX, self.startY
-end
-
-function Level:getLevelImage()
-    return self:getImage()
 end

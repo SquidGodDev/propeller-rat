@@ -61,7 +61,6 @@ local _level_names = {} -- uids to name
 local _level_rects = {}
 local _tilesets = {}
 local _imageTables = {}
-local _bgPaths = {}
 local _levelCount = 0
 
 local _use_external_files = false
@@ -106,7 +105,6 @@ function LDtk.load( ldtk_file, use_lua_levels )
 		_level_rects = data.level_rects
 		_levels = data.levels
 		_use_external_files = data.use_external_files
-		_bgPaths = data._bgPaths
 		_levelCount = data._levelCount
 
 		if not _use_external_files then
@@ -209,7 +207,6 @@ function LDtk.load( ldtk_file, use_lua_levels )
 	for level_index, level_data in ipairs(data.levels) do
 		_level_names[ level_data.iid ] = level_data.identifier
 		_level_rects[ level_data.identifier ] = { x=level_data.worldX, y=level_data.worldY, width=level_data.pxWid, height=level_data.pxHei }
-		_bgPaths[ level_data.identifier ] = string.sub(level_data.bgRelPath, 4, -1)
 		_levelCount += 1
 	end
 
@@ -249,7 +246,6 @@ function LDtk.export_to_lua_files()
 		level_rects = _level_rects,
 		levels = _levels,
 		use_external_files = _use_external_files,
-		bgPaths = _bgPaths,
 		levelCount = _levelCount
 	})
 
@@ -433,10 +429,6 @@ end
 
 function LDtk.get_level_count()
 	return _levelCount
-end
-
-function LDtk.get_level_bg_path( level_name )
-	return _bgPaths[level_name]
 end
 
 -- get a list of entities

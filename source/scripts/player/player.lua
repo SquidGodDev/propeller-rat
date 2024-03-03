@@ -21,22 +21,23 @@ local unfreezeSensitivity = 0.1
 local resetTime = 500 -- ms
 
 local playerSpeed = 1.4
+local playerImageTable = gfx.imagetable.new("images/player/rat")
 
 class('Player').extends(gfx.sprite)
 
-function Player:init(gameScene, x, y, levelImage)
+function Player:init(gameScene, x, y)
     self.gameScene = gameScene
 
     self.startX = x
     self.startY = y
-    self.levelImage = levelImage
     setDrawOffset(-x + 200, -y + 120)
+    self:setZIndex(Z_INDEXES.player)
     self:moveTo(x, y)
     self:add()
 
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
-    self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup})
+    self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup, TAGS.wall})
     self:setCollideRect(4, 3, 15, 21)
 
     self.disabled = true
@@ -78,26 +79,14 @@ function Player:update()
         end
     end
 
-    local levelImage = self.levelImage
     local x, y = self.x, self.y
-    if sample(levelImage, x + playerRadius, y + playerRadius) ~= kColorClear
-    or sample(levelImage, x + playerRadius, y - playerRadius) ~= kColorClear
-    or sample(levelImage, x - playerRadius, y + playerRadius) ~= kColorClear
-    or sample(levelImage, x - playerRadius, y - playerRadius) ~= kColorClear
-    or sample(levelImage, x, y) ~= kColorClear then
-        self:reset()
-        return
-    end
-
     local crankPosition = rad(getCrankPosition() - 90)
     local crankCos, crankSin = cos(crankPosition), sin(crankPosition)
     local _, _, collisions, length = self:moveWithCollisions(x + playerSpeed * crankCos, y + playerSpeed * crankSin)
     if crankCos < 0 then
         self:setImageFlip(gfx.kImageFlippedX)
-        -- self.smoke:setImageFlip(gfx.kImageFlippedX)
     elseif crankCos > 0 then
         self:setImageFlip(gfx.kImageUnflipped)
-        -- self.smoke:setImageFlip(gfx.kImageUnflipped)
     end
 
     for i=1, length do
@@ -106,6 +95,8 @@ function Player:update()
         local collisionTag = collisionSprite:getTag()
         if collisionTag == TAGS.pickup then
             collisionSprite:pickup(self)
+        elseif collisionTag == TAGS.wall then
+            self:reset()
         end
     end
 end

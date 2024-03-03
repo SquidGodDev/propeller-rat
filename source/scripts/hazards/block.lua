@@ -1,6 +1,43 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local boxImage = gfx.image.new("images/levels/box")
+local medBoxImage = gfx.image.new("images/levels/mediumBox")
+
+local boxImages = {
+    [1] = {
+        [1] = boxImage
+    },
+    [2] = {
+        [2] = medBoxImage
+    }
+}
+
+local function getBoxImage(width, height)
+    local tileSize = 16
+    local tileWidth, tileHeight = width / tileSize, height / tileSize
+    local heightDict = boxImages[tileWidth]
+    if heightDict then
+        local image = heightDict[tileHeight]
+        if image then
+            return image
+        end
+    else
+        heightDict = {}
+        boxImages[tileWidth] = heightDict
+    end
+    local image = gfx.image.new(width, height)
+    gfx.pushContext(image)
+        for x=0,width-tileSize,tileSize do
+            for y=0,height-tileSize,tileSize do
+                boxImage:draw(x, y)
+            end
+        end
+    gfx.popContext()
+    heightDict[tileHeight] = image
+    return image
+end
+
 class('Block').extends(Hazard)
 
 function Block:init(x, y, entity)
@@ -12,15 +49,11 @@ function Block:init(x, y, entity)
     self.xSpeed = fields.xSpeed
     self.ySpeed = fields.ySpeed
 
-    local cornerRadius = 2
-    local blockImage = gfx.image.new(self.width, self.height)
-    gfx.pushContext(blockImage)
-        gfx.setColor(gfx.kColorWhite)
-        gfx.fillRoundRect(0, 0, self.width, self.height, cornerRadius)
-    gfx.popContext()
+    local blockImage = getBoxImage(self.width, self.height)
     self:setImage(blockImage)
 
     self:setCollideRect(0, 0, blockImage:getSize())
+    self:setCollidesWithGroups({TAGS.player, TAGS.hazard, TAGS.wall})
 end
 
 function Block:collisionResponse(other)
@@ -44,18 +77,14 @@ function Block:update()
         if collisionTag == TAGS.hazard then
             bounceCollision = true
             collisionSprite:bounce()
+        elseif collisionTag == TAGS.wall then
+            bounceCollision = true
         end
     end
 
-    if self.xSpeed ~= 0 then
-        if bounceCollision or self.levelImage:sample(self.x + (self.xSpeed > 0 and self.width or 0), self.y) ~= gfx.kColorClear then
-            self.xSpeed = -self.xSpeed
-        end
-    end
-    if self.ySpeed ~= 0 then
-        if bounceCollision or self.levelImage:sample(self.x, self.y + (self.ySpeed > 0 and self.height or 0)) ~= gfx.kColorClear then
-            self.ySpeed = -self.ySpeed
-        end
+    if bounceCollision then
+        self.xSpeed = -self.xSpeed
+        self.ySpeed = -self.ySpeed
     end
 end
 

@@ -13,10 +13,6 @@ function Hazard:init(x, y)
     self:setCollidesWithGroups({TAGS.player, TAGS.hazard})
 end
 
-function Hazard:setLevelImage(levelImage)
-    self.levelImage = levelImage
-end
-
 function Hazard:collisionResponse()
     return gfx.sprite.kCollisionTypeOverlap
 end

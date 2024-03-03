@@ -9,6 +9,8 @@ import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/animation"
 
+import "scripts/tests"
+
 -- Libraries
 import "scripts/libraries/LDtk"
 import "scripts/libraries/Utilities"
@@ -39,14 +41,21 @@ TAGS = {
     player = 1,
     hazard = 2,
     projectile = 3,
-    pickup = 4
+    pickup = 4,
+    wall = 5
 }
 
 Z_INDEXES = {
+    level = 10,
+    player = 20,
     transition = 1000,
 }
 
 pd.display.setRefreshRate(50)
+
+if pd.isSimulator then
+    sanityChecks()
+end
 
 DRAW_FPS = true
 
