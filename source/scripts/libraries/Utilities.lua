@@ -34,7 +34,7 @@ local gfx <const> = pd.graphics
 
 Utilities = {}
 
-function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, noRemove)
+function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame)
     if type(imagetable) == 'string' then
         imagetable = gfx.imagetable.new(imagetable)
     end
@@ -43,9 +43,11 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, noRemove
     sprite:moveTo(x, y)
     sprite:add()
     sprite.animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
+    sprite.animationLoop.startFrame = startFrame and startFrame or 1
+    sprite.animationLoop.endFrame = endFrame and endFrame or #imagetable
     sprite.update = function(self)
         self:setImage(self.animationLoop:image())
-        if not self.animationLoop:isValid() and not noRemove then
+        if not self.animationLoop:isValid() then
             self:remove()
         end
     end

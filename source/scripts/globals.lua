@@ -1,6 +1,20 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+TAGS = {
+    player = 1,
+    hazard = 2,
+    projectile = 3,
+    pickup = 4,
+    wall = 5
+}
+
+Z_INDEXES = {
+    level = 10,
+    player = 20,
+    transition = 1000,
+}
+
 -- Core
 import "CoreLibs/object"
 import "CoreLibs/graphics"
@@ -36,20 +50,6 @@ import "scripts/game/gameScene"
 
 -- Title
 import "scripts/title/levelSelectScene"
-
-TAGS = {
-    player = 1,
-    hazard = 2,
-    projectile = 3,
-    pickup = 4,
-    wall = 5
-}
-
-Z_INDEXES = {
-    level = 10,
-    player = 20,
-    transition = 1000,
-}
 
 pd.display.setRefreshRate(50)
 
