@@ -42,6 +42,19 @@ function GameScene:init()
     self.titleSprite:setZIndex(500)
     self.titleSprite:setIgnoresDrawOffset(true)
     self.titleSprite:add()
+
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:addMenuItem("Reset", function()
+        if self.player then
+            self.player:reset()
+        end
+    end)
+    systemMenu:addMenuItem("Level Select", function()
+        if self.player then
+            self.player:disable()
+        end
+        SceneManager.switchScene(LevelSelectScene)
+    end)
 end
 
 function GameScene:update()

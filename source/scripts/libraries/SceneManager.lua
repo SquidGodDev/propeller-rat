@@ -48,6 +48,9 @@ end
 function cleanupScene()
     gfx.sprite.removeAll()
     gfx.setDrawOffset(0, 0)
+    pd.display.setOffset(0, 0)
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:removeAllMenuItems()
     local allTimers = pd.timer.allTimers()
     for _, timer in ipairs(allTimers) do
         timer:remove()
