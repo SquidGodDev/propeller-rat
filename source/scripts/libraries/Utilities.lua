@@ -34,21 +34,22 @@ local gfx <const> = pd.graphics
 
 Utilities = {}
 
-function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame)
+function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
     if type(imagetable) == 'string' then
         imagetable = gfx.imagetable.new(imagetable)
     end
     assert(imagetable)
+    flip = flip and flip or gfx.kImageUnflipped
     local sprite = gfx.sprite.new(imagetable[1])
     sprite:moveTo(x, y)
     sprite:add()
-    sprite.animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
-    sprite.animationLoop.startFrame = startFrame and startFrame or 1
-    sprite.animationLoop.endFrame = endFrame and endFrame or #imagetable
-    sprite.update = function(self)
-        self:setImage(self.animationLoop:image())
-        if not self.animationLoop:isValid() then
-            self:remove()
+    local animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
+    animationLoop.startFrame = startFrame and startFrame or 1
+    animationLoop.endFrame = endFrame and endFrame or #imagetable
+    sprite.update = function()
+        sprite:setImage(animationLoop:image(), flip)
+        if not animationLoop:isValid() then
+            sprite:remove()
         end
     end
     return sprite

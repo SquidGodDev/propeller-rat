@@ -4,6 +4,8 @@ local gfx <const> = pd.graphics
 local rad <const> = math.rad
 local cos <const> = math.cos
 local sin <const> = math.sin
+local floor <const> = math.floor
+local random <const> = math.random
 
 local getCrankPosition <const> = pd.getCrankPosition
 local getDrawOffset <const> = gfx.getDrawOffset
@@ -13,9 +15,10 @@ local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
 end
 
+local setDisplayOffset = pd.display.setOffset
+
 local smoothSpeed <const> = 0.06
 local unfreezeSensitivity = 0.1
-local resetTime = 500 -- ms
 
 local playerSpeed = 1.4
 local playerAnimationFrameRate = 50 -- ms
@@ -27,9 +30,8 @@ local propellerSprite = Utilities.animatedSprite(0, 0, propellerImagetable, play
 propellerSprite:setZIndex(Z_INDEXES.player)
 propellerSprite:remove()
 
-local beamImage = gfx.image.new(24, 300, gfx.kColorWhite)
-local beamSprite = gfx.sprite.new(beamImage)
-beamSprite:setZIndex(Z_INDEXES.player)
+local spinningPlayerImagetable = gfx.imagetable.new("images/player/spinningRat")
+local spinningPlayerFrameRate = 20
 
 class('Player').extends(gfx.sprite)
 
@@ -50,7 +52,7 @@ function Player:init(gameScene, x, y)
 
     self.disabled = true
     self.frozen = true
-    self.resetTimer = nil
+    self.resetting = false
 
     self.animationLoop = gfx.animation.loop.new(playerAnimationFrameRate, playerImageTable, true)
     self.animationLoop.startFrame = flyStartFrame
@@ -65,17 +67,16 @@ end
 function Player:update()
     self:setImage(self.animationLoop:image())
 
-    local drawOffsetX, drawOffsetY = getDrawOffset()
     local targetOffsetX, targetOffsetY = -(self.x - 200), -(self.y - 120)
+    if self.resetting then
+        targetOffsetX, targetOffsetY = -(self.startX - 200), -(self.startY - 120)
+    end
+    local drawOffsetX, drawOffsetY = getDrawOffset()
     local smoothedX = lerp(drawOffsetX, targetOffsetX, smoothSpeed)
     local smoothedY = lerp(drawOffsetY, targetOffsetY, smoothSpeed)
     setDrawOffset(smoothedX, smoothedY)
 
     if self.disabled then
-        return
-    end
-
-    if self.resetTimer then
         return
     end
 
@@ -145,16 +146,62 @@ function Player:enable()
 end
 
 function Player:reset()
-    if self.disabled or self.resetTimer or self.frozen then
+    if self.disabled or self.frozen then
         return
     end
 
-    self:setCollisionsEnabled(false)
-
-    self:moveTo(self.startX, self.startY)
-    self.resetTimer = pd.timer.new(resetTime, function()
-        self.resetTimer = nil
-        self:setCollisionsEnabled(true)
-    end)
+    self.disabled = true
     self.frozen = true
+
+    local shakeTimer = pd.timer.new(500, 5, 0)
+    shakeTimer.timerEndedCallback = function()
+        setDisplayOffset(0, 0)
+    end
+    shakeTimer.updateCallback = function(timer)
+        local shakeAmount = timer.value
+        local shakeAngle = random()*3.14*2;
+        shakeX = floor(cos(shakeAngle)*shakeAmount);
+        shakeY = floor(sin(shakeAngle)*shakeAmount);
+        setDisplayOffset(shakeX, shakeY)
+    end
+
+    local deathX, deathY = self.x, self.y
+
+    self:setCollisionsEnabled(false)
+    self:setVisible(false)
+    local spinningPlayerSprite = Utilities.animatedSprite(deathX, deathY, spinningPlayerImagetable, spinningPlayerFrameRate, true, nil, nil, self:getImageFlip())
+    spinningPlayerSprite:setZIndex(Z_INDEXES.player)
+    local moveTimer = pd.timer.new(1000, deathY, deathY + 200, pd.easingFunctions.inBack)
+    moveTimer.updateCallback = function(timer)
+        spinningPlayerSprite:moveTo(deathX, timer.value)
+    end
+    moveTimer.timerEndedCallback = function()
+        spinningPlayerSprite:remove()
+    end
+
+    propellerSprite:moveTo(deathX, deathY)
+    propellerSprite:add()
+    local propellerTimer = pd.timer.new(1500, deathY, deathY - 200, pd.easingFunctions.inCubic)
+    propellerTimer.updateCallback = function(timer)
+        propellerSprite:moveTo(deathX, timer.value)
+    end
+    propellerTimer.timerEndedCallback = function()
+        propellerSprite:remove()
+    end
+
+    pd.timer.performAfterDelay(1000, function()
+        self:setVisible(true)
+        self.resetting = true
+        local animateInY = self.startY + 300
+        self:moveTo(self.startX, animateInY)
+        local animateInTimer = pd.timer.new(1000, animateInY, self.startY, pd.easingFunctions.outCubic)
+        animateInTimer.updateCallback = function(timer)
+            self:moveTo(self.startX, timer.value)
+        end
+        animateInTimer.timerEndedCallback = function()
+            self.resetting = false
+            self:setCollisionsEnabled(true)
+            self.disabled = false
+        end
+    end)
 end
