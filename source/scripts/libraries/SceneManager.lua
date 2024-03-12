@@ -5,10 +5,18 @@ local transitionImage = nil
 
 local newScene = nil
 
+local drawQueue = {}
+
 SceneManager = {}
 
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
+local drawUpdate = function()
+    for i=1, #drawQueue do
+        drawQueue[i]()
+    end
+    drawQueue = {}
+end
 
 function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
     if transitionImage then
@@ -25,6 +33,10 @@ function SceneManager.startingScene(scene)
     setSceneUpdate(scene)
 end
 
+function SceneManager.addToDrawQueue(drawFunc)
+    table.insert(drawQueue, drawFunc)
+end
+
 function loadNewScene()
     cleanupScene()
     setSceneUpdate(newScene())
@@ -36,6 +48,7 @@ function setSceneUpdate(scene)
         spriteUpdate()
         scene:update()
         timerUpdate()
+        drawUpdate()
         if drawFps then
             pd.drawFPS(0, 228)
         end
@@ -49,6 +62,7 @@ function cleanupScene()
     gfx.sprite.removeAll()
     gfx.setDrawOffset(0, 0)
     pd.display.setOffset(0, 0)
+    drawQueue = {}
     local systemMenu = pd.getSystemMenu()
     systemMenu:removeAllMenuItems()
     local allTimers = pd.timer.allTimers()

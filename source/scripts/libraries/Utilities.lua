@@ -39,13 +39,13 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
         imagetable = gfx.imagetable.new(imagetable)
     end
     assert(imagetable)
-    flip = flip and flip or gfx.kImageUnflipped
+    flip = flip or gfx.kImageUnflipped
     local sprite = gfx.sprite.new(imagetable[1])
     sprite:moveTo(x, y)
     sprite:add()
     local animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
-    animationLoop.startFrame = startFrame and startFrame or 1
-    animationLoop.endFrame = endFrame and endFrame or #imagetable
+    animationLoop.startFrame = startFrame or 1
+    animationLoop.endFrame = endFrame or #imagetable
     sprite.update = function()
         sprite:setImage(animationLoop:image(), flip)
         if not animationLoop:isValid() then

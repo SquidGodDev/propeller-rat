@@ -38,6 +38,7 @@ import "scripts/hazards/hazard"
 import "scripts/hazards/spinner"
 import "scripts/hazards/block"
 import "scripts/hazards/turret"
+import "scripts/hazards/laser"
 
 -- Pickups
 import "scripts/pickups/pickup"

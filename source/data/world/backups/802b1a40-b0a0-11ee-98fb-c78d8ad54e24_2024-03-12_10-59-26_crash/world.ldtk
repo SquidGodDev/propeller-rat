@@ -11,7 +11,7 @@
 	"iid": "802b1a40-b0a0-11ee-98fb-c78d8ad54e24",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 179,
+	"nextUid": 178,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -1269,19 +1269,19 @@
 			"pivotY": 0,
 			"fieldDefs": [
 				{
-					"identifier": "tail",
+					"identifier": "LaserTail",
 					"doc": null,
-					"__type": "Point",
-					"uid": 178,
-					"type": "F_Point",
+					"__type": "EntityRef",
+					"uid": 176,
+					"type": "F_EntityRef",
 					"isArray": false,
 					"canBeNull": false,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
-					"editorDisplayMode": "PointPath",
+					"editorDisplayMode": "RefLinkBetweenCenters",
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
-					"editorLinkStyle": "StraightArrow",
+					"editorLinkStyle": "CurvedArrow",
 					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
@@ -1299,9 +1299,9 @@
 					"textLanguageMode": null,
 					"symmetricalRef": false,
 					"autoChainRef": true,
-					"allowOutOfLevelRef": true,
-					"allowedRefs": "OnlySame",
-					"allowedRefsEntityUid": null,
+					"allowOutOfLevelRef": false,
+					"allowedRefs": "OnlySpecificEntity",
+					"allowedRefsEntityUid": 175,
 					"allowedRefTags": [],
 					"tilesetUid": null
 				}
@@ -3760,19 +3760,46 @@
 						},
 						{
 							"__identifier": "Laser",
+							"__grid": [13,2],
+							"__pivot": [0,0],
+							"__tags": ["Hazard"],
+							"__tile": null,
+							"__smartColor": "#B700FF",
+							"iid": "4f3b74b0-d7b0-11ee-989d-332a2c91574d",
+							"width": 16,
+							"height": 16,
+							"defUid": 175,
+							"px": [208,32],
+							"fieldInstances": [{ "__identifier": "LaserTail", "__type": "EntityRef", "__value": {
+								"entityIid": "51847a50-d7b0-11ee-989d-a3b1e437c862",
+								"layerIid": "67849bb1-d7b0-11ee-989d-79e8e820abd2",
+								"levelIid": "678474a0-d7b0-11ee-989d-6799882b3a5f",
+								"worldIid": "802b1a41-b0a0-11ee-98fb-39aeca836ad0"
+							}, "__tile": null, "defUid": 176, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["51847a50-d7b0-11ee-989d-a3b1e437c862"]
+							}] }]
+						},
+						{
+							"__identifier": "Laser",
 							"__grid": [7,2],
 							"__pivot": [0,0],
 							"__tags": ["Hazard"],
 							"__tile": null,
 							"__smartColor": "#B700FF",
-							"iid": "27036e30-d7b0-11ee-b292-593a97b49ff2",
+							"iid": "57b4f350-d7b0-11ee-989d-a501d333f47a",
 							"width": 16,
 							"height": 16,
 							"defUid": 175,
 							"px": [112,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 10, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "LaserTail", "__type": "EntityRef", "__value": {
+								"entityIid": "58f2ca80-d7b0-11ee-989d-43febc7184bd",
+								"layerIid": "67849bb1-d7b0-11ee-989d-79e8e820abd2",
+								"levelIid": "678474a0-d7b0-11ee-989d-6799882b3a5f",
+								"worldIid": "802b1a41-b0a0-11ee-98fb-39aeca836ad0"
+							}, "__tile": null, "defUid": 176, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["10,10"]
+								"params": ["58f2ca80-d7b0-11ee-989d-43febc7184bd"]
 							}] }]
 						},
 						{
@@ -3782,31 +3809,19 @@
 							"__tags": ["Hazard"],
 							"__tile": null,
 							"__smartColor": "#B700FF",
-							"iid": "291473e0-d7b0-11ee-b292-252bf6191e5e",
+							"iid": "5eb84cb0-d7b0-11ee-989d-fd7793060557",
 							"width": 16,
 							"height": 16,
 							"defUid": 175,
 							"px": [304,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 16, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
+							"fieldInstances": [{ "__identifier": "LaserTail", "__type": "EntityRef", "__value": {
+								"entityIid": "624e6bc0-d7b0-11ee-989d-ed541085ac2c",
+								"layerIid": "67849bb1-d7b0-11ee-989d-79e8e820abd2",
+								"levelIid": "678474a0-d7b0-11ee-989d-6799882b3a5f",
+								"worldIid": "802b1a41-b0a0-11ee-98fb-39aeca836ad0"
+							}, "__tile": null, "defUid": 176, "realEditorValues": [{
 								"id": "V_String",
-								"params": ["16,10"]
-							}] }]
-						},
-						{
-							"__identifier": "Laser",
-							"__grid": [13,2],
-							"__pivot": [0,0],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "6b7d7d80-d7b0-11ee-b292-b304e8e83aaf",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [208,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 13, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["13,10"]
+								"params": ["624e6bc0-d7b0-11ee-989d-ed541085ac2c"]
 							}] }]
 						}
 					]
