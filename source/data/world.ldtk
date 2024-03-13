@@ -11,7 +11,7 @@
 	"iid": "802b1a40-b0a0-11ee-98fb-c78d8ad54e24",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 179,
+	"nextUid": 182,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "LinearHorizontal",
@@ -1296,6 +1296,80 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "delay",
+					"doc": null,
+					"__type": "Int",
+					"uid": 180,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "interval",
+					"doc": null,
+					"__type": "Int",
+					"uid": 181,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [1000] },
 					"textLanguageMode": null,
 					"symmetricalRef": false,
 					"autoChainRef": true,
@@ -3770,10 +3844,14 @@
 							"height": 16,
 							"defUid": 175,
 							"px": [112,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 10, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["10,10"]
-							}] }]
+							"fieldInstances": [
+								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 10, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["10,10"]
+								}] },
+								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
+							]
 						},
 						{
 							"__identifier": "Laser",
@@ -3787,10 +3865,14 @@
 							"height": 16,
 							"defUid": 175,
 							"px": [304,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 16, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["16,10"]
-							}] }]
+							"fieldInstances": [
+								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 16, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["16,10"]
+								}] },
+								{ "__identifier": "delay", "__type": "Int", "__value": 400, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [400] }] },
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
+							]
 						},
 						{
 							"__identifier": "Laser",
@@ -3804,10 +3886,14 @@
 							"height": 16,
 							"defUid": 175,
 							"px": [208,32],
-							"fieldInstances": [{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 13, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["13,10"]
-							}] }]
+							"fieldInstances": [
+								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 13, "cy": 10 }, "__tile": null, "defUid": 178, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["13,10"]
+								}] },
+								{ "__identifier": "delay", "__type": "Int", "__value": 200, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [200] }] },
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
+							]
 						}
 					]
 				}
