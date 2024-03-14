@@ -21,8 +21,8 @@ function Turret:init(x, y, entity)
 
     self:setImage(turretImagetable[1])
 
-    self.projectileX = x + turretRadius + turretRadius * math.zeroSign(self.xSpeed)
-    self.projectileY = y + turretRadius + turretRadius * math.zeroSign(self.ySpeed)
+    self.projectileX = x
+    self.projectileY = y
 
     self.projectileFired = false
 
@@ -58,7 +58,6 @@ function Projectile:init(x, y, xSpeed, ySpeed)
     self.ySpeed = ySpeed
 
     self:setZIndex(Z_INDEXES.projectile)
-    self:setCenter(0.5, 0.5)
     self:setImage(projectileImage)
     self:moveTo(x, y)
     self:add()

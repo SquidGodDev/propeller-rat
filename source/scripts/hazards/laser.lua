@@ -14,7 +14,6 @@ class('Laser').extends(gfx.sprite)
 
 function Laser:init(x, y, entity)
     self:setImage(laserImagetable[1])
-    self:setCenter(0, 0)
     self:moveTo(x, y)
     self:add()
 
@@ -22,7 +21,7 @@ function Laser:init(x, y, entity)
         local fields = entity.fields
         local delay = fields.delay
         local interval = fields.interval
-        local tailX, tailY = fields.tail.cx * 16, fields.tail.cy * 16
+        local tailX, tailY = fields.tail.cx * 16 + 8, fields.tail.cy * 16 + 8
         local tailLaser = Laser(tailX, tailY)
         self.tailX, self.tailY = tailX, tailY
         self.fired = false
@@ -58,8 +57,8 @@ function Laser:startupAnimation()
 end
 
 function Laser:fire()
-    local laserHeadX, laserHeadY = self.x + laserNodeHalfSize, self.y + laserNodeHalfSize
-    local laserTailX, laserTailY = self.tailX + laserNodeHalfSize, self.tailY + laserNodeHalfSize
+    local laserHeadX, laserHeadY = self.x, self.y
+    local laserTailX, laserTailY = self.tailX, self.tailY
     local fireTimer = pd.timer.new(laserFireTime, laserBeamWidth, 0, pd.easingFunctions.outExpo)
     fireTimer.updateCallback = function(timer)
         if timer.value >= 0.3 then

@@ -4,7 +4,8 @@ local gfx <const> = pd.graphics
 class('Hazard').extends(gfx.sprite)
 
 function Hazard:init(x, y)
-    self:setCenter(0, 0)
+    -- self:setCenter(0, 0)
+    self:setZIndex(Z_INDEXES.hazard)
     self:moveTo(x, y)
     self:add()
 
