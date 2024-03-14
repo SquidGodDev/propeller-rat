@@ -25,7 +25,9 @@ function Laser:init(x, y, entity)
         local tailX, tailY = fields.tail.cx * 16, fields.tail.cy * 16
         local tailLaser = Laser(tailX, tailY)
         self.tailX, self.tailY = tailX, tailY
+        self.fired = false
         pd.timer.performAfterDelay(delay, function()
+            self:fire()
             local laserTimer = pd.timer.new(interval, function()
                 self:startupAnimation()
                 tailLaser:startupAnimation()
@@ -39,8 +41,9 @@ function Laser:update()
     if self.animationLoop then
         if self.animationLoop:isValid() then
             self:setImage(self.animationLoop:image())
-            if self.animationLoop.frame == fireFrame and self.tailX and self.tailY then
+            if self.tailX and self.tailY and not self.fired and self.animationLoop.frame == fireFrame then
                 self:fire()
+                self.fired = true
             end
         else
             self:setImage(laserImagetable[1])
@@ -51,6 +54,7 @@ end
 
 function Laser:startupAnimation()
     self.animationLoop = gfx.animation.loop.new(laserFrameTime, laserImagetable, false)
+    self.fired = false
 end
 
 function Laser:fire()
@@ -62,7 +66,6 @@ function Laser:fire()
             local drawLaser = function()
                 gfx.pushContext()
                     gfx.setColor(gfx.kColorWhite)
-                    -- gfx.setPattern({0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF, 0x77})
                     gfx.setLineWidth(timer.value)
                     gfx.drawLine(laserHeadX, laserHeadY, laserTailX, laserTailY)
                 gfx.popContext()

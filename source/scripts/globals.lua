@@ -12,6 +12,7 @@ TAGS = {
 Z_INDEXES = {
     level = 10,
     player = 20,
+    projectile = 30,
     transition = 1000,
 }
 

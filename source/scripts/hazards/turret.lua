@@ -1,51 +1,63 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local projectileImage = gfx.image.new("images/hazards/turretProjectile")
+local turretImagetable = gfx.imagetable.new("images/hazards/turret")
+local turretFrameTime = 80 -- ms
+local turretWidth = turretImagetable[1]:getSize()
+local turretRadius = turretWidth / 2
+
+local projectileBreakImageTable = gfx.imagetable.new("images/hazards/projectileBreak")
+
 class('Turret').extends(Hazard)
 
 function Turret:init(x, y, entity)
     Turret.super.init(self, x, y)
 
     local fields = entity.fields
-    local xSpeed, ySpeed = fields.xSpeed, fields.ySpeed
-    local diameter = fields.projectileDiameter
+    self.xSpeed, self.ySpeed = fields.xSpeed, fields.ySpeed
     local time = fields.time
     local startDelay = fields.startDelay
 
-    local turretDiameter = 8
-    local turretImage = gfx.image.new(turretDiameter, turretDiameter)
-    gfx.pushContext(turretImage)
-        gfx.setColor(gfx.kColorWhite)
-        gfx.drawCircleInRect(0, 0, turretDiameter, turretDiameter)
-    gfx.popContext()
-    self:setImage(turretImage)
+    self:setImage(turretImagetable[1])
 
-    local projectileImage = gfx.image.new(diameter, diameter)
-    gfx.pushContext(projectileImage)
-        gfx.setColor(gfx.kColorWhite)
-        gfx.fillCircleInRect(0, 0, diameter, diameter)
-    gfx.popContext()
+    self.projectileX = x + turretRadius + turretRadius * math.zeroSign(self.xSpeed)
+    self.projectileY = y + turretRadius + turretRadius * math.zeroSign(self.ySpeed)
 
-    local turretRadius = turretDiameter / 2
-    local projectileX = x + turretRadius + turretRadius * math.zeroSign(xSpeed)
-    local projectileY = y + turretRadius + turretRadius * math.zeroSign(ySpeed)
+    self.projectileFired = false
 
-    pd.timer.new(startDelay, function()
-        local turretTimer = pd.timer.new(time, function()
-            Projectile(projectileX, projectileY, xSpeed, ySpeed, projectileImage)
-        end)
+    pd.timer.performAfterDelay(startDelay, function()
+        local fireFunction = function ()
+            self.animationLoop = gfx.animation.loop.new(turretFrameTime, turretImagetable, false)
+            self.projectileFired = false
+        end
+
+        fireFunction()
+        local turretTimer = pd.timer.new(time, fireFunction)
 
         turretTimer.repeats = true
     end)
+end
 
+function Turret:update()
+    if self.animationLoop then
+        if self.animationLoop:isValid() then
+            self:setImage(self.animationLoop:image())
+        else
+            Projectile(self.projectileX, self.projectileY, self.xSpeed, self.ySpeed)
+            self:setImage(turretImagetable[1])
+            self.animationLoop = nil
+        end
+    end
 end
 
 class('Projectile').extends(gfx.sprite)
 
-function Projectile:init(x, y, xSpeed, ySpeed, projectileImage)
+function Projectile:init(x, y, xSpeed, ySpeed)
     self.xSpeed = xSpeed
     self.ySpeed = ySpeed
 
+    self:setZIndex(Z_INDEXES.projectile)
     self:setCenter(0.5, 0.5)
     self:setImage(projectileImage)
     self:moveTo(x, y)
@@ -72,6 +84,7 @@ function Projectile:update()
         end
 
         if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
+            Utilities.animatedSprite(self.x, self.y, projectileBreakImageTable, 20, false)
             self:remove()
         end
     end
