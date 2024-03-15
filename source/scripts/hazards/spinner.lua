@@ -1,7 +1,9 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local spinnerImagetable = gfx.imagetable.new("images/hazards/spinner")
+local assets <const> = Assets
+
+assets.preloadImagetable("images/hazards/spinner")
 
 class('Spinner').extends(Hazard)
 
@@ -11,11 +13,13 @@ function Spinner:init(x, y)
     self.angle = 1
     self.maxAngle = 90
 
+    local spinnerImagetable = assets.getImagetable("images/hazards/spinner")
     self:setCenter(0.5, 0.5)
     self:setCollideRect(0, 0, spinnerImagetable[1]:getSize())
 end
 
 function Spinner:update()
+    local spinnerImagetable = assets.getImagetable("images/hazards/spinner")
     self:setImage(spinnerImagetable[self.angle])
     self.angle = math.ringInt(self.angle + 1, 1, self.maxAngle)
 

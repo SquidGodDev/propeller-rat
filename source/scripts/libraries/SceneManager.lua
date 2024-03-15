@@ -1,6 +1,9 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local lazyLoadAssets = Assets.lazyLoad
+local ms = pd.getCurrentTimeMilliseconds
+
 local transitionImage = nil
 
 local newScene = nil
@@ -55,6 +58,8 @@ function setSceneUpdate(scene)
         if transitionImage then
             transitionImage:drawIgnoringOffset(0, 0)
         end
+
+        lazyLoadAssets(ms())
     end
 end
 

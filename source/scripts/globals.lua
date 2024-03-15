@@ -30,6 +30,7 @@ import "scripts/tests"
 -- Libraries
 import "scripts/libraries/LDtk"
 import "scripts/libraries/Utilities"
+import "scripts/libraries/Assets"
 import "scripts/libraries/SceneManager"
 
 -- Game

@@ -36,7 +36,7 @@ Utilities = {}
 
 function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
     if type(imagetable) == 'string' then
-        imagetable = gfx.imagetable.new(imagetable)
+        imagetable = Assets.getImagetable(imagetable)
     end
     assert(imagetable)
     flip = flip or gfx.kImageUnflipped

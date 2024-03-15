@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local assets <const> = Assets
+
 local rad <const> = math.rad
 local cos <const> = math.cos
 local sin <const> = math.sin
@@ -20,17 +22,12 @@ local setDisplayOffset = pd.display.setOffset
 local smoothSpeed <const> = 0.06
 local unfreezeSensitivity = 0.1
 
+assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat"})
+
 local playerSpeed = 1.4
 local playerAnimationFrameRate = 50 -- ms
-local playerImageTable = gfx.imagetable.new("images/player/rat")
 local flyStartFrame, flyEndFrame = 1, 12
 
-local propellerImagetable = gfx.imagetable.new("images/player/propeller")
-local propellerSprite = Utilities.animatedSprite(0, 0, propellerImagetable, playerAnimationFrameRate, true)
-propellerSprite:setZIndex(Z_INDEXES.player)
-propellerSprite:remove()
-
-local spinningPlayerImagetable = gfx.imagetable.new("images/player/spinningRat")
 local spinningPlayerFrameRate = 20
 
 class('Player').extends(gfx.sprite)
@@ -54,6 +51,7 @@ function Player:init(gameScene, x, y)
     self.frozen = true
     self.resetting = false
 
+    local playerImageTable = assets.getImagetable("images/player/rat")
     self.animationLoop = gfx.animation.loop.new(playerAnimationFrameRate, playerImageTable, true)
     self.animationLoop.startFrame = flyStartFrame
     self.animationLoop.endFrame = flyEndFrame
@@ -123,8 +121,10 @@ function Player:nextLevel(x, y)
     self:moveTo(x, y)
     self:disable()
     self:setVisible(false)
+    local propellerImagetable = assets.getImagetable("images/player/propeller")
+    local propellerSprite = Utilities.animatedSprite(0, 0, propellerImagetable, playerAnimationFrameRate, true)
+    propellerSprite:setZIndex(Z_INDEXES.player)
     propellerSprite:moveTo(x, y)
-    propellerSprite:add()
     local propellerTimer = pd.timer.new(1500, y, y - 200, pd.easingFunctions.inCubic)
     propellerTimer.updateCallback = function(timer)
         propellerSprite:moveTo(x, timer.value)
@@ -169,6 +169,7 @@ function Player:reset()
 
     self:setCollisionsEnabled(false)
     self:setVisible(false)
+    local spinningPlayerImagetable = assets.getImagetable("images/player/spinningRat")
     local spinningPlayerSprite = Utilities.animatedSprite(deathX, deathY, spinningPlayerImagetable, spinningPlayerFrameRate, true, nil, nil, self:getImageFlip())
     spinningPlayerSprite:setZIndex(Z_INDEXES.player)
     local moveTimer = pd.timer.new(1000, deathY, deathY + 200, pd.easingFunctions.inBack)
@@ -179,8 +180,10 @@ function Player:reset()
         spinningPlayerSprite:remove()
     end
 
+    local propellerImagetable = assets.getImagetable("images/player/propeller")
+    local propellerSprite = Utilities.animatedSprite(0, 0, propellerImagetable, playerAnimationFrameRate, true)
+    propellerSprite:setZIndex(Z_INDEXES.player)
     propellerSprite:moveTo(deathX, deathY)
-    propellerSprite:add()
     local propellerTimer = pd.timer.new(1500, deathY, deathY - 200, pd.easingFunctions.inCubic)
     propellerTimer.updateCallback = function(timer)
         propellerSprite:moveTo(deathX, timer.value)

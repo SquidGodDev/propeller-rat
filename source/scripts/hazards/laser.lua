@@ -1,9 +1,10 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local laserNodeSize = 16
-local laserNodeHalfSize = laserNodeSize / 2
-local laserImagetable = gfx.imagetable.new("images/hazards/laser")
+local assets <const> = Assets
+
+Assets.preloadImagetable("images/hazards/laser")
+
 local laserFrameTime = 100 -- ms
 local fireFrame = 5
 
@@ -13,6 +14,7 @@ local laserFireTime = 1000 -- ms
 class('Laser').extends(gfx.sprite)
 
 function Laser:init(x, y, entity)
+    local laserImagetable = assets.getImagetable("images/hazards/laser")
     self:setImage(laserImagetable[1])
     self:moveTo(x, y)
     self:add()
@@ -45,6 +47,7 @@ function Laser:update()
                 self.fired = true
             end
         else
+            local laserImagetable = assets.getImagetable("images/hazards/laser")
             self:setImage(laserImagetable[1])
             self.animationLoop = nil
         end
@@ -52,6 +55,7 @@ function Laser:update()
 end
 
 function Laser:startupAnimation()
+    local laserImagetable = assets.getImagetable("images/hazards/laser")
     self.animationLoop = gfx.animation.loop.new(laserFrameTime, laserImagetable, false)
     self.fired = false
 end

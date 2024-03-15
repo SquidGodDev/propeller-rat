@@ -1,13 +1,15 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local projectileImage = gfx.image.new("images/hazards/turretProjectile")
-local turretImagetable = gfx.imagetable.new("images/hazards/turret")
-local turretFrameTime = 80 -- ms
-local turretWidth = turretImagetable[1]:getSize()
-local turretRadius = turretWidth / 2
+local assets <const> = Assets
 
-local projectileBreakImageTable = gfx.imagetable.new("images/hazards/projectileBreak")
+assets.preloadImage("images/hazards/turretProjectile")
+assets.preloadImagetables({
+    "images/hazards/turret",
+    "images/hazards/projectileBreak"
+})
+
+local turretFrameTime = 80 -- ms
 
 class('Turret').extends(Hazard)
 
@@ -19,6 +21,7 @@ function Turret:init(x, y, entity)
     local time = fields.time
     local startDelay = fields.startDelay
 
+    local turretImagetable = assets.getImagetable("images/hazards/turret")
     self:setImage(turretImagetable[1])
 
     self.projectileX = x
@@ -45,6 +48,7 @@ function Turret:update()
             self:setImage(self.animationLoop:image())
         else
             Projectile(self.projectileX, self.projectileY, self.xSpeed, self.ySpeed)
+            local turretImagetable = assets.getImagetable("images/hazards/turret")
             self:setImage(turretImagetable[1])
             self.animationLoop = nil
         end
@@ -57,6 +61,7 @@ function Projectile:init(x, y, xSpeed, ySpeed)
     self.xSpeed = xSpeed
     self.ySpeed = ySpeed
 
+    local projectileImage = assets.getImage("images/hazards/turretProjectile")
     self:setZIndex(Z_INDEXES.projectile)
     self:setImage(projectileImage)
     self:moveTo(x, y)
@@ -83,6 +88,7 @@ function Projectile:update()
         end
 
         if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
+            local projectileBreakImageTable = assets.getImagetable("images/hazards/projectileBreak")
             Utilities.animatedSprite(self.x, self.y, projectileBreakImageTable, 20, false)
             self:remove()
         end
