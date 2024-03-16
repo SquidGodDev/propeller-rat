@@ -1,5 +1,6 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
+local assets <const> = Assets
 
 local titleFont = gfx.font.new("data/fonts/m6x11-26")
 
@@ -9,11 +10,12 @@ local usePrecomputedLevels = not pd.isSimulator
 
 ldtk.load("data/world.ldtk", usePrecomputedLevels)
 
-if pd.isSimulator then
+if not usePrecomputedLevels then
     ldtk.export_to_lua_files()
 end
 
-Assets.preloadImages({"images/decoration/stars", "images/decoration/planet"})
+assets.preloadImage("images/decoration/stars")
+assets.preloadImagetable("images/decoration/planet")
 
 class('GameScene').extends()
 

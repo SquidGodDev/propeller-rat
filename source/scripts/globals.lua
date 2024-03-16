@@ -14,8 +14,10 @@ Z_INDEXES = {
     player = 20,
     hazard = 30,
     projectile = 40,
-    transition = 1000,
+    transition = 1000
 }
+
+CUR_LEVEL = 1
 
 -- Core
 import "CoreLibs/object"
@@ -24,6 +26,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/animation"
+import "CoreLibs/crank"
 
 import "scripts/tests"
 
@@ -62,5 +65,3 @@ if pd.isSimulator then
 end
 
 DRAW_FPS = true
-
-CUR_LEVEL = 1

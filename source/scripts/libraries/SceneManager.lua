@@ -32,8 +32,8 @@ function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
 end
 
 function SceneManager.startingScene(scene)
-    scene()
-    setSceneUpdate(scene)
+    local sceneInstance = scene()
+    setSceneUpdate(sceneInstance)
 end
 
 function SceneManager.addToDrawQueue(drawFunc)
@@ -42,7 +42,8 @@ end
 
 function loadNewScene()
     cleanupScene()
-    setSceneUpdate(newScene())
+    local sceneInstance = newScene()
+    setSceneUpdate(sceneInstance)
 end
 
 function setSceneUpdate(scene)

@@ -105,7 +105,7 @@ function LDtk.load( ldtk_file, use_lua_levels )
 		_level_rects = data.level_rects
 		_levels = data.levels
 		_use_external_files = data.use_external_files
-		_levelCount = data._levelCount
+		_levelCount = data.levelCount
 
 		if not _use_external_files then
 			for level_name in pairs(_levels) do

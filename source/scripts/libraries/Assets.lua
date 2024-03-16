@@ -1,3 +1,5 @@
+-- Shaun Inman: https://devforum.play.date/t/best-practices-for-managing-lots-of-assets/395/2
+
 Assets = {}
 
 local images = {}
