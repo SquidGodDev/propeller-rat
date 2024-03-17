@@ -72,8 +72,9 @@ function Laser:fire()
                     gfx.setLineWidth(timer.value)
                     gfx.drawLine(laserHeadX, laserHeadY, laserTailX, laserTailY)
                 gfx.popContext()
+                return true
             end
-            SceneManager.addToDrawQueue(drawLaser)
+            SceneManager.addToDrawQueue({update = drawLaser})
         end
     end
     local intersectedSprites = gfx.sprite.querySpritesAlongLine(laserHeadX, laserHeadY, laserTailX, laserTailY)

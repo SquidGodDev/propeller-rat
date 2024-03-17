@@ -15,10 +15,14 @@ SceneManager = {}
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
 local drawUpdate = function()
-    for i=1, #drawQueue do
-        drawQueue[i]()
+    for i=#drawQueue, 1, -1 do
+        local drawObject = drawQueue[i]
+        local drawUpdate = drawObject.update
+        local remove = drawUpdate(drawObject)
+        if remove then
+            table.remove(drawQueue, i)
+        end
     end
-    drawQueue = {}
 end
 
 function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
@@ -36,8 +40,8 @@ function SceneManager.startingScene(scene)
     setSceneUpdate(sceneInstance)
 end
 
-function SceneManager.addToDrawQueue(drawFunc)
-    table.insert(drawQueue, drawFunc)
+function SceneManager.addToDrawQueue(drawObject)
+    table.insert(drawQueue, drawObject)
 end
 
 function loadNewScene()
