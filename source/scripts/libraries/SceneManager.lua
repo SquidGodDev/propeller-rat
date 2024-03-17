@@ -9,6 +9,7 @@ local transitionImage = nil
 local newScene = nil
 
 local drawQueue = {}
+local uiQueue = {}
 
 SceneManager = {}
 
@@ -24,6 +25,16 @@ local drawUpdate = function()
         end
     end
 end
+local uiUpdate = function()
+    for i=#uiQueue, 1, -1 do
+        local drawObject = uiQueue[i]
+        local uiUpdate = drawObject.update
+        local remove = uiUpdate(drawObject)
+        if remove then
+            table.remove(uiQueue, i)
+        end
+    end
+end
 
 function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
     if transitionImage then
@@ -32,7 +43,7 @@ function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
 
     newScene = scene
 
-    startTransition(xIn, yIn, xOut, yOut)
+    SceneManager.startTransition(xIn, yIn, xOut, yOut, loadNewScene)
 end
 
 function SceneManager.startingScene(scene)
@@ -42,6 +53,10 @@ end
 
 function SceneManager.addToDrawQueue(drawObject)
     table.insert(drawQueue, drawObject)
+end
+
+function SceneManager.addToUiQueue(drawObject)
+    table.insert(uiQueue, drawObject)
 end
 
 function loadNewScene()
@@ -57,6 +72,7 @@ function setSceneUpdate(scene)
         scene:update()
         timerUpdate()
         drawUpdate()
+        uiUpdate()
         if drawFps then
             pd.drawFPS(0, 228)
         end
@@ -73,6 +89,7 @@ function cleanupScene()
     gfx.setDrawOffset(0, 0)
     pd.display.setOffset(0, 0)
     drawQueue = {}
+    uiQueue = {}
     local systemMenu = pd.getSystemMenu()
     systemMenu:removeAllMenuItems()
     local allTimers = pd.timer.allTimers()
@@ -81,29 +98,33 @@ function cleanupScene()
     end
 end
 
-function startTransition(xIn, yIn, xOut, yOut)
+function SceneManager.startTransition(xIn, yIn, xOut, yOut, callback)
     xIn = xIn and xIn or 200
     yIn = yIn and yIn or 120
     xOut = xOut and xOut or xIn
     yOut = yOut and yOut or yIn
 
-    local transitionTime = 700
+    local transitionTime = 1000
     local startRadius, endRadius = 0, 500
-    local transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
+    transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
     transitionTimer.updateCallback = function()
-        transitionImage = gfx.image.new(400, 240)
-        gfx.pushContext(transitionImage)
-            gfx.setColor(gfx.kColorWhite)
-            gfx.fillCircleAtPoint(xIn, yIn, transitionTimer.value)
+        transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
+        local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
+        gfx.pushContext(transitionMask)
+            gfx.setColor(gfx.kColorBlack)
+            gfx.fillCircleAtPoint(xOut, yOut, transitionTimer.value)
         gfx.popContext()
+        transitionImage:setMaskImage(transitionMask)
     end
 
     transitionTimer.timerEndedCallback = function()
-        loadNewScene()
+        if callback then
+            callback()
+        end
 
-        transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius)
+        transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
         transitionTimer.updateCallback = function()
-            transitionImage = gfx.image.new(400, 240, gfx.kColorWhite)
+            transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
             local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
             gfx.pushContext(transitionMask)
                 gfx.setColor(gfx.kColorBlack)

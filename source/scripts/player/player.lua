@@ -130,7 +130,7 @@ function Player:nextLevel(x, y)
         propellerSprite:moveTo(x, timer.value)
     end
 
-    pd.timer.performAfterDelay(1700, function()
+    pd.timer.performAfterDelay(1300, function()
         self.gameScene:nextLevel()
     end)
 end

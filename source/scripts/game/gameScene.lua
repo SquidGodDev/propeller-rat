@@ -26,12 +26,6 @@ function GameScene:init()
     self.curLevelNum = CUR_LEVEL
     self:setUpLevel()
 
-    self.transitionSprite = gfx.sprite.new()
-    self.transitionSprite:moveTo(200, 120)
-    self.transitionSprite:setZIndex(Z_INDEXES.transition)
-    self.transitionSprite:setIgnoresDrawOffset(true)
-    self.transitionSprite:add()
-
     self.titleSprite = gfx.sprite.new()
     self.titleSprite:moveTo(200, 120)
     self.titleSprite:setZIndex(500)
@@ -72,7 +66,6 @@ function GameScene:clearLevel()
         timer:remove()
     end
     gfx.sprite.removeAll()
-    self.transitionSprite:add()
 end
 
 function GameScene:setUpLevel()
@@ -89,57 +82,23 @@ function GameScene:setUpLevel()
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 
-    local titleDelay = 200
+    local titleDelay = 500
     pd.timer.performAfterDelay(titleDelay, function()
         self:showLevelTitle()
     end)
 end
 
 function GameScene:startLevelTransition()
-    local transitionTime = 700
-
-    self.transitionSprite:add()
     local playerX, playerY = self.player:getScreenPosition()
 
-    local startRadius, endRadius = 0, 500
-    local transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
-    transitionTimer.updateCallback = function(timer)
-        local transitionImage = gfx.image.new(400, 240)
-        gfx.pushContext(transitionImage)
-            gfx.setColor(gfx.kColorWhite)
-            gfx.fillCircleAtPoint(playerX, playerY, timer.value)
-        gfx.popContext()
-        self.transitionSprite:setImage(transitionImage)
-    end
-
-    transitionTimer.timerEndedCallback = function()
+    SceneManager.startTransition(playerX, playerY, 200, 120, function()
         self:clearLevel()
         self:setUpLevel()
-
-        playerX, playerY = self.player:getScreenPosition()
-        transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius)
-        transitionTimer.updateCallback = function(timer)
-            local transitionImage = gfx.image.new(400, 240, gfx.kColorWhite)
-            local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
-            gfx.pushContext(transitionMask)
-                gfx.setColor(gfx.kColorBlack)
-                gfx.fillCircleAtPoint(playerX, playerY, timer.value)
-            gfx.popContext()
-            transitionImage:setMaskImage(transitionMask)
-            self.transitionSprite:setImage(transitionImage)
-        end
-
-        transitionTimer.timerEndedCallback = function()
-            self.transitionSprite:setImage(nil)
-            self.transitionSprite:remove()
-        end
-    end
+    end)
 end
 
 function GameScene:showLevelTitle()
     local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name")
-
-    self.titleSprite:add()
 
     local titleWidth, titleHeight = 400, 54
     local titleImage = gfx.image.new(titleWidth, titleHeight, gfx.kColorWhite)
@@ -148,25 +107,49 @@ function GameScene:showLevelTitle()
         titleFont:drawTextAligned(levelName --[[@as string]], titleWidth/2, 16, kTextAlignment.center)
     gfx.popContext()
 
-    self.titleSprite:setImage(titleImage)
-    self.titleSprite:setClipRect(0, 0, 0, titleHeight)
-
+    local addToUiQueue = SceneManager.addToUiQueue
     local titleTime = 500
     local titleTimer = pd.timer.new(titleTime, 0, titleWidth, pd.easingFunctions.inOutCubic)
-    titleTimer.updateCallback = function(timer)
-        self.titleSprite:setClipRect(0, 0, timer.value, 240)
-    end
-    titleTimer.timerEndedCallback = function()
-        self.titleSprite:clearClipRect()
-        pd.timer.performAfterDelay(titleTime, function()
-            titleTimer = pd.timer.new(titleTime, titleWidth, 0, pd.easingFunctions.inOutCubic)
-            titleTimer.updateCallback = function(timer)
-                self.titleSprite:setClipRect(titleWidth - timer.value, 0, timer.value, 240)
+    addToUiQueue({
+        timer = titleTimer,
+        update = function(drawObject)
+            if drawObject.timer.timeLeft <= 0 then
+                return true
             end
+            gfx.setScreenClipRect(0, 0, drawObject.timer.value, 240)
+            titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
+            gfx.clearClipRect()
+        end
+    })
+
+    titleTimer.timerEndedCallback = function()
+        titleTimer = pd.timer.new(titleTime)
+        addToUiQueue({
+            timer = titleTimer,
+            update = function(drawObject)
+                if drawObject.timer.timeLeft <= 0 then
+                    return true
+                end
+                titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
+            end
+        })
+        titleTimer.timerEndedCallback = function()
+            titleTimer = pd.timer.new(titleTime, titleWidth, 0, pd.easingFunctions.inOutCubic)
+            addToUiQueue({
+                timer = titleTimer,
+                update = function(drawObject)
+                    if drawObject.timer.timeLeft <= 0 then
+                        return true
+                    end
+                    local timer = drawObject.timer
+                    gfx.setScreenClipRect(titleWidth - timer.value, 0, timer.value, 240)
+                    titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
+                    gfx.clearClipRect()
+                end
+            })
             titleTimer.timerEndedCallback = function()
                 self.player:enable()
-                self.titleSprite:remove()
             end
-        end)
+        end
     end
 end

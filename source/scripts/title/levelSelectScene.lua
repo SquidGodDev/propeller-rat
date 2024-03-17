@@ -135,6 +135,13 @@ function LevelSelectScene:init()
 end
 
 function LevelSelectScene:update()
+    local targetX = self:getTargetX()
+    if math.abs(self.levelsSprite.x - targetX) < 0.5 then
+        self.levelsSprite:moveTo(targetX, previewY)
+    else
+        self.levelsSprite:moveTo(lerp(self.levelsSprite.x, targetX, smoothSpeed), previewY)
+    end
+
     if self.transitioning then
         return
     end
@@ -150,13 +157,6 @@ function LevelSelectScene:update()
         self.transitioning = true
         CUR_LEVEL = self.selectedLevel
         SceneManager.switchScene(GameScene)
-    end
-
-    local targetX = self:getTargetX()
-    if math.abs(self.levelsSprite.x - targetX) < 0.5 then
-        self.levelsSprite:moveTo(targetX, previewY)
-    else
-        self.levelsSprite:moveTo(lerp(self.levelsSprite.x, targetX, smoothSpeed), previewY)
     end
 end
 
