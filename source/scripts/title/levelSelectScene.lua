@@ -146,18 +146,48 @@ function LevelSelectScene:update()
         return
     end
 
+    if pd.buttonJustPressed(pd.kButtonLeft) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+        self.keyRepeatTimer = pd.timer.keyRepeatTimer(function()
+            self:moveLeft()
+        end)
+    elseif pd.buttonJustReleased(pd.kButtonLeft) then
+        self.keyRepeatTimer:remove()
+    end
+
+    if pd.buttonJustPressed(pd.kButtonRight) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+        self.keyRepeatTimer = pd.timer.keyRepeatTimer(function()
+            self:moveRight()
+        end)
+    elseif pd.buttonJustReleased(pd.kButtonRight) then
+        self.keyRepeatTimer:remove()
+    end
+
     local crankTicks = pd.getCrankTicks(3)
-    if pd.buttonJustPressed(pd.kButtonLeft) or crankTicks == -1 then
-        self.selectedLevel = math.clamp(self.selectedLevel - 1, 1, levelCount)
-        self:updateName()
-    elseif pd.buttonJustPressed(pd.kButtonRight) or crankTicks == 1 then
-        self.selectedLevel = math.clamp(self.selectedLevel + 1, 1, levelCount)
-        self:updateName()
+    if crankTicks == -1 then
+        self:moveLeft()
+    elseif crankTicks == 1 then
+        self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
         self.transitioning = true
         CUR_LEVEL = self.selectedLevel
         SceneManager.switchScene(GameScene)
     end
+end
+
+function LevelSelectScene:moveLeft()
+    self.selectedLevel = math.clamp(self.selectedLevel - 1, 1, levelCount)
+    self:updateName()
+end
+
+function LevelSelectScene:moveRight()
+    self.selectedLevel = math.clamp(self.selectedLevel + 1, 1, levelCount)
+    self:updateName()
 end
 
 function LevelSelectScene:getTargetX()
