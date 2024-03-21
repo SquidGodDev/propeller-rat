@@ -113,43 +113,40 @@ function GameScene:showLevelTitle()
     addToUiQueue({
         timer = titleTimer,
         update = function(drawObject)
-            if drawObject.timer.timeLeft <= 0 then
-                return true
-            end
             gfx.setScreenClipRect(0, 0, drawObject.timer.value, 240)
             titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
             gfx.clearClipRect()
+            if drawObject.timer.timeLeft <= 0 then
+                titleTimer = pd.timer.new(titleTime)
+                addToUiQueue({
+                    timer = titleTimer,
+                    update = function(drawObject)
+                        titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
+                        if drawObject.timer.timeLeft <= 0 then
+                            return true
+                        end
+                    end
+                })
+                titleTimer.timerEndedCallback = function()
+                    titleTimer = pd.timer.new(titleTime, titleWidth, 0, pd.easingFunctions.inOutCubic)
+                    addToUiQueue({
+                        timer = titleTimer,
+                        update = function(drawObject)
+                            if drawObject.timer.timeLeft <= 0 then
+                                return true
+                            end
+                            local timer = drawObject.timer
+                            gfx.setScreenClipRect(titleWidth - timer.value, 0, timer.value, 240)
+                            titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
+                            gfx.clearClipRect()
+                        end
+                    })
+                    titleTimer.timerEndedCallback = function()
+                        self.player:enable()
+                    end
+                end
+                return true
+            end
         end
     })
-
-    titleTimer.timerEndedCallback = function()
-        titleTimer = pd.timer.new(titleTime)
-        addToUiQueue({
-            timer = titleTimer,
-            update = function(drawObject)
-                if drawObject.timer.timeLeft <= 0 then
-                    return true
-                end
-                titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
-            end
-        })
-        titleTimer.timerEndedCallback = function()
-            titleTimer = pd.timer.new(titleTime, titleWidth, 0, pd.easingFunctions.inOutCubic)
-            addToUiQueue({
-                timer = titleTimer,
-                update = function(drawObject)
-                    if drawObject.timer.timeLeft <= 0 then
-                        return true
-                    end
-                    local timer = drawObject.timer
-                    gfx.setScreenClipRect(titleWidth - timer.value, 0, timer.value, 240)
-                    titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
-                    gfx.clearClipRect()
-                end
-            })
-            titleTimer.timerEndedCallback = function()
-                self.player:enable()
-            end
-        end
-    end
 end
