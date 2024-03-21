@@ -2,6 +2,7 @@ local pd <const> = playdate
 local gfx <const> = pd.graphics
 
 local assets <const> = Assets
+local audioManager <const> = AudioManager
 
 Assets.preloadImagetable("images/hazards/laser")
 
@@ -28,7 +29,6 @@ function Laser:init(x, y, entity)
         self.tailX, self.tailY = tailX, tailY
         self.fired = false
         pd.timer.performAfterDelay(delay, function()
-            self:fire()
             local laserTimer = pd.timer.new(interval, function()
                 self:startupAnimation()
                 tailLaser:startupAnimation()
@@ -43,6 +43,7 @@ function Laser:update()
         if self.animationLoop:isValid() then
             self:setImage(self.animationLoop:image())
             if self.tailX and self.tailY and not self.fired and self.animationLoop.frame == fireFrame then
+                audioManager.play(audioManager.sfx.laser)
                 self:fire()
                 self.fired = true
             end

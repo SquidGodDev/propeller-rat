@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local audioManager <const> = AudioManager
+
 local ldtk <const> = LDtk
 
 local assets <const> = Assets
@@ -174,6 +176,7 @@ function LevelSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
+        audioManager.play(audioManager.sfx.select)
         self.transitioning = true
         CUR_LEVEL = self.selectedLevel
         SceneManager.switchScene(GameScene)
@@ -181,11 +184,13 @@ function LevelSelectScene:update()
 end
 
 function LevelSelectScene:moveLeft()
+    audioManager.play(audioManager.sfx.navigate)
     self.selectedLevel = math.clamp(self.selectedLevel - 1, 1, levelCount)
     self:updateName()
 end
 
 function LevelSelectScene:moveRight()
+    audioManager.play(audioManager.sfx.navigate)
     self.selectedLevel = math.clamp(self.selectedLevel + 1, 1, levelCount)
     self:updateName()
 end

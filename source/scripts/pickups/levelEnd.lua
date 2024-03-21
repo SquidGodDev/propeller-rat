@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local audioManager <const> = AudioManager
+
 local levelEndImagetable = gfx.imagetable.new("images/levels/teleporter")
 local idleStartFrame = 1
 local idleEndFrame = 4
@@ -28,6 +30,7 @@ function LevelEnd:update()
 end
 
 function LevelEnd:pickup(player)
+    audioManager.play(audioManager.sfx.teleport)
     player:nextLevel(self.x, self.y)
     self.animationLoop = gfx.animation.loop.new(100, levelEndImagetable, false)
     self.animationLoop.startFrame = teleportStartFrame

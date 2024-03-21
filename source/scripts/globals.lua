@@ -29,6 +29,7 @@ import "CoreLibs/animation"
 import "CoreLibs/crank"
 
 import "scripts/tests"
+import "scripts/audio/audioManager"
 
 -- Libraries
 import "scripts/libraries/LDtk"

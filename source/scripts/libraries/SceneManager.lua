@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local audioManager <const> = AudioManager
+
 local lazyLoadAssets = Assets.lazyLoad
 local ms = pd.getCurrentTimeMilliseconds
 
@@ -104,6 +106,7 @@ function SceneManager.startTransition(xIn, yIn, xOut, yOut, callback)
     xOut = xOut and xOut or xIn
     yOut = yOut and yOut or yIn
 
+    audioManager.play(audioManager.sfx.transitionOut)
     local transitionTime = 1000
     local startRadius, endRadius = 0, 500
     transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
@@ -122,6 +125,7 @@ function SceneManager.startTransition(xIn, yIn, xOut, yOut, callback)
             callback()
         end
 
+        audioManager.play(audioManager.sfx.transitionIn)
         transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
         transitionTimer.updateCallback = function()
             transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
