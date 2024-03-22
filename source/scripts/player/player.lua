@@ -2,6 +2,7 @@ local pd <const> = playdate
 local gfx <const> = pd.graphics
 
 local audioManager <const> = AudioManager
+local squeaksSfx = {audioManager.sfx.squeak1, audioManager.sfx.squeak2, audioManager.sfx.squeak3, audioManager.sfx.squeak4}
 
 local assets <const> = Assets
 
@@ -35,7 +36,6 @@ local spinningPlayerFrameRate = 20
 class('Player').extends(gfx.sprite)
 
 function Player:init(gameScene, x, y)
-    self.propellerSfx = audioManager.play(audioManager.sfx.propeller, 0)
     self.gameScene = gameScene
 
     self.startX = x
@@ -141,7 +141,6 @@ end
 function Player:disable()
     self.disabled = true
     self:setCollisionsEnabled(false)
-    audioManager.fadeOut(self.propellerSfx)
 end
 
 function Player:enable()
@@ -154,7 +153,7 @@ function Player:reset()
         return
     end
 
-    audioManager.fadeOut(self.propellerSfx)
+    audioManager.playRandom(squeaksSfx)
 
     self.disabled = true
     self.frozen = true
@@ -199,7 +198,6 @@ function Player:reset()
     end
 
     pd.timer.performAfterDelay(1000, function()
-        self.propellerSfx = audioManager.play(audioManager.sfx.propeller, 0)
         self:setVisible(true)
         self.resetting = true
         local animateInY = self.startY + 300

@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local audioManager <const> = AudioManager
+
 local querySpritesInRect = gfx.sprite.querySpritesInRect
 
 local assets <const> = Assets
@@ -51,6 +53,7 @@ function Turret:init(x, y, entity)
             end
 
             if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
+                audioManager.play(audioManager.sfx.smash)
                 Utilities.animatedSprite(projectileX, projectileY, projectileBreakImageTable, 20, false)
                 return true -- Remove
             end
@@ -76,6 +79,7 @@ function Turret:update()
         if self.animationLoop:isValid() then
             self:setImage(self.animationLoop:image())
         else
+            audioManager.play(audioManager.sfx.shoot)
             SceneManager.addToDrawQueue({
                 x = self.projectileX,
                 y = self.projectileY,

@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+local audioManager <const> = AudioManager
+
 local boxImage = gfx.image.new("images/levels/box")
 local medBoxImage = gfx.image.new("images/levels/mediumBox")
 
@@ -83,6 +85,7 @@ function Block:update()
     end
 
     if bounceCollision then
+        audioManager.play(audioManager.sfx.bounce)
         self.xSpeed = -self.xSpeed
         self.ySpeed = -self.ySpeed
     end

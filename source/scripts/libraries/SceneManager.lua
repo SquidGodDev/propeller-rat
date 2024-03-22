@@ -81,7 +81,7 @@ function setSceneUpdate(scene)
         if transitionImage then
             transitionImage:drawIgnoringOffset(0, 0)
         end
-
+        audioManager.clearPlayedThisFrame()
         lazyLoadAssets(ms())
     end
 end
