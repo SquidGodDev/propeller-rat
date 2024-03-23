@@ -210,7 +210,7 @@ end
 
 function LevelSelectScene:updateName()
     local levelName = ldtk.get_custom_data("Level_" .. self.selectedLevel, "Name")
-    local nameImage = gfx.imageWithText(levelName, 400, 50, nil, nil, nil, kTextAlignment.center, titleFont)
+    local nameImage = gfx.imageWithText(levelName --[[@as string]], 400, 50, nil, nil, nil, kTextAlignment.center, titleFont)
     self.nameSprite:setImageDrawMode(gfx.kDrawModeFillWhite)
     self.nameSprite:setImage(nameImage)
 end

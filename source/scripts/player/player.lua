@@ -25,7 +25,7 @@ local setDisplayOffset = pd.display.setOffset
 local smoothSpeed <const> = 0.06
 local unfreezeSensitivity = 0.1
 
-assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat"})
+assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat", "images/player/aButtonPopup"})
 
 local playerSpeed = 2.5
 local playerAnimationFrameRate = 50 -- ms
@@ -49,6 +49,9 @@ function Player:init(gameScene, x, y)
     self:setGroups(TAGS.player)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup, TAGS.wall})
     self:setCollideRect(4, 3, 15, 21)
+
+    self.aButtonPopup = Utilities.animatedSprite(x, y - 32, assets.getImagetable("images/player/aButtonPopup"), 500, true)
+    self.aButtonPopup:setZIndex(Z_INDEXES.ui)
 
     self.disabled = true
     self.frozen = true
@@ -82,9 +85,9 @@ function Player:update()
     end
 
     if self.frozen then
-        local _, acceleratedChange = pd.getCrankChange()
-        if math.abs(acceleratedChange) >= unfreezeSensitivity then
+        if pd.buttonJustPressed(pd.kButtonA) then
             self.frozen = false
+            self.aButtonPopup:remove()
         else
             return
         end

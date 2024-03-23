@@ -440,6 +440,7 @@ end
 --	.size :  width and height of the entity
 --	.zIndex : layer index
 -- 	.fields : all the custom fields data entered in the LDtk editor
+---@return table
 function LDtk.get_entities( level_name, layer_name )
 	local level = _levels[level_name]
 	if not level then return end
@@ -547,6 +548,7 @@ function LDtk.get_empty_tileIDs( level_name, tileset_enum_value, layer_name )
 end
 
 -- return all layers from a level
+---@return table
 function LDtk.get_layers(level_name)
 	local level = _levels[level_name]
 

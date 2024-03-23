@@ -14,6 +14,7 @@ Z_INDEXES = {
     player = 20,
     hazard = 30,
     projectile = 40,
+    ui = 100,
     transition = 1000
 }
 
