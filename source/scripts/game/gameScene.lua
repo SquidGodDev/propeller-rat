@@ -55,7 +55,8 @@ function GameScene:nextLevel()
     self.curLevelNum = math.ringInt(self.curLevelNum + 1, 1, levelCount)
     CUR_LEVEL = self.curLevelNum
     if self.curLevelNum <= levelCount then
-        self:startLevelTransition()
+        local playerX, playerY = self.player:getScreenPosition()
+        SceneManager.switchScene(GameScene, playerX, playerY)
     end
 end
 
@@ -85,15 +86,6 @@ function GameScene:setUpLevel()
     local titleDelay = 500
     pd.timer.performAfterDelay(titleDelay, function()
         self:showLevelTitle()
-    end)
-end
-
-function GameScene:startLevelTransition()
-    local playerX, playerY = self.player:getScreenPosition()
-
-    SceneManager.startTransition(playerX, playerY, 200, 120, function()
-        self:clearLevel()
-        self:setUpLevel()
     end)
 end
 
