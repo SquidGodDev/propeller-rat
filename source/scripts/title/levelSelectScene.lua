@@ -15,7 +15,7 @@ assets.preloadImagetable("images/decoration/planet")
 local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
 end
-local smoothSpeed <const> = 0.15
+local smoothSpeed <const> = 0.3
 
 local titleFont = gfx.font.new("data/fonts/m6x11-26")
 

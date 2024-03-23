@@ -14,14 +14,18 @@ function Spinner:init(x, y)
     self.maxAngle = 90
 
     local spinnerImagetable = assets.getImagetable("images/hazards/spinner")
+    self.animationLoop = gfx.animation.loop.new(20, spinnerImagetable, true)
+    self.curFrame = 1
     self:setCenter(0.5, 0.5)
     self:setCollideRect(0, 0, spinnerImagetable[1]:getSize())
+    self:setImage(spinnerImagetable[1])
 end
 
 function Spinner:update()
-    local spinnerImagetable = assets.getImagetable("images/hazards/spinner")
-    self:setImage(spinnerImagetable[self.angle])
-    self.angle = math.ringInt(self.angle + 1, 1, self.maxAngle)
+    if self.curFrame ~= self.animationLoop.frame then
+        self.curFrame = self.animationLoop.frame
+        self:setImage(self.animationLoop:image())
+    end
 
     local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x, self.y)
     if length > 0 then

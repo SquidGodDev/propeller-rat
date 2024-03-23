@@ -27,6 +27,7 @@ function Turret:init(x, y, entity)
 
     local turretImagetable = assets.getImagetable("images/hazards/turret")
     self:setImage(turretImagetable[1])
+    self.curFrame = 1
 
     self.projectileX = x
     self.projectileY = y
@@ -75,9 +76,11 @@ function Turret:init(x, y, entity)
 end
 
 function Turret:update()
-    if self.animationLoop then
-        if self.animationLoop:isValid() then
-            self:setImage(self.animationLoop:image())
+    local animationLoop = self.animationLoop
+    if animationLoop then
+        if animationLoop:isValid() and self.curFrame ~= animationLoop.frame then
+            self.curFrame = animationLoop.frame
+            self:setImage(animationLoop:image())
         else
             audioManager.play(audioManager.sfx.shoot)
             SceneManager.addToDrawQueue({

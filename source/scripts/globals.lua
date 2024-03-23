@@ -59,7 +59,7 @@ import "scripts/game/gameScene"
 -- Title
 import "scripts/title/levelSelectScene"
 
-pd.display.setRefreshRate(50)
+-- pd.display.setRefreshRate(50)
 
 if pd.isSimulator then
     sanityChecks()

@@ -46,8 +46,13 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
     local animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
     animationLoop.startFrame = startFrame or 1
     animationLoop.endFrame = endFrame or #imagetable
+    local curFrame = animationLoop.startFrame
     sprite.update = function()
-        sprite:setImage(animationLoop:image(), flip)
+        local frame = animationLoop.frame
+        if frame ~= curFrame then
+            curFrame = frame
+            sprite:setImage(animationLoop:image(), flip)
+        end
         if not animationLoop:isValid() then
             sprite:remove()
         end

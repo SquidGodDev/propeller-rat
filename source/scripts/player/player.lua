@@ -27,7 +27,7 @@ local unfreezeSensitivity = 0.1
 
 assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat"})
 
-local playerSpeed = 1.4
+local playerSpeed = 2.5
 local playerAnimationFrameRate = 50 -- ms
 local flyStartFrame, flyEndFrame = 1, 12
 
@@ -149,7 +149,7 @@ function Player:enable()
 end
 
 function Player:reset()
-    if self.disabled or self.frozen then
+    if self.disabled then
         return
     end
 
