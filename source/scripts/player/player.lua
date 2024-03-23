@@ -198,18 +198,7 @@ function Player:reset()
     end
 
     pd.timer.performAfterDelay(1000, function()
-        self:setVisible(true)
-        self.resetting = true
-        local animateInY = self.startY + 300
-        self:moveTo(self.startX, animateInY)
-        local animateInTimer = pd.timer.new(1000, animateInY, self.startY, pd.easingFunctions.outCubic)
-        animateInTimer.updateCallback = function(timer)
-            self:moveTo(self.startX, timer.value)
-        end
-        animateInTimer.timerEndedCallback = function()
-            self.resetting = false
-            self:setCollisionsEnabled(true)
-            self.disabled = false
-        end
+        local playerX, playerY = self:getScreenPosition()
+        SceneManager.switchScene(GameScene, playerX, playerY, false)
     end)
 end

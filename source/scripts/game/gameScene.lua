@@ -19,12 +19,12 @@ assets.preloadImagetable("images/decoration/planet")
 
 class('GameScene').extends()
 
-function GameScene:init()
+function GameScene:init(showTitle)
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
     self.curLevelNum = CUR_LEVEL
-    self:setUpLevel()
+    self:setUpLevel(showTitle)
 
     self.titleSprite = gfx.sprite.new()
     self.titleSprite:moveTo(200, 120)
@@ -56,7 +56,7 @@ function GameScene:nextLevel()
     CUR_LEVEL = self.curLevelNum
     if self.curLevelNum <= levelCount then
         local playerX, playerY = self.player:getScreenPosition()
-        SceneManager.switchScene(GameScene, playerX, playerY)
+        SceneManager.switchScene(GameScene, playerX, playerY, true)
     end
 end
 
@@ -69,7 +69,7 @@ function GameScene:clearLevel()
     gfx.sprite.removeAll()
 end
 
-function GameScene:setUpLevel()
+function GameScene:setUpLevel(showTitle)
     local starsImage = Assets.getImage("images/decoration/stars")
     local stars = gfx.sprite.new(starsImage)
     stars:setIgnoresDrawOffset(true)
@@ -83,10 +83,14 @@ function GameScene:setUpLevel()
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 
-    local titleDelay = 500
-    pd.timer.performAfterDelay(titleDelay, function()
-        self:showLevelTitle()
-    end)
+    if showTitle then
+        local titleDelay = 500
+        pd.timer.performAfterDelay(titleDelay, function()
+            self:showLevelTitle()
+        end)
+    else
+        self.player:enable()
+    end
 end
 
 function GameScene:showLevelTitle()

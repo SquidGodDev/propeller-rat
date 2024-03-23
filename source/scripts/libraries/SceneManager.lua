@@ -38,14 +38,15 @@ local uiUpdate = function()
     end
 end
 
-function SceneManager.switchScene(scene, xIn, yIn, xOut, yOut)
+function SceneManager.switchScene(scene, xIn, yIn, ...)
     if transitionImage then
         return
     end
 
     newScene = scene
+    local args = {...}
 
-    SceneManager.startTransition(xIn, yIn, xOut, yOut, loadNewScene)
+    SceneManager.startTransition(xIn, yIn, loadNewScene, args)
 end
 
 function SceneManager.startingScene(scene)
@@ -61,9 +62,9 @@ function SceneManager.addToUiQueue(drawObject)
     table.insert(uiQueue, drawObject)
 end
 
-function loadNewScene()
+function loadNewScene(args)
     cleanupScene()
-    local sceneInstance = newScene()
+    local sceneInstance = newScene(table.unpack(args))
     setSceneUpdate(sceneInstance)
 end
 
@@ -100,11 +101,11 @@ function cleanupScene()
     end
 end
 
-function SceneManager.startTransition(xIn, yIn, xOut, yOut, callback)
+function SceneManager.startTransition(xIn, yIn, callback, args)
     xIn = xIn and xIn or 200
     yIn = yIn and yIn or 120
-    xOut = xOut and xOut or xIn
-    yOut = yOut and yOut or yIn
+    xOut = xIn
+    yOut = yIn
 
     audioManager.play(audioManager.sfx.transitionOut)
     local transitionTime = 1000
@@ -122,7 +123,7 @@ function SceneManager.startTransition(xIn, yIn, xOut, yOut, callback)
 
     transitionTimer.timerEndedCallback = function()
         if callback then
-            callback()
+            callback(args)
         end
 
         audioManager.play(audioManager.sfx.transitionIn)

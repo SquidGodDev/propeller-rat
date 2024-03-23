@@ -179,7 +179,7 @@ function LevelSelectScene:update()
         audioManager.play(audioManager.sfx.select)
         self.transitioning = true
         CUR_LEVEL = self.selectedLevel
-        SceneManager.switchScene(GameScene)
+        SceneManager.switchScene(GameScene, nil, nil, true)
     end
 end
 
