@@ -176,10 +176,12 @@ function LevelSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        audioManager.play(audioManager.sfx.select)
-        self.transitioning = true
-        CUR_LEVEL = self.selectedLevel
-        SceneManager.switchScene(GameScene, nil, nil, true)
+        local transitioning = SceneManager.switchScene(GameScene, nil, nil, true)
+        if transitioning then
+            audioManager.play(audioManager.sfx.select)
+            self.transitioning = true
+            CUR_LEVEL = self.selectedLevel
+        end
     end
 end
 

@@ -23,7 +23,6 @@ end
 local setDisplayOffset = pd.display.setOffset
 
 local smoothSpeed <const> = 0.06
-local unfreezeSensitivity = 0.1
 
 assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat", "images/player/aButtonPopup"})
 
@@ -141,6 +140,10 @@ function Player:nextLevel(x, y)
     end)
 end
 
+function Player:isDisabled()
+    return self.disabled
+end
+
 function Player:disable()
     self.disabled = true
     self:setCollisionsEnabled(false)
@@ -155,6 +158,8 @@ function Player:reset()
     if self.disabled then
         return
     end
+
+    self.aButtonPopup:remove()
 
     audioManager.playRandom(squeaksSfx)
 

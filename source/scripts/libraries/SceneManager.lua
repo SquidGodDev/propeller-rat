@@ -40,13 +40,14 @@ end
 
 function SceneManager.switchScene(scene, xIn, yIn, ...)
     if transitionImage then
-        return
+        return false
     end
 
     newScene = scene
     local args = {...}
 
     SceneManager.startTransition(xIn, yIn, loadNewScene, args)
+    return true
 end
 
 function SceneManager.startingScene(scene)
