@@ -40,6 +40,9 @@ function GameScene:init(showTitle)
     end)
     systemMenu:addMenuItem("Level Select", function()
         if self.player then
+            if self.player:isDisabled() then
+                return
+            end
             self.player:disable()
         end
         SceneManager.switchScene(LevelSelectScene)
