@@ -44,7 +44,7 @@ function Level:init(levelIndex)
         elseif entityName == "Turret" then
             Turret(entityX, entityY, entity)
         elseif entityName == "Spinner" then
-            Spinner(entityX, entityY)
+            Spinner(entityX, entityY, entity)
         elseif entityName == "Laser" then
             Laser(entityX, entityY, entity)
         end

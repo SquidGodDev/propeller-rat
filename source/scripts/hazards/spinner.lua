@@ -7,14 +7,13 @@ assets.preloadImagetable("images/hazards/spinner")
 
 class('Spinner').extends(Hazard)
 
-function Spinner:init(x, y)
+function Spinner:init(x, y, entity)
     Spinner.super.init(self, x, y)
 
-    self.angle = 1
-    self.maxAngle = 90
-
+    local fields = entity.fields
+    local speed = fields.speed
     local spinnerImagetable = assets.getImagetable("images/hazards/spinner")
-    self.animationLoop = gfx.animation.loop.new(20, spinnerImagetable, true)
+    self.animationLoop = gfx.animation.loop.new(speed, spinnerImagetable, true)
     self.curFrame = 1
     self:setCenter(0.5, 0.5)
     self:setCollideRect(0, 0, spinnerImagetable[1]:getSize())
