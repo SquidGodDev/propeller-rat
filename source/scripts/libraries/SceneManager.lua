@@ -110,7 +110,7 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
     yOut = yIn
 
     audioManager.play(audioManager.sfx.transitionOut)
-    local transitionTime = 1000
+    local transitionTime = 500
     local startRadius, endRadius = 0, 500
     transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
     transitionTimer.updateCallback = function()
