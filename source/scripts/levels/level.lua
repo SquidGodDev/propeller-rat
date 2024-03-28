@@ -31,6 +31,8 @@ function Level:init(levelIndex)
         end
     end
 
+    local levelEnd
+    local keys = {}
     for _, entity in ipairs(ldtk.get_entities(levelName)) do
         local entityX, entityY = entity.position.x, entity.position.y
         local entityName = entity.name
@@ -38,7 +40,7 @@ function Level:init(levelIndex)
         if entityName == "Start" then
             self.startX, self.startY = entityX, entityY
         elseif entityName == "End" then
-            LevelEnd(entityX, entityY)
+            levelEnd = LevelEnd(entityX, entityY)
         elseif entityName == "Block" then
             Block(entityX, entityY, entity)
         elseif entityName == "Turret" then
@@ -47,8 +49,16 @@ function Level:init(levelIndex)
             Spinner(entityX, entityY, entity)
         elseif entityName == "Laser" then
             Laser(entityX, entityY, entity)
+        elseif entityName == "Key" then
+            table.insert(keys, Key(entityX, entityY))
         end
     end
+
+    for i=1,#keys do
+        local key = keys[i]
+        key:setLevelEnd(levelEnd)
+    end
+    levelEnd:setKeyCount(#keys)
 end
 
 function Level:getStartPos()

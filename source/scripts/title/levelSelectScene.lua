@@ -29,13 +29,15 @@ local blockIcon = gfx.image.new("images/levelSelect/icons/block")
 local laserIcon = gfx.image.new("images/levelSelect/icons/laser")
 local spinnerIcon = gfx.image.new("images/levelSelect/icons/spinner")
 local turretIcon = gfx.image.new("images/levelSelect/icons/turret")
+local keyIcon = gfx.image.new("images/levelSelect/icons/key")
 local icons = {
     Start = startIcon,
     End = endIcon,
     Block = blockIcon,
     Laser = laserIcon,
     Spinner = spinnerIcon,
-    Turret = turretIcon
+    Turret = turretIcon,
+    Key = keyIcon
 }
 
 local levelPreviews = {}
@@ -176,7 +178,7 @@ function LevelSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        local transitioning = SceneManager.switchScene(GameScene, nil, nil, true)
+        local transitioning = SceneManager.switchScene(GameScene, nil, nil)
         if transitioning then
             audioManager.play(audioManager.sfx.select)
             self.transitioning = true

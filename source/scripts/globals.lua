@@ -51,6 +51,7 @@ import "scripts/hazards/laser"
 -- Pickups
 import "scripts/pickups/pickup"
 import "scripts/pickups/levelEnd"
+import "scripts/pickups/key"
 
 -- Levels
 import "scripts/levels/level"
