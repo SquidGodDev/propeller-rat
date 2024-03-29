@@ -16,11 +16,11 @@ function Key:init(x, y)
     self:setImage(keyImage)
     self:setCollideRect(0, 0, self:getSize())
 
-    local bobTimer = pd.timer.new(1000, 0, 8)
+    local bobTimer = pd.timer.new(1000, -4, 4)
     bobTimer.repeats = true
     bobTimer.reverses = true
     bobTimer.updateCallback = function(timer)
-        self:moveTo(x, y + timer.value)
+        self:moveTo(x, y - timer.value)
     end
 end
 

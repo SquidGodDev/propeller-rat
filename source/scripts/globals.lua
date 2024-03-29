@@ -11,9 +11,10 @@ TAGS = {
 
 Z_INDEXES = {
     level = 10,
-    player = 20,
-    hazard = 30,
-    projectile = 40,
+    pickup = 20,
+    player = 30,
+    hazard = 40,
+    projectile = 50,
     ui = 100,
     transition = 1000
 }
