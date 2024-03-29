@@ -2,4 +2,5 @@
 builds
 .vscode
 closeSim.ps1
+copyLuaLevels.ps1
 *.pdx

@@ -2,7 +2,7 @@ local pd <const> = playdate
 local gfx <const> = playdate.graphics
 local assets <const> = Assets
 
-local titleFont = gfx.font.new("data/fonts/m6x11-26")
+local titleFont = gfx.font.new("data/fonts/m6x11-12")
 
 local ldtk <const> = LDtk
 
@@ -19,12 +19,12 @@ assets.preloadImagetable("images/decoration/planet")
 
 class('GameScene').extends()
 
-function GameScene:init(showTitle)
+function GameScene:init()
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
     self.curLevelNum = CUR_LEVEL
-    self:setUpLevel(showTitle)
+    self:setUpLevel()
 
     self.titleSprite = gfx.sprite.new()
     self.titleSprite:moveTo(200, 120)
@@ -72,7 +72,7 @@ function GameScene:clearLevel()
     gfx.sprite.removeAll()
 end
 
-function GameScene:setUpLevel(showTitle)
+function GameScene:setUpLevel()
     local starsImage = Assets.getImage("images/decoration/stars")
     local stars = gfx.sprite.new(starsImage)
     stars:setIgnoresDrawOffset(true)
@@ -86,66 +86,42 @@ function GameScene:setUpLevel(showTitle)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 
-    if showTitle then
-        local titleDelay = 500
-        pd.timer.performAfterDelay(titleDelay, function()
-            self:showLevelTitle()
-        end)
-    else
-        self.player:enable()
-    end
+    self:showLevelTitle()
+
+    self.player:enable()
 end
 
 function GameScene:showLevelTitle()
-    local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name")
+    local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name") or ""
 
-    local titleWidth, titleHeight = 400, 54
-    local titleImage = gfx.image.new(titleWidth, titleHeight, gfx.kColorWhite)
-    gfx.pushContext(titleImage)
-        gfx.setImageDrawMode(gfx.kDrawModeFillBlack)
-        titleFont:drawTextAligned(levelName --[[@as string]], titleWidth/2, 16, kTextAlignment.center)
-    gfx.popContext()
+    local titleX, titleY = 5, 5
+    local titleSprite = gfx.sprite.spriteWithText(levelName, 100, 20, gfx.kColorClear, nil, nil, nil, titleFont)
+    local _, titleHeight = titleSprite:getSize()
+    titleSprite:setIgnoresDrawOffset(true)
+    titleSprite:setCenter(0, 0)
+    titleSprite:moveTo(titleX, -titleHeight)
+    titleSprite:setZIndex(Z_INDEXES.ui)
+    titleSprite:add()
 
-    local addToUiQueue = SceneManager.addToUiQueue
-    local titleTime = 500
-    local titleTimer = pd.timer.new(titleTime, 0, titleWidth, pd.easingFunctions.inOutCubic)
-    addToUiQueue({
-        timer = titleTimer,
-        update = function(drawObject)
-            gfx.setScreenClipRect(0, 0, drawObject.timer.value, 240)
-            titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
-            gfx.clearClipRect()
-            if drawObject.timer.timeLeft <= 0 then
-                titleTimer = pd.timer.new(titleTime)
-                addToUiQueue({
-                    timer = titleTimer,
-                    update = function(drawObject)
-                        titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
-                        if drawObject.timer.timeLeft <= 0 then
-                            return true
-                        end
-                    end
-                })
-                titleTimer.timerEndedCallback = function()
-                    titleTimer = pd.timer.new(titleTime, titleWidth, 0, pd.easingFunctions.inOutCubic)
-                    addToUiQueue({
-                        timer = titleTimer,
-                        update = function(drawObject)
-                            if drawObject.timer.timeLeft <= 0 then
-                                return true
-                            end
-                            local timer = drawObject.timer
-                            gfx.setScreenClipRect(titleWidth - timer.value, 0, timer.value, 240)
-                            titleImage:drawIgnoringOffset(0, 120 - titleHeight / 2)
-                            gfx.clearClipRect()
-                        end
-                    })
-                    titleTimer.timerEndedCallback = function()
-                        self.player:enable()
-                    end
-                end
-                return true
-            end
+
+    local startDelay = 500
+    local titleTransitionTime = 700
+    local titleShowTime = 2000
+    pd.timer.performAfterDelay(startDelay, function()
+        local titleTimer = pd.timer.new(titleTransitionTime, -titleHeight, titleY, pd.easingFunctions.outCubic)
+        titleTimer.updateCallback = function(timer)
+            titleSprite:moveTo(titleX, timer.value)
         end
-    })
+        titleTimer.timerEndedCallback = function()
+            pd.timer.performAfterDelay(titleShowTime, function()
+                titleTimer = pd.timer.new(titleTransitionTime, titleSprite.y, -titleHeight, pd.easingFunctions.inCubic)
+                titleTimer.updateCallback = function(timer)
+                    titleSprite:moveTo(titleX, timer.value)
+                end
+                titleTimer.timerEndedCallback= function()
+                    titleSprite:remove()
+                end
+            end)
+        end
+    end)
 end

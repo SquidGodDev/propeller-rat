@@ -207,6 +207,6 @@ function Player:reset()
 
     pd.timer.performAfterDelay(1000, function()
         local playerX, playerY = self:getScreenPosition()
-        SceneManager.switchScene(GameScene, playerX, playerY, false)
+        SceneManager.switchScene(GameScene, playerX, playerY)
     end)
 end
