@@ -166,7 +166,7 @@ function Player:reset()
     self.disabled = true
     self.frozen = true
 
-    local shakeTimer = pd.timer.new(500, 5, 0)
+    local shakeTimer = pd.timer.new(300, 6, 0)
     shakeTimer.timerEndedCallback = function()
         setDisplayOffset(0, 0)
     end
