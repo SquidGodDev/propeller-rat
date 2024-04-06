@@ -112,6 +112,8 @@ gfx.popContext()
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init()
+    audioManager.playSong(audioManager.songs.cosmicDust)
+
     self.selectedLevel = CUR_LEVEL
 
     gfx.setBackgroundColor(gfx.kColorBlack)

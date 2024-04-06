@@ -1,7 +1,9 @@
 local pd <const> = playdate
 local sp <const> = pd.sound.sampleplayer.new
+local fp <const> = pd.sound.fileplayer.new
 
 local playedThisFrame = {}
+local currentlyPlayingSong
 
 AudioManager = {}
 local audioManager <const> = AudioManager
@@ -24,6 +26,26 @@ AudioManager.sfx = {
     transitionOut = sp("sound/ui/transitionOut"),
     transitionIn = sp("sound/ui/transitionIn")
 }
+
+AudioManager.songs = {
+    cosmicDust = fp("sound/music/CosmicDust")
+}
+
+AudioManager.playSong = function(song)
+    if song == currentlyPlayingSong then
+        return
+    end
+
+    if currentlyPlayingSong then
+        local previousSong = currentlyPlayingSong
+        previousSong:setVolume(0, nil, 1.0, function()
+            previousSong:stop()
+        end)
+    end
+
+    currentlyPlayingSong = song
+    song:play(0)
+end
 
 AudioManager.play = function(sound, count)
     if not sound or playedThisFrame[sound] then
