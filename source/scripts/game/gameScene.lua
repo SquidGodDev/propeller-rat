@@ -95,7 +95,7 @@ function GameScene:showLevelTitle()
     local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name") or ""
 
     local titleX, titleY = 5, 5
-    local titleSprite = gfx.sprite.spriteWithText(levelName, 100, 20, gfx.kColorClear, nil, nil, nil, titleFont)
+    local titleSprite = gfx.sprite.spriteWithText(levelName, 400, 20, gfx.kColorClear, nil, nil, nil, titleFont)
     local _, titleHeight = titleSprite:getSize()
     titleSprite:setIgnoresDrawOffset(true)
     titleSprite:setCenter(0, 0)
