@@ -21,6 +21,10 @@ function Spinner:init(x, y, entity)
 end
 
 function Spinner:update()
+    if self.stopped then
+        return
+    end
+
     if self.curFrame ~= self.animationLoop.frame then
         self.curFrame = self.animationLoop.frame
         self:setImage(self.animationLoop:image())

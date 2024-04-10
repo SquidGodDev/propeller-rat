@@ -60,7 +60,7 @@ function LevelEnd:pickup(player)
         return
     end
     audioManager.play(audioManager.sfx.teleport)
-    player:nextLevel(self.x, self.y)
+    player:levelEnd(self.x, self.y)
     local levelEndImagetable = assets.getImagetable("images/levels/teleporter")
     self.animationLoop = gfx.animation.loop.new(100, levelEndImagetable, false)
     self.animationLoop.startFrame = teleportStartFrame

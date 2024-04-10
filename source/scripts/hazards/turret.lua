@@ -76,6 +76,10 @@ function Turret:init(x, y, entity)
 end
 
 function Turret:update()
+    if self.stopped then
+        return
+    end
+
     local animationLoop = self.animationLoop
     if animationLoop then
         if animationLoop:isValid() and self.curFrame ~= animationLoop.frame then

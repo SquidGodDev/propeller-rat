@@ -11,8 +11,14 @@ function Hazard:init(x, y)
     self:setTag(TAGS.hazard)
     self:setGroups(TAGS.hazard)
     self:setCollidesWithGroups({TAGS.player, TAGS.hazard})
+
+    self.stopped = false
 end
 
 function Hazard:collisionResponse()
     return gfx.sprite.kCollisionTypeOverlap
+end
+
+function Hazard:stop()
+    self.stopped = true
 end

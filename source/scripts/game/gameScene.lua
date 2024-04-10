@@ -14,8 +14,14 @@ if not usePrecomputedLevels then
     ldtk.export_to_lua_files()
 end
 
-assets.preloadImage("images/decoration/stars")
-assets.preloadImagetable("images/decoration/planet")
+local levelEndPopupImage = gfx.image.new("images/levels/ui/levelEndPopup")
+local popupWidth, popupHeight = levelEndPopupImage:getSize()
+local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
+local selectorBaseX, selectorBaseY = popupX + 57, popupY + 68
+local selectorGap = 41
+
+assets.preloadImages({"images/decoration/stars"})
+assets.preloadImagetables({"images/decoration/earthPlanet", "images/levels/ui/selector"})
 
 class('GameScene').extends()
 
@@ -50,7 +56,70 @@ function GameScene:init()
 end
 
 function GameScene:update()
-    -- Nothing
+    if self.popupActive then
+        if pd.buttonJustPressed(pd.kButtonLeft) then
+            self.levelEndOption = math.clamp(self.levelEndOption - 1, 1, 3)
+            self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+        elseif pd.buttonJustPressed(pd.kButtonRight) then
+            self.levelEndOption = math.clamp(self.levelEndOption + 1, 1, 3)
+            self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+        elseif pd.buttonJustPressed(pd.kButtonA) then
+            self.popupActive = false
+            if self.levelEndOption == 1 then
+                SceneManager.switchScene(LevelSelectScene)
+            elseif self.levelEndOption == 2 then
+                SceneManager.switchScene(GameScene)
+            elseif self.levelEndOption then
+                self:nextLevel()
+            end
+        end
+    end
+end
+
+function GameScene:levelEnd()
+    self.curLevel:stopLevelHazards()
+
+    self.popupActive = false
+    self.levelEndOption = 3
+
+    -- local gradientImage = assets.getImage("images/levels/ui/gradient")
+    -- local gradientSprite = gfx.sprite.new(gradientImage)
+    -- gradientSprite:setIgnoresDrawOffset(true)
+    -- gradientSprite:setZIndex(Z_INDEXES.ui)
+    -- gradientSprite:setCenter(0, 0)
+    -- gradientSprite:moveTo(0, 240)
+    -- gradientSprite:add()
+    -- local gradientTimer = pd.timer.new(500, gradientSprite.y, -240, pd.easingFunctions.outCubic)
+    -- gradientTimer.updateCallback = function(timer)
+    --     gradientSprite:moveTo(gradientSprite.x, timer.value)
+    -- end
+
+    local popupSprite = gfx.sprite.new(levelEndPopupImage)
+    popupSprite:setIgnoresDrawOffset(true)
+    popupSprite:setZIndex(Z_INDEXES.ui)
+    popupSprite:setCenter(0, 0)
+    popupSprite:moveTo(popupX, popupY + 240)
+    popupSprite:add()
+    local popupTimer = pd.timer.new(900, popupSprite.y, popupY, pd.easingFunctions.outBack)
+    popupTimer.updateCallback = function(timer)
+        popupSprite:moveTo(popupX, timer.value)
+    end
+
+    local selectorImagetable = assets.getImagetable("images/levels/ui/selector")
+    local selectorSprite = Utilities.animatedSprite(selectorBaseX + selectorGap * 2, selectorBaseY + 240, selectorImagetable, 50, true)
+    selectorSprite:setIgnoresDrawOffset(true)
+    selectorSprite:setZIndex(Z_INDEXES.ui)
+    selectorSprite:setCenter(0, 0)
+    self.selectorSprite = selectorSprite
+    pd.timer.performAfterDelay(200, function()
+        local selectorTimer = pd.timer.new(900, selectorSprite.y, selectorBaseY, pd.easingFunctions.outBack)
+        selectorTimer.updateCallback = function(timer)
+            selectorSprite:moveTo(selectorSprite.x, timer.value)
+        end
+        selectorTimer.timerEndedCallback = function()
+            self.popupActive = true
+        end
+    end)
 end
 
 function GameScene:nextLevel()
@@ -59,7 +128,7 @@ function GameScene:nextLevel()
     CUR_LEVEL = self.curLevelNum
     if self.curLevelNum <= levelCount then
         local playerX, playerY = self.player:getScreenPosition()
-        SceneManager.switchScene(GameScene, playerX, playerY, true)
+        SceneManager.switchScene(GameScene, playerX, playerY)
     end
 end
 
@@ -79,7 +148,7 @@ function GameScene:setUpLevel()
     stars:moveTo(200, 120)
     stars:add()
 
-    local planet = Utilities.animatedSprite(365, 45, "images/decoration/planet", 100, true)
+    local planet = Utilities.animatedSprite(365, 45, "images/decoration/earthPlanet", 100, true)
     planet:setIgnoresDrawOffset(true)
 
     self.curLevel = Level(self.curLevelNum)

@@ -119,7 +119,7 @@ function Player:getScreenPosition()
     return self.x + drawOffsetX, self.y + drawOffsetY
 end
 
-function Player:nextLevel(x, y)
+function Player:levelEnd(x, y)
     if self.disabled then
         return
     end
@@ -136,7 +136,7 @@ function Player:nextLevel(x, y)
     end
 
     pd.timer.performAfterDelay(1300, function()
-        self.gameScene:nextLevel()
+        self.gameScene:levelEnd()
     end)
 end
 

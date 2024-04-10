@@ -31,6 +31,7 @@ function Level:init(levelIndex)
         end
     end
 
+    self.hazards = {}
     local levelEnd
     local keys = {}
     for _, entity in ipairs(ldtk.get_entities(levelName)) do
@@ -42,13 +43,13 @@ function Level:init(levelIndex)
         elseif entityName == "End" then
             levelEnd = LevelEnd(entityX, entityY)
         elseif entityName == "Block" then
-            Block(entityX, entityY, entity)
+            table.insert(self.hazards, Block(entityX, entityY, entity))
         elseif entityName == "Turret" then
-            Turret(entityX, entityY, entity)
+            table.insert(self.hazards, Turret(entityX, entityY, entity))
         elseif entityName == "Spinner" then
-            Spinner(entityX, entityY, entity)
+            table.insert(self.hazards, Spinner(entityX, entityY, entity))
         elseif entityName == "Laser" then
-            Laser(entityX, entityY, entity)
+            table.insert(self.hazards, Laser(entityX, entityY, entity))
         elseif entityName == "Key" then
             table.insert(keys, Key(entityX, entityY))
         end
@@ -63,4 +64,10 @@ end
 
 function Level:getStartPos()
     return self.startX, self.startY
+end
+
+function Level:stopLevelHazards()
+    for _, hazard in ipairs(self.hazards) do
+        hazard:stop()
+    end
 end

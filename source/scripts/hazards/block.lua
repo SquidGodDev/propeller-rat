@@ -66,6 +66,10 @@ function Block:collisionResponse(other)
 end
 
 function Block:update()
+    if self.stopped then
+       return
+    end
+
     local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed, self.y + self.ySpeed)
 
     local bounceCollision = false

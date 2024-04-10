@@ -26,6 +26,7 @@ function Laser:init(x, y, entity)
         local interval = fields.interval
         local tailX, tailY = fields.tail.cx * 16 + 8, fields.tail.cy * 16 + 8
         local tailLaser = Laser(tailX, tailY)
+        self.tailLaser = tailLaser
         self.tailX, self.tailY = tailX, tailY
         self.fired = false
         pd.timer.performAfterDelay(delay, function()
@@ -38,7 +39,18 @@ function Laser:init(x, y, entity)
     end
 end
 
+function Laser:stop()
+    self.stopped = true
+    if self.tailLaser then
+        self.tailLaser:stop()
+    end
+end
+
 function Laser:update()
+    if self.stopped then
+        return
+    end
+
     if self.animationLoop then
         if self.animationLoop:isValid() then
             self:setImage(self.animationLoop:image())
