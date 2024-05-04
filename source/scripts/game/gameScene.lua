@@ -20,8 +20,10 @@ local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
 local selectorBaseX, selectorBaseY = popupX + 57, popupY + 68
 local selectorGap = 41
 
+local planetImagetables = PLANET_IMAGETABLES
+
 assets.preloadImages({"images/decoration/stars"})
-assets.preloadImagetables({"images/decoration/earthPlanet", "images/levels/ui/selector"})
+assets.preloadImagetables({"images/levels/ui/selector"})
 
 class('GameScene').extends()
 
@@ -148,7 +150,8 @@ function GameScene:setUpLevel()
     stars:moveTo(200, 120)
     stars:add()
 
-    local planet = Utilities.animatedSprite(365, 45, "images/decoration/earthPlanet", 100, true)
+    local planetImagetable = planetImagetables[SELECTED_WORLD]
+    local planet = Utilities.animatedSprite(365, 45, planetImagetable, 100, true)
     planet:setIgnoresDrawOffset(true)
 
     self.curLevel = Level(self.curLevelNum)

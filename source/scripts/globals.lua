@@ -1,6 +1,10 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+math.randomseed(pd.getSecondsSinceEpoch())
+
+DRAW_FPS = false
+
 TAGS = {
     player = 1,
     hazard = 2,
@@ -20,6 +24,13 @@ Z_INDEXES = {
 }
 
 CUR_LEVEL = 1
+SELECTED_WORLD = 1
+
+local earthPlanet = gfx.imagetable.new("images/decoration/earthPlanet")
+local dryPlanet = gfx.imagetable.new("images/decoration/dryPlanet")
+local icePlanet = gfx.imagetable.new("images/decoration/icePlanet")
+local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
+PLANET_IMAGETABLES = {earthPlanet, dryPlanet, icePlanet, moonPlanet}
 
 -- Core
 import "CoreLibs/object"
@@ -60,12 +71,11 @@ import "scripts/levels/level"
 import "scripts/game/gameScene"
 
 -- Title
+import "scripts/title/starfield"
+import "scripts/title/titleScene"
 import "scripts/title/levelSelectScene"
-
--- pd.display.setRefreshRate(50)
+import "scripts/title/worldSelectScene"
 
 if pd.isSimulator then
     sanityChecks()
 end
-
-DRAW_FPS = true

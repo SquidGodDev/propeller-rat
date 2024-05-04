@@ -72,7 +72,6 @@ end
 function setSceneUpdate(scene)
     local drawFps = DRAW_FPS
     pd.update = function()
-        print(gfx.sprite.spriteCount())
         spriteUpdate()
         scene:update()
         timerUpdate()

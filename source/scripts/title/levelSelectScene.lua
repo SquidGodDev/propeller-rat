@@ -10,12 +10,13 @@ assets.preloadImages({
     "images/levelSelect/previewBorder",
     "images/decoration/stars"
 })
-assets.preloadImagetable("images/decoration/planet")
 
 local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
 end
 local smoothSpeed <const> = 0.3
+
+local planetImagetables = PLANET_IMAGETABLES
 
 local titleFont = gfx.font.new("data/fonts/m6x11-26")
 
@@ -40,7 +41,8 @@ local icons = {
     Key = keyIcon
 }
 
-local levelPreviews = {}
+local worldBaseLevel = {}
+local allLevelPreviews = {}
 local levelCount = ldtk.get_level_count()
 for levelIndex=1,levelCount do
     local levelName = "Level_" .. levelIndex
@@ -87,7 +89,15 @@ for levelIndex=1,levelCount do
                 icon:drawAnchored(entityX, entityY, 0.5, 0.5)
             end
         end
-        levelPreviews[levelIndex] = previewImage
+
+        local levelDepth = ldtk.get_depth(levelName) + 1
+        local levelPreviews = allLevelPreviews[levelDepth]
+        if not levelPreviews then
+            levelPreviews = {}
+            allLevelPreviews[levelDepth] = levelPreviews
+            worldBaseLevel[levelDepth] = levelIndex
+        end
+        table.insert(levelPreviews, previewImage)
     gfx.popContext()
 end
 
@@ -96,39 +106,49 @@ local previewGap = 35
 local previewBorder = gfx.image.new("images/levelSelect/previewBorder")
 local borderWidth, borderHeight = previewBorder:getSize()
 local borderDrawX, borderDrawY = 6, 6
-local allPreviewsWidth = levelCount * borderWidth + (levelCount - 1) * previewGap
-local allPreviews = gfx.image.new(allPreviewsWidth, borderHeight)
 
-local drawX = 0
-gfx.pushContext(allPreviews)
-    for i=1, levelCount do
-        local preview = levelPreviews[i]
-        previewBorder:draw(drawX, 0)
-        preview:draw(drawX + borderDrawX, borderDrawY)
-        drawX += previewGap + borderWidth
-    end
-gfx.popContext()
+local worldPreviews = {}
+
+for worldDepth, levelPreviews in pairs(allLevelPreviews) do
+    local worldLevelCount = #levelPreviews
+    local allPreviewsWidth = worldLevelCount * borderWidth + (worldLevelCount - 1) * previewGap
+    local previewImage = gfx.image.new(allPreviewsWidth, borderHeight)
+    local drawX = 0
+    gfx.pushContext(previewImage)
+        for i=1, worldLevelCount do
+            local preview = levelPreviews[i]
+            previewBorder:draw(drawX, 0)
+            preview:draw(drawX + borderDrawX, borderDrawY)
+            drawX += previewGap + borderWidth
+        end
+    gfx.popContext()
+    worldPreviews[worldDepth] = previewImage
+end
 
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init()
     audioManager.playSong(audioManager.songs.cosmicDust)
 
-    self.selectedLevel = CUR_LEVEL
-
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
-    local starsImage = Assets.getImage("images/decoration/stars")
+    local starsImage = assets.getImage("images/decoration/stars")
     local stars = gfx.sprite.new(starsImage)
     stars:moveTo(200, 120)
     stars:add()
 
-    Utilities.animatedSprite(365, 45, "images/decoration/planet", 100, true)
+    local worldIndex = SELECTED_WORLD
+    Utilities.animatedSprite(365, 45, planetImagetables[worldIndex], 100, true)
 
-    self.levelsSprite = gfx.sprite.new(allPreviews)
+    self.levelCount = #allLevelPreviews[worldIndex]
+    self.baseLevel = worldBaseLevel[worldIndex]
+    self.selectedLevel = CUR_LEVEL - self.baseLevel + 1
+    local previewImage = worldPreviews[worldIndex]
+    self.levelsSprite = gfx.sprite.new(previewImage)
     self.levelsSprite:setCenter(0.0, 0.5)
-    self.levelsSprite:moveTo(self:getTargetX(), previewY)
+    local targetX = previewX - borderWidth / 2 - (self.selectedLevel - 1) * (borderWidth + previewGap)
+    self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
@@ -184,20 +204,22 @@ function LevelSelectScene:update()
         if transitioning then
             audioManager.play(audioManager.sfx.select)
             self.transitioning = true
-            CUR_LEVEL = self.selectedLevel
+            CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
         end
+    elseif pd.buttonJustPressed(pd.kButtonB) then
+        SceneManager.switchScene(WorldSelectScene, nil, nil)
     end
 end
 
 function LevelSelectScene:moveLeft()
     audioManager.play(audioManager.sfx.navigate)
-    self.selectedLevel = math.ringInt(self.selectedLevel - 1, 1, levelCount)
+    self.selectedLevel = math.clamp(self.selectedLevel - 1, 1, self.levelCount)
     self:updateName()
 end
 
 function LevelSelectScene:moveRight()
     audioManager.play(audioManager.sfx.navigate)
-    self.selectedLevel = math.ringInt(self.selectedLevel + 1, 1, levelCount)
+    self.selectedLevel = math.clamp(self.selectedLevel + 1, 1, self.levelCount)
     self:updateName()
 end
 
@@ -211,7 +233,7 @@ function LevelSelectScene:getSelectedLevel()
 end
 
 function LevelSelectScene:updateName()
-    local levelName = ldtk.get_custom_data("Level_" .. self.selectedLevel, "Name")
+    local levelName = ldtk.get_custom_data("Level_" .. self.baseLevel + self.selectedLevel - 1, "Name")
     local nameImage = gfx.imageWithText(levelName --[[@as string]], 400, 50, nil, nil, nil, kTextAlignment.center, titleFont)
     self.nameSprite:setImageDrawMode(gfx.kDrawModeFillWhite)
     self.nameSprite:setImage(nameImage)

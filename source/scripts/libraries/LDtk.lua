@@ -59,6 +59,7 @@ local _level_files = {}
 local _levels = {}
 local _level_names = {} -- uids to name
 local _level_rects = {}
+local _level_depths = {}
 local _tilesets = {}
 local _imageTables = {}
 local _levelCount = 0
@@ -103,6 +104,7 @@ function LDtk.load( ldtk_file, use_lua_levels )
 		_level_files = data.level_files
 		_level_names = data.level_names
 		_level_rects = data.level_rects
+		_level_depths = data.level_depths
 		_levels = data.levels
 		_use_external_files = data.use_external_files
 		_levelCount = data.levelCount
@@ -207,6 +209,7 @@ function LDtk.load( ldtk_file, use_lua_levels )
 	for level_index, level_data in ipairs(data.levels) do
 		_level_names[ level_data.iid ] = level_data.identifier
 		_level_rects[ level_data.identifier ] = { x=level_data.worldX, y=level_data.worldY, width=level_data.pxWid, height=level_data.pxHei }
+		_level_depths[ level_data.identifier ] = level_data.worldDepth
 		_levelCount += 1
 	end
 
@@ -244,6 +247,7 @@ function LDtk.export_to_lua_files()
 		level_files = lua_level_files,
 		level_names = _level_names,
 		level_rects = _level_rects,
+		level_depths = _level_depths,
 		levels = _levels,
 		use_external_files = _use_external_files,
 		levelCount = _levelCount
@@ -492,6 +496,10 @@ end
 -- always available, the level doesn't need to be loaded
 function LDtk.get_rect( level_name )
 	return _level_rects[ level_name ]
+end
+
+function LDtk.get_depth( level_name )
+	return _level_depths[ level_name ]
 end
 
 -- return custom data for the specified level

@@ -11,4 +11,4 @@ function pd.update()
     pd.drawFPS(0, 228)
 end
 
-SceneManager.startingScene(LevelSelectScene)
+SceneManager.startingScene(TitleScene)
