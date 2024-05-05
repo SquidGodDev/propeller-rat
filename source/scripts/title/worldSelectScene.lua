@@ -16,6 +16,9 @@ local titleFont = gfx.font.new("data/fonts/m6x11-26")
 local planetImagetables = PLANET_IMAGETABLES
 local planetNames = {"World 1", "World 2", "World 3", "World 4"}
 
+local arrowLeft = gfx.image.new("images/levelSelect/arrowLeft")
+local arrowRight = gfx.image.new("images/levelSelect/arrowRight")
+
 local baseLevels = {}
 local levelCount = ldtk.get_level_count()
 for levelIndex=1,levelCount do
@@ -54,6 +57,20 @@ function WorldSelectScene:init()
     self.nameSprite:add()
     self:updateName()
 
+    self.leftArrow = gfx.sprite.new(arrowLeft)
+    self.leftArrow:moveTo(100, 140)
+    self.leftArrow:setIgnoresDrawOffset(true)
+    self.leftArrow:add()
+    self.leftArrow:setVisible(false)
+
+    self.rightArrow = gfx.sprite.new(arrowRight)
+    self.rightArrow:moveTo(300, 140)
+    self.rightArrow:setIgnoresDrawOffset(true)
+    self.rightArrow:add()
+    self.rightArrow:setVisible(false)
+
+    self:updateArrows()
+
     local curWorld = self.worlds[self.selectedWorld]
     local curWorldX, curWorldY = curWorld.x, curWorld.y
     local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 140)
@@ -74,9 +91,11 @@ function WorldSelectScene:update()
     if pd.buttonJustPressed(pd.kButtonLeft) then
         self.selectedWorld = math.clamp(self.selectedWorld - 1, 1, #self.worlds)
         self:updateName()
+        self:updateArrows()
     elseif pd.buttonJustPressed(pd.kButtonRight) then
         self.selectedWorld = math.clamp(self.selectedWorld + 1, 1, #self.worlds)
         self:updateName()
+        self:updateArrows()
     elseif pd.buttonJustPressed(pd.kButtonA) then
         SELECTED_WORLD = self.selectedWorld
         CUR_LEVEL = baseLevels[SELECTED_WORLD]
@@ -89,4 +108,18 @@ function WorldSelectScene:updateName()
     local nameImage = gfx.imageWithText(name --[[@as string]], 400, 50, nil, nil, nil, kTextAlignment.center, titleFont)
     self.nameSprite:setImageDrawMode(gfx.kDrawModeFillWhite)
     self.nameSprite:setImage(nameImage)
+end
+
+function WorldSelectScene:updateArrows()
+    if self.selectedWorld > 1 then
+        self.leftArrow:setVisible(true)
+    else
+        self.leftArrow:setVisible(false)
+    end
+
+    if self.selectedWorld < #self.worlds then
+        self.rightArrow:setVisible(true)
+    else
+        self.rightArrow:setVisible(false)
+    end
 end
