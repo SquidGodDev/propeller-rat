@@ -14,6 +14,17 @@ if not usePrecomputedLevels then
     ldtk.export_to_lua_files()
 end
 
+local baseLevels = {}
+local levelCount = ldtk.get_level_count()
+for levelIndex=1,levelCount do
+    local levelName = "Level_" .. levelIndex
+    local levelDepth = ldtk.get_depth(levelName)
+    local baseLevel = baseLevels[levelDepth+1]
+    if not baseLevel then
+        baseLevels[levelDepth+1] = levelIndex
+    end
+end
+
 local levelEndPopupImage = gfx.image.new("images/levels/ui/levelEndPopup")
 local popupWidth, popupHeight = levelEndPopupImage:getSize()
 local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
@@ -84,18 +95,6 @@ function GameScene:levelEnd()
     self.popupActive = false
     self.levelEndOption = 3
 
-    -- local gradientImage = assets.getImage("images/levels/ui/gradient")
-    -- local gradientSprite = gfx.sprite.new(gradientImage)
-    -- gradientSprite:setIgnoresDrawOffset(true)
-    -- gradientSprite:setZIndex(Z_INDEXES.ui)
-    -- gradientSprite:setCenter(0, 0)
-    -- gradientSprite:moveTo(0, 240)
-    -- gradientSprite:add()
-    -- local gradientTimer = pd.timer.new(500, gradientSprite.y, -240, pd.easingFunctions.outCubic)
-    -- gradientTimer.updateCallback = function(timer)
-    --     gradientSprite:moveTo(gradientSprite.x, timer.value)
-    -- end
-
     local popupSprite = gfx.sprite.new(levelEndPopupImage)
     popupSprite:setIgnoresDrawOffset(true)
     popupSprite:setZIndex(Z_INDEXES.ui)
@@ -125,12 +124,19 @@ function GameScene:levelEnd()
 end
 
 function GameScene:nextLevel()
-    local levelCount = ldtk.get_level_count()
-    self.curLevelNum = math.ringInt(self.curLevelNum + 1, 1, levelCount)
-    CUR_LEVEL = self.curLevelNum
+    self.curLevelNum = self.curLevelNum + 1
     if self.curLevelNum <= levelCount then
+        if SELECTED_WORLD < #baseLevels then
+            local nextWorldStartLevel = baseLevels[SELECTED_WORLD + 1]
+            if self.curLevelNum >= nextWorldStartLevel then
+                SELECTED_WORLD += 1
+            end
+        end
+        CUR_LEVEL = self.curLevelNum
         local playerX, playerY = self.player:getScreenPosition()
         SceneManager.switchScene(GameScene, playerX, playerY)
+    else
+        SceneManager.switchScene(LevelSelectScene, playerX, playerY)
     end
 end
 
