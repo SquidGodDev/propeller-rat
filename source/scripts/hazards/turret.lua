@@ -3,8 +3,6 @@ local gfx <const> = pd.graphics
 
 local audioManager <const> = AudioManager
 
-local querySpritesInRect = gfx.sprite.querySpritesInRect
-
 local assets <const> = Assets
 
 assets.preloadImage("images/hazards/turretProjectile")
@@ -21,7 +19,7 @@ function Turret:init(x, y, entity)
     Turret.super.init(self, x, y)
 
     local fields = entity.fields
-    local xSpeed, ySpeed = fields.xSpeed, fields.ySpeed
+    self.xSpeed, self.ySpeed = fields.xSpeed, fields.ySpeed
     local time = fields.time
     local startDelay = fields.startDelay
 
@@ -33,34 +31,6 @@ function Turret:init(x, y, entity)
     self.projectileY = y
 
     self.projectileFired = false
-
-    local projectileImage = assets.getImage("images/hazards/turretProjectile")
-    local width, height = projectileImage:getSize()
-    local halfWidth, halfHeight = width / 2, height / 2
-
-    local projectileBreakImageTable = assets.getImagetable("images/hazards/projectileBreak")
-    self.projectileUpdate = function(projectile)
-        local projectileX, projectileY = projectile.x, projectile.y
-        projectileX += xSpeed
-        projectileY += ySpeed
-        projectile.x = projectileX
-        projectile.y = projectileY
-        local sprites = querySpritesInRect(projectileX - halfWidth, projectileY - halfHeight, width, height)
-        for i=1,#sprites do
-            local sprite = sprites[i]
-            local collisionTag = sprite:getTag()
-            if collisionTag == TAGS.player then
-                sprite:reset()
-            end
-
-            if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
-                audioManager.play(audioManager.sfx.smash)
-                Utilities.animatedSprite(projectileX, projectileY, projectileBreakImageTable, 20, false)
-                return true -- Remove
-            end
-        end
-        projectileImage:drawAnchored(projectileX, projectileY, 0.5, 0.5)
-    end
 
     pd.timer.performAfterDelay(startDelay, function()
         local fireFunction = function ()
@@ -87,14 +57,50 @@ function Turret:update()
             self:setImage(animationLoop:image())
         else
             audioManager.play(audioManager.sfx.shoot)
-            SceneManager.addToDrawQueue({
-                x = self.projectileX,
-                y = self.projectileY,
-                update = self.projectileUpdate
-            })
+            Projectile(self.projectileX, self.projectileY, self.xSpeed, self.ySpeed)
             local turretImagetable = assets.getImagetable("images/hazards/turret")
             self:setImage(turretImagetable[1])
             self.animationLoop = nil
+        end
+    end
+end
+
+class('Projectile').extends(gfx.sprite)
+
+function Projectile:init(x, y, xSpeed, ySpeed)
+    self.xSpeed = xSpeed
+    self.ySpeed = ySpeed
+
+    local projectileImage = assets.getImage("images/hazards/turretProjectile")
+    self:setZIndex(Z_INDEXES.projectile)
+    self:setImage(projectileImage)
+    self:moveTo(x, y)
+    self:add()
+
+    self:setTag(TAGS.projectile)
+    self:setGroups(TAGS.projectile)
+    self:setCollidesWithGroups({TAGS.player, TAGS.hazard, TAGS.wall})
+    self:setCollideRect(0, 0, projectileImage:getSize())
+end
+
+function Projectile:collisionResponse()
+    return gfx.sprite.kCollisionTypeOverlap
+end
+
+function Projectile:update()
+    local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed, self.y + self.ySpeed)
+
+    for i=1,length do
+        local collisionSprite = collisions[i].other
+        local collisionTag = collisionSprite:getTag()
+        if collisionTag == TAGS.player then
+            collisionSprite:reset()
+        end
+
+        if collisionTag == TAGS.hazard or collisionTag == TAGS.wall then
+            local projectileBreakImageTable = assets.getImagetable("images/hazards/projectileBreak")
+            Utilities.animatedSprite(self.x, self.y, projectileBreakImageTable, 20, false)
+            self:remove()
         end
     end
 end

@@ -3,7 +3,7 @@ local gfx <const> = pd.graphics
 
 math.randomseed(pd.getSecondsSinceEpoch())
 
-DRAW_FPS = false
+DRAW_FPS = true
 
 TAGS = {
     player = 1,
