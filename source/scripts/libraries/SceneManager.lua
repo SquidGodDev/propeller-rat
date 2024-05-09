@@ -72,6 +72,7 @@ end
 function setSceneUpdate(scene)
     local drawFps = DRAW_FPS
     pd.update = function()
+        local frameStart = ms()
         spriteUpdate()
         scene:update()
         timerUpdate()
@@ -84,7 +85,7 @@ function setSceneUpdate(scene)
             transitionImage:drawIgnoringOffset(0, 0)
         end
         audioManager.clearPlayedThisFrame()
-        lazyLoadAssets(ms())
+        lazyLoadAssets(frameStart)
     end
 end
 

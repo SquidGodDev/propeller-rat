@@ -51,12 +51,14 @@ for levelIndex=1,levelCount do
         gfx.setColor(gfx.kColorWhite)
         for layerName, layer in pairs(ldtk.get_layers(levelName)) do
             if layer.tiles then
-                local tilemap = ldtk.create_tilemap(levelName, layerName)
-                local width, height = tilemap:getSize()
-                for w=1, width do
-                    for h=1, height do
-                        local curTile = tilemap:getTileAtPosition(w, h)
-                        if curTile then
+                local tiles = layer.tiles
+                local width = layer.tilemap_width
+                local height = math.floor(#tiles / width)
+                for h=1, height do
+                    for w=1, width do
+                        local idx = (h - 1) * width + w
+                        local curTile = tiles[idx]
+                        if curTile ~= 0 then
                             local previewX, previewY = (w-1)*tileSize, (h-1)*tileSize
                             wallIcon:draw(previewX, previewY)
                         end
