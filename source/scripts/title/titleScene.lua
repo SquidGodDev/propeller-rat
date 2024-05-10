@@ -15,6 +15,8 @@ local li = {
 local font = gfx.font.new("data/fonts/m6x11-12")
 local backgroundImage = gfx.image.new("images/decoration/stars")
 
+local ratChance = 0.05
+
 local moveTime = 1500
 local offScreenY = 300
 local topRowY = 30
@@ -38,7 +40,7 @@ function TitleScene:init()
         local letterX = xPositions[i]
         local letterY = i <= ratChar and topRowY or bottomRowY
         local letterImage = letterOrder[i]
-        if i == ratChar and math.random() < 0.2 then
+        if i == ratChar and math.random() < ratChance then
             letterImage = li.rat
         end
         local letterSprite = gfx.sprite.new(letterImage)
