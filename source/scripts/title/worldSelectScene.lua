@@ -14,7 +14,7 @@ local smoothSpeed <const> = 0.2
 local titleFont = gfx.font.new("data/fonts/m6x11-26")
 
 local planetImagetables = PLANET_IMAGETABLES
-local planetNames = {"World 1", "World 2", "World 3", "World 4"}
+local planetNames = {"Galatea", "Koyopa", "Hairu", "Yuchi"}
 
 local arrowLeft = gfx.image.new("images/levelSelect/arrowLeft")
 local arrowRight = gfx.image.new("images/levelSelect/arrowRight")

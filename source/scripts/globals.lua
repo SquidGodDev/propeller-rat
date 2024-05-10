@@ -27,10 +27,10 @@ CUR_LEVEL = 1
 SELECTED_WORLD = 1
 
 local earthPlanet = gfx.imagetable.new("images/decoration/earthPlanet")
-local dryPlanet = gfx.imagetable.new("images/decoration/dryPlanet")
-local icePlanet = gfx.imagetable.new("images/decoration/icePlanet")
+local lightPlanet = gfx.imagetable.new("images/decoration/lightPlanet")
+local darkPlanet = gfx.imagetable.new("images/decoration/darkPlanet")
 local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
-PLANET_IMAGETABLES = {earthPlanet, dryPlanet, icePlanet, moonPlanet}
+PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet}
 
 -- Core
 import "CoreLibs/object"
