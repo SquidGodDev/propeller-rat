@@ -113,12 +113,10 @@ function GameScene:levelEnd()
     selectorSprite:setCenter(0, 0)
     self.selectorSprite = selectorSprite
     pd.timer.performAfterDelay(200, function()
+        self.popupActive = true
         local selectorTimer = pd.timer.new(900, selectorSprite.y, selectorBaseY, pd.easingFunctions.outBack)
         selectorTimer.updateCallback = function(timer)
             selectorSprite:moveTo(selectorSprite.x, timer.value)
-        end
-        selectorTimer.timerEndedCallback = function()
-            self.popupActive = true
         end
     end)
 end
