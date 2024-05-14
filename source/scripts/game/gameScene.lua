@@ -130,13 +130,15 @@ function GameScene:nextLevel()
             local nextWorldStartLevel = baseLevels[SELECTED_WORLD + 1]
             if self.curLevelNum >= nextWorldStartLevel then
                 SELECTED_WORLD += 1
+                SceneManager.switchScene(WorldSelectScene, playerX, playerY)
+                return
             end
         end
         CUR_LEVEL = self.curLevelNum
         local playerX, playerY = self.player:getScreenPosition()
         SceneManager.switchScene(GameScene, playerX, playerY)
     else
-        SceneManager.switchScene(LevelSelectScene, playerX, playerY)
+        SceneManager.switchScene(WorldSelectScene, playerX, playerY)
     end
 end
 
