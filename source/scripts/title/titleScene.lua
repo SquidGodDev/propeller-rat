@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local audioManager <const> = AudioManager
+
 local li = {
     p = gfx.image.new("images/title/letters/p"),
     r = gfx.image.new("images/title/letters/r"),
@@ -29,6 +31,8 @@ local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 class('TitleScene').extends()
 
 function TitleScene:init()
+    audioManager.playSong(audioManager.songs.cosmicDust)
+
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 

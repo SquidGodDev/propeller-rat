@@ -88,11 +88,12 @@ function WorldSelectScene:update()
     setDrawOffset(smoothedX, smoothedY)
     self.starfieldSprite:moveTo(smoothedX/10, smoothedY/10 + 120)
 
-    if pd.buttonJustPressed(pd.kButtonLeft) then
+    local crankTicks = pd.getCrankTicks(2)
+    if pd.buttonJustPressed(pd.kButtonLeft) or crankTicks == -1 then
         self.selectedWorld = math.clamp(self.selectedWorld - 1, 1, #self.worlds)
         self:updateName()
         self:updateArrows()
-    elseif pd.buttonJustPressed(pd.kButtonRight) then
+    elseif pd.buttonJustPressed(pd.kButtonRight) or crankTicks == 1 then
         self.selectedWorld = math.clamp(self.selectedWorld + 1, 1, #self.worlds)
         self:updateName()
         self:updateArrows()

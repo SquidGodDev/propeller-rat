@@ -130,8 +130,6 @@ end
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init()
-    audioManager.playSong(audioManager.songs.cosmicDust)
-
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
@@ -182,7 +180,9 @@ function LevelSelectScene:update()
             self:moveLeft()
         end)
     elseif pd.buttonJustReleased(pd.kButtonLeft) then
-        self.keyRepeatTimer:remove()
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
     end
 
     if pd.buttonJustPressed(pd.kButtonRight) then
@@ -193,7 +193,9 @@ function LevelSelectScene:update()
             self:moveRight()
         end)
     elseif pd.buttonJustReleased(pd.kButtonRight) then
-        self.keyRepeatTimer:remove()
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
     end
 
     local crankTicks = pd.getCrankTicks(3)
