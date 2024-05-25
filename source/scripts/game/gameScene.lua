@@ -70,10 +70,11 @@ end
 
 function GameScene:update()
     if self.popupActive then
-        if pd.buttonJustPressed(pd.kButtonLeft) then
+        local crankTicks = pd.getCrankTicks(2)
+        if pd.buttonJustPressed(pd.kButtonLeft) or crankTicks == -1 then
             self.levelEndOption = math.clamp(self.levelEndOption - 1, 1, 3)
             self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
-        elseif pd.buttonJustPressed(pd.kButtonRight) then
+        elseif pd.buttonJustPressed(pd.kButtonRight) or crankTicks == 1 then
             self.levelEndOption = math.clamp(self.levelEndOption + 1, 1, 3)
             self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
         elseif pd.buttonJustPressed(pd.kButtonA) then
