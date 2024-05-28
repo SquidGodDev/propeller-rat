@@ -47,7 +47,7 @@ function Player:init(gameScene, x, y)
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup, TAGS.wall})
-    self:setCollideRect(4, 3, 15, 21)
+    self:setCollideRect(4, 3, 15, 20)
 
     self.aButtonPopup = Utilities.animatedSprite(x, y - 28, assets.getImagetable("images/player/aButtonPopup"), 500, true)
     self.aButtonPopup:setZIndex(Z_INDEXES.ui)
