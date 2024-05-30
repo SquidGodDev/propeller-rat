@@ -136,6 +136,7 @@ function WorldSelectScene:moveLeft()
         self.selectedWorld -= 1
         self:updateName()
         self:updateArrows()
+        SELECTED_WORLD = self.selectedWorld
     end
 end
 
@@ -145,6 +146,7 @@ function WorldSelectScene:moveRight()
         self.selectedWorld += 1
         self:updateName()
         self:updateArrows()
+        SELECTED_WORLD = self.selectedWorld
     end
 end
 
