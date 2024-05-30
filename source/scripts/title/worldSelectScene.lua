@@ -3,6 +3,8 @@ local gfx <const> = playdate.graphics
 
 local ldtk <const> = LDtk
 
+local audioManager <const> = AudioManager
+
 local getDrawOffset <const> = gfx.getDrawOffset
 local setDrawOffset <const> = gfx.setDrawOffset
 
@@ -88,19 +90,61 @@ function WorldSelectScene:update()
     setDrawOffset(smoothedX, smoothedY)
     self.starfieldSprite:moveTo(smoothedX/10, smoothedY/10 + 120)
 
+    if pd.buttonJustPressed(pd.kButtonLeft) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+        self.keyRepeatTimer = pd.timer.keyRepeatTimer(function()
+            self:moveLeft()
+        end)
+    elseif pd.buttonJustReleased(pd.kButtonLeft) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+    end
+
+    if pd.buttonJustPressed(pd.kButtonRight) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+        self.keyRepeatTimer = pd.timer.keyRepeatTimer(function()
+            self:moveRight()
+        end)
+    elseif pd.buttonJustReleased(pd.kButtonRight) then
+        if self.keyRepeatTimer then
+            self.keyRepeatTimer:remove()
+        end
+    end
+
     local crankTicks = pd.getCrankTicks(2)
-    if pd.buttonJustPressed(pd.kButtonLeft) or crankTicks == -1 then
-        self.selectedWorld = math.clamp(self.selectedWorld - 1, 1, #self.worlds)
-        self:updateName()
-        self:updateArrows()
-    elseif pd.buttonJustPressed(pd.kButtonRight) or crankTicks == 1 then
-        self.selectedWorld = math.clamp(self.selectedWorld + 1, 1, #self.worlds)
-        self:updateName()
-        self:updateArrows()
+    if crankTicks == -1 then
+        self:moveLeft()
+    elseif crankTicks == 1 then
+        self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
         SELECTED_WORLD = self.selectedWorld
         CUR_LEVEL = baseLevels[SELECTED_WORLD]
         SceneManager.switchScene(LevelSelectScene)
+    elseif pd.buttonJustPressed(pd.kButtonB) then
+        SceneManager.switchScene(TitleScene)
+    end
+end
+
+function WorldSelectScene:moveLeft()
+    if self.selectedWorld > 1 then
+        audioManager.play(audioManager.sfx.navigate)
+        self.selectedWorld -= 1
+        self:updateName()
+        self:updateArrows()
+    end
+end
+
+function WorldSelectScene:moveRight()
+    if self.selectedWorld < #self.worlds then
+        audioManager.play(audioManager.sfx.navigate)
+        self.selectedWorld += 1
+        self:updateName()
+        self:updateArrows()
     end
 end
 

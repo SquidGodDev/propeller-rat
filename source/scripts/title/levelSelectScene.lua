@@ -216,15 +216,19 @@ function LevelSelectScene:update()
 end
 
 function LevelSelectScene:moveLeft()
-    audioManager.play(audioManager.sfx.navigate)
-    self.selectedLevel = math.clamp(self.selectedLevel - 1, 1, self.levelCount)
-    self:updateName()
+    if self.selectedLevel > 1 then
+        audioManager.play(audioManager.sfx.navigate)
+        self.selectedLevel -= 1
+        self:updateName()
+    end
 end
 
 function LevelSelectScene:moveRight()
-    audioManager.play(audioManager.sfx.navigate)
-    self.selectedLevel = math.clamp(self.selectedLevel + 1, 1, self.levelCount)
-    self:updateName()
+    if self.selectedLevel < self.levelCount then
+        audioManager.play(audioManager.sfx.navigate)
+        self.selectedLevel += 1
+        self:updateName()
+    end
 end
 
 function LevelSelectScene:getTargetX()
