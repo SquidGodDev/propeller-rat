@@ -78,6 +78,8 @@ function WorldSelectScene:init()
     local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 140)
     setDrawOffset(targetOffsetX, targetOffsetY)
     self.starfieldSprite:moveTo(targetOffsetX/10, targetOffsetY/10 + 120)
+
+    self.transitioning = false
 end
 
 function WorldSelectScene:update()
@@ -89,6 +91,10 @@ function WorldSelectScene:update()
     local smoothedY = lerp(drawOffsetY, targetOffsetY, smoothSpeed)
     setDrawOffset(smoothedX, smoothedY)
     self.starfieldSprite:moveTo(smoothedX/10, smoothedY/10 + 120)
+
+    if self.transitioning then
+        return
+    end
 
     if pd.buttonJustPressed(pd.kButtonLeft) then
         if self.keyRepeatTimer then
@@ -122,11 +128,19 @@ function WorldSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        SELECTED_WORLD = self.selectedWorld
-        CUR_LEVEL = baseLevels[SELECTED_WORLD]
-        SceneManager.switchScene(LevelSelectScene)
+        local transitioning = SceneManager.switchScene(LevelSelectScene)
+        if transitioning then
+            audioManager.play(audioManager.sfx.select)
+            SELECTED_WORLD = self.selectedWorld
+            CUR_LEVEL = baseLevels[SELECTED_WORLD]
+            self.transitioning = true
+        end
     elseif pd.buttonJustPressed(pd.kButtonB) then
-        SceneManager.switchScene(TitleScene)
+        local transitioning = SceneManager.switchScene(TitleScene)
+        if transitioning then
+            audioManager.play(audioManager.sfx.select)
+            self.transitioning = true
+        end
     end
 end
 
