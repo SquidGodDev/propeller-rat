@@ -29,11 +29,15 @@ function Laser:init(x, y, entity)
         self.tailLaser = tailLaser
         self.tailX, self.tailY = tailX, tailY
         self.fired = false
+
+        local fireLaser = function()
+            self:startupAnimation()
+            tailLaser:startupAnimation()
+        end
+
         pd.timer.performAfterDelay(delay, function()
-            local laserTimer = pd.timer.new(interval, function()
-                self:startupAnimation()
-                tailLaser:startupAnimation()
-            end)
+            fireLaser()
+            local laserTimer = pd.timer.new(interval, fireLaser)
             laserTimer.repeats = true
         end)
     end
