@@ -14,6 +14,8 @@ if not usePrecomputedLevels then
     ldtk.export_to_lua_files()
 end
 
+local crankIndicator = pd.ui.crankIndicator
+
 local baseLevels = {}
 local levelCount = ldtk.get_level_count()
 for levelIndex=1,levelCount do
@@ -86,6 +88,10 @@ function GameScene:update()
                 self:nextLevel()
             end
         end
+    end
+
+    if pd.isCrankDocked() then
+        crankIndicator:draw()
     end
 end
 
