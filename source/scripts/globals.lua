@@ -30,7 +30,7 @@ local earthPlanet = gfx.imagetable.new("images/decoration/earthPlanet")
 local lightPlanet = gfx.imagetable.new("images/decoration/lightPlanet")
 local darkPlanet = gfx.imagetable.new("images/decoration/darkPlanet")
 local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
-PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPlanet}
+PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPlanet, earthPlanet}
 
 -- Core
 import "CoreLibs/object"
