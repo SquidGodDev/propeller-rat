@@ -59,3 +59,15 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
     end
     return sprite
 end
+
+function Utilities.formatTime(seconds)
+    if seconds >= 5999.999 then
+        seconds = 5999.999
+    end
+
+    local minutes = math.floor(seconds / 60)
+    local remainingSeconds = math.floor(seconds) % 60
+    local milliseconds = math.floor((seconds - math.floor(seconds)) * 1000)
+
+    return string.format("%02d:%02d.%03d", minutes, remainingSeconds, milliseconds)
+end

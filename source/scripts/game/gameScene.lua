@@ -1,6 +1,13 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 local assets <const> = Assets
+local utilities <const> = Utilities
+
+local formatTime = utilities.formatTime
+local getElapsedTime = pd.getElapsedTime
+local pushContext = gfx.pushContext
+local popContext = gfx.popContext
+local newImage = gfx.image.new
 
 local font = FONT
 
@@ -30,10 +37,13 @@ end
 local levelEndPopupImage = gfx.image.new("images/levels/ui/levelEndPopup")
 local popupWidth, popupHeight = levelEndPopupImage:getSize()
 local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
-local selectorBaseX, selectorBaseY = popupX + 57, popupY + 68
+local selectorBaseX, selectorBaseY = popupX + 56, popupY + 92
 local selectorGap = 41
+local popupTimeX, popupTimeY = 90, 68
 
 local planetImagetables = PLANET_IMAGETABLES
+
+local timeTextWidth, timeTextHeight = 64, 13
 
 assets.preloadImages({"images/decoration/stars"})
 assets.preloadImagetables({"images/levels/ui/selector"})
@@ -41,6 +51,8 @@ assets.preloadImagetables({"images/levels/ui/selector"})
 class('GameScene').extends()
 
 function GameScene:init()
+    self.timerActive = false
+
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
@@ -48,10 +60,18 @@ function GameScene:init()
     self:setUpLevel()
 
     self.titleSprite = gfx.sprite.new()
-    self.titleSprite:moveTo(200, 120)
-    self.titleSprite:setZIndex(500)
+    self.titleSprite:setZIndex(Z_INDEXES.ui)
     self.titleSprite:setIgnoresDrawOffset(true)
     self.titleSprite:add()
+
+    self.timeSprite = gfx.sprite.new()
+    self.timeSprite:setCenter(0, 0)
+    self.timeSprite:moveTo(400 - timeTextWidth, 0)
+    self.timeSprite:setZIndex(Z_INDEXES.ui)
+    self.timeSprite:setIgnoresDrawOffset(true)
+    self.timeSprite:add()
+
+    self:updateTimeSprite(0.0)
 
     local systemMenu = pd.getSystemMenu()
     systemMenu:addMenuItem("Reset", function()
@@ -71,6 +91,10 @@ function GameScene:init()
 end
 
 function GameScene:update()
+    if self.timerActive then
+        self:updateTimeSprite(getElapsedTime())
+    end
+
     if self.popupActive then
         if pd.buttonJustPressed(pd.kButtonLeft) then
             self.levelEndOption = math.clamp(self.levelEndOption - 1, 1, 3)
@@ -95,13 +119,53 @@ function GameScene:update()
     end
 end
 
+function GameScene:updateTimeSprite(time)
+    local levelTimeText = formatTime(time)
+    local textImage = newImage(timeTextWidth, timeTextHeight)
+    pushContext(textImage)
+        font:drawText(levelTimeText, 0, 0)
+    popContext()
+    self.timeSprite:setImage(textImage)
+end
+
+function GameScene:startLevelTime()
+    self.timerActive = true
+    pd.resetElapsedTime()
+end
+
+function GameScene:recordLevelTime()
+    self.timerActive = false
+    local levelTime = getElapsedTime()
+
+    self:updateTimeSprite(levelTime)
+
+    local levelIID = LEVEL_INDEX_TO_IID[self.curLevelNum]
+    local oldLevelTime = LEVEL_TIMES[levelIID]
+
+    local newBestTime = false
+    if not oldLevelTime or (levelTime < oldLevelTime) then
+        newBestTime = true
+        LEVEL_TIMES[levelIID] = levelTime
+    end
+    local levelTimeText = formatTime(levelTime)
+    if newBestTime then
+        levelTimeText = levelTimeText .. " *NEW*"
+    end
+
+    self.levelTimeText = levelTimeText
+end
+
 function GameScene:levelEnd()
     self.curLevel:stopLevelHazards()
 
     self.popupActive = false
     self.levelEndOption = 3
 
-    local popupSprite = gfx.sprite.new(levelEndPopupImage)
+    local popupImage = levelEndPopupImage:copy()
+    pushContext(popupImage)
+        font:drawText(self.levelTimeText, popupTimeX, popupTimeY)
+    popContext()
+    local popupSprite = gfx.sprite.new(popupImage)
     popupSprite:setIgnoresDrawOffset(true)
     popupSprite:setZIndex(Z_INDEXES.ui)
     popupSprite:setCenter(0, 0)

@@ -23,9 +23,6 @@ Z_INDEXES = {
     transition = 1000
 }
 
-CUR_LEVEL = 1
-SELECTED_WORLD = 1
-
 local earthPlanet = gfx.imagetable.new("images/decoration/earthPlanet")
 local lightPlanet = gfx.imagetable.new("images/decoration/lightPlanet")
 local darkPlanet = gfx.imagetable.new("images/decoration/darkPlanet")
@@ -34,6 +31,45 @@ PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPla
 
 FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
+
+
+-- Save Data
+CUR_LEVEL = 1
+SELECTED_WORLD = 1
+LEVEL_TIMES = {}
+
+local function loadGameData()
+    local gameData = pd.datastore.read()
+    if gameData then
+        CUR_LEVEL = gameData.curLevel
+        SELECTED_WORLD = gameData.selectedWorld
+        LEVEL_TIMES = gameData.levelTimes
+    end
+end
+
+loadGameData()
+
+local function saveGameData()
+    local gameData = {
+        curLevel = CUR_LEVEL,
+        selectedWorld = SELECTED_WORLD,
+        levelTimes = LEVEL_TIMES,
+    }
+
+    pd.datastore.write(gameData)
+end
+
+function pd.gameWillTerminate()
+    saveGameData()
+end
+
+function pd.gameWillSleep()
+    saveGameData()
+end
+
+-- Level IDs
+LEVEL_INDEX_TO_IID = {}
+LEVEL_IID_BY_WORLD = {}
 
 -- Core
 import "CoreLibs/object"

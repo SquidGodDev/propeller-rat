@@ -1,5 +1,6 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
+local utilities <const> = Utilities
 
 local audioManager <const> = AudioManager
 
@@ -18,6 +19,7 @@ local smoothSpeed <const> = 0.3
 
 local planetImagetables = PLANET_IMAGETABLES
 
+local font = FONT
 local titleFont = TITLE_FONT
 
 local previewWidth, previewHeight = 176, 116
@@ -41,11 +43,13 @@ local icons = {
     Key = keyIcon
 }
 
+local worldIIDs = {}
 local worldBaseLevel = {}
 local allLevelPreviews = {}
 local levelCount = ldtk.get_level_count()
 for levelIndex=1,levelCount do
     local levelName = "Level_" .. levelIndex
+    LEVEL_INDEX_TO_IID[levelIndex] = ldtk.get_level_iid(levelName)
     local previewImage = gfx.image.new(previewWidth, previewHeight)
     gfx.pushContext(previewImage)
         gfx.setColor(gfx.kColorWhite)
@@ -93,21 +97,28 @@ for levelIndex=1,levelCount do
         end
 
         local levelDepth = ldtk.get_depth(levelName) + 1
+        local levelIID = ldtk.get_level_iid(levelName)
         local levelPreviews = allLevelPreviews[levelDepth]
+        local levelIIDs = worldIIDs[levelDepth]
         if not levelPreviews then
             levelPreviews = {}
             allLevelPreviews[levelDepth] = levelPreviews
             worldBaseLevel[levelDepth] = levelIndex
+            levelIIDs = {}
+            worldIIDs[levelDepth] = levelIIDs
         end
         table.insert(levelPreviews, previewImage)
+        table.insert(levelIIDs, levelIID)
     gfx.popContext()
 end
+
+LEVEL_IID_BY_WORLD = worldIIDs
 
 local previewX, previewY = 200, 140
 local previewGap = 35
 local previewBorder = gfx.image.new("images/levelSelect/previewBorder")
 local borderWidth, borderHeight = previewBorder:getSize()
-local borderDrawX, borderDrawY = 6, 6
+local borderDrawX, borderDrawY = 6, 24
 
 local worldPreviews = {}
 
@@ -127,6 +138,31 @@ for worldDepth, levelPreviews in pairs(allLevelPreviews) do
     worldPreviews[worldDepth] = previewImage
 end
 
+local flagImage = gfx.image.new("images/levelSelect/levelCompleteFlag")
+local flagX, flagY = 15, 0
+local timeX, timeY = 116, 4
+local levelTimes = LEVEL_TIMES
+local function getPreviewWithLevelTimes(worldDepth)
+    local levelIIDs = worldIIDs[worldDepth]
+    local previewImage = worldPreviews[worldDepth]:copy()
+    local worldLevelCount = #allLevelPreviews[worldDepth]
+    local drawX = 0
+    gfx.pushContext(previewImage)
+        for i=1, worldLevelCount do
+            local levelIID = levelIIDs[i]
+            local levelTime = levelTimes[levelIID]
+            local timeText = "--:--.---"
+            if levelTime then
+                timeText = utilities.formatTime(levelTime)
+                flagImage:draw(drawX + flagX, flagY)
+            end
+            font:drawText(timeText, drawX + timeX, timeY)
+            drawX += previewGap + borderWidth
+        end
+    gfx.popContext()
+    return previewImage
+end
+
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init()
@@ -144,7 +180,7 @@ function LevelSelectScene:init()
     self.levelCount = #allLevelPreviews[worldIndex]
     self.baseLevel = worldBaseLevel[worldIndex]
     self.selectedLevel = CUR_LEVEL - self.baseLevel + 1
-    local previewImage = worldPreviews[worldIndex]
+    local previewImage = getPreviewWithLevelTimes(worldIndex)
     self.levelsSprite = gfx.sprite.new(previewImage)
     self.levelsSprite:setCenter(0.0, 0.5)
     local targetX = previewX - borderWidth / 2 - (self.selectedLevel - 1) * (borderWidth + previewGap)

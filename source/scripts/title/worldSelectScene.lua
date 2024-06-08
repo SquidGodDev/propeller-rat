@@ -1,6 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+local utilities <const> = Utilities
+
 local ldtk <const> = LDtk
 
 local audioManager <const> = AudioManager
@@ -13,6 +15,7 @@ local lerp <const> = function(a, b, t)
 end
 local smoothSpeed <const> = 0.2
 
+local font = FONT
 local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
@@ -43,10 +46,40 @@ function WorldSelectScene:init()
     local worldGap = 400
     local worldY = 200
     self.worlds = {}
+    local levelTimes = LEVEL_TIMES
     for i, planetImagetable in ipairs(planetImagetables) do
-        local planetSprite = Utilities.animatedSprite(0, 0, planetImagetable, 100, true)
-        planetSprite:moveTo(i*worldGap, worldY)
+        local planetSprite = utilities.animatedSprite(0, 0, planetImagetable, 100, true)
+        local worldX = i * worldGap
+        planetSprite:moveTo(worldX, worldY)
         table.insert(self.worlds, planetSprite)
+
+        worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
+        local timeTotal = 0.0
+        local worldCompleted = true
+        for _, iid in ipairs(worldLevelIIDs) do
+            local levelTime = levelTimes[iid]
+            if not levelTime then
+                worldCompleted = false
+                break
+            end
+            timeTotal += levelTime
+        end
+
+        local worldTimeText = "--:--.---"
+        if worldCompleted then
+            worldTimeText = utilities.formatTime(timeTotal)
+        end
+
+        local timeTextWidth, timeTextHeight = 64, 13
+        local textImage = gfx.image.new(timeTextWidth, timeTextHeight)
+        gfx.pushContext(textImage)
+            font:drawText(worldTimeText, 0, 0)
+        gfx.popContext()
+        local worldTimeSprite = gfx.sprite.new()
+        worldTimeSprite:setImage(textImage)
+        worldTimeSprite:moveTo(worldX + 1, worldY + 70)
+        worldTimeSprite:add()
+
         worldY = (worldY + 100) % 340
     end
 

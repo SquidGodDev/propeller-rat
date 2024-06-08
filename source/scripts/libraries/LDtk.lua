@@ -284,6 +284,7 @@ function LDtk.load_level( level_name )
 
 	local level = {}
 	_levels[ level_data.identifier ] = level
+	level.iid = level_data.iid
 
 	level.neighbours = { east = {}, west = {}, north = {}, south = {}}
 	local direction_table = { e = "east", w = "west", n = "north", s = "south" }
@@ -562,6 +563,13 @@ function LDtk.get_layers(level_name)
 
 	if not level then return end
 	return level.layers
+end
+
+function LDtk.get_level_iid(level_name)
+	local level = _levels[level_name]
+
+	if not level then return end
+	return level.iid
 end
 
 -- return the name of a level bsed on their Strind IID

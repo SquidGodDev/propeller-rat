@@ -87,6 +87,7 @@ function Player:update()
         if pd.buttonJustPressed(pd.kButtonA) then
             self.frozen = false
             self.aButtonPopup:remove()
+            self.gameScene:startLevelTime()
         else
             return
         end
@@ -135,6 +136,7 @@ function Player:levelEnd(x, y)
         propellerSprite:moveTo(x, timer.value)
     end
 
+    self.gameScene:recordLevelTime()
     pd.timer.performAfterDelay(1300, function()
         self.gameScene:levelEnd()
     end)
