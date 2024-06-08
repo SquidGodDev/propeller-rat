@@ -18,7 +18,7 @@ local smoothSpeed <const> = 0.3
 
 local planetImagetables = PLANET_IMAGETABLES
 
-local titleFont = gfx.font.new("data/fonts/m6x11-26")
+local titleFont = TITLE_FONT
 
 local previewWidth, previewHeight = 176, 116
 local tileSize = 4

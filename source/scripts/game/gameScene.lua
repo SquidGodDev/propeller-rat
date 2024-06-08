@@ -2,7 +2,7 @@ local pd <const> = playdate
 local gfx <const> = playdate.graphics
 local assets <const> = Assets
 
-local titleFont = gfx.font.new("data/fonts/m6x11-12")
+local font = FONT
 
 local ldtk <const> = LDtk
 
@@ -179,7 +179,7 @@ function GameScene:showLevelTitle()
     local levelName = ldtk.get_custom_data("Level_" .. self.curLevelNum, "Name") or ""
 
     local titleX, titleY = 5, 5
-    local titleSprite = gfx.sprite.spriteWithText(levelName, 400, 20, gfx.kColorClear, nil, nil, nil, titleFont)
+    local titleSprite = gfx.sprite.spriteWithText(levelName, 400, 20, gfx.kColorClear, nil, nil, nil, font)
     local _, titleHeight = titleSprite:getSize()
     titleSprite:setIgnoresDrawOffset(true)
     titleSprite:setCenter(0, 0)

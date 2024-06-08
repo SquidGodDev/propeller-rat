@@ -32,6 +32,9 @@ local darkPlanet = gfx.imagetable.new("images/decoration/darkPlanet")
 local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
 PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPlanet, earthPlanet}
 
+FONT = gfx.font.new("data/fonts/m6x11-12")
+TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
+
 -- Core
 import "CoreLibs/object"
 import "CoreLibs/graphics"

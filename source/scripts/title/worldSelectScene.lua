@@ -13,7 +13,7 @@ local lerp <const> = function(a, b, t)
 end
 local smoothSpeed <const> = 0.2
 
-local titleFont = gfx.font.new("data/fonts/m6x11-26")
+local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
 local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon"}

@@ -14,7 +14,7 @@ local li = {
     rat = gfx.image.new("images/title/letters/rat")
 }
 
-local font = gfx.font.new("data/fonts/m6x11-12")
+local font = FONT
 local backgroundImage = gfx.image.new("images/decoration/stars")
 
 local ratChance = 0.05
