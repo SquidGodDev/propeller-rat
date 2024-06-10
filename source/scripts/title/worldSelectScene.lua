@@ -73,6 +73,9 @@ function WorldSelectScene:init()
         local lockImagetable = assets.getImagetable("images/levelSelect/lock")
         if i ~= 1 then
             if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
+                pd.timer.performAfterDelay(900, function()
+                    audioManager.play(audioManager.sfx.unlocked)
+                end)
                 utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
             elseif not completedWorlds[i - 1] then
                 local lockSprite = gfx.sprite.new(lockImagetable[1])
@@ -201,7 +204,7 @@ function WorldSelectScene:update()
                 self.exitingScene = true
             end
         else
-            -- Level locked sfx
+            audioManager.play(audioManager.sfx.error)
         end
     elseif pd.buttonJustPressed(pd.kButtonB) then
         local exitingScene = sceneManager.switchScene(TitleScene)

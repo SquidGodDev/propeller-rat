@@ -23,13 +23,16 @@ AudioManager.sfx = {
     navigate = sp("sound/ui/navigate"),
     select = sp("sound/ui/select"),
     error = sp("sound/ui/error"),
+    unlocked = sp("sound/ui/unlocked"),
     transitionOut = sp("sound/ui/transitionOut"),
     transitionIn = sp("sound/ui/transitionIn")
 }
 
+local songVolume = 0.5
 AudioManager.songs = {
     cosmicDust = fp("sound/music/CosmicDust")
 }
+AudioManager.songs.cosmicDust:setVolume(songVolume)
 
 AudioManager.playSong = function(song)
     if song == currentlyPlayingSong then
