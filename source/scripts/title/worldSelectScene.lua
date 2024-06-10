@@ -2,9 +2,9 @@ local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
 local utilities <const> = Utilities
-
+local assets <const> = Assets
 local ldtk <const> = LDtk
-
+local sceneManager <const> = SceneManager
 local audioManager <const> = AudioManager
 
 local getDrawOffset <const> = gfx.getDrawOffset
@@ -21,8 +21,12 @@ local titleFont = TITLE_FONT
 local planetImagetables = PLANET_IMAGETABLES
 local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon"}
 
-local arrowLeft = gfx.image.new("images/levelSelect/arrowLeft")
-local arrowRight = gfx.image.new("images/levelSelect/arrowRight")
+assets.preloadImages({
+    "images/levelSelect/arrowLeft",
+    "images/levelSelect/arrowRight"
+})
+
+assets.preloadImagetable("images/levelSelect/lock")
 
 local baseLevels = {}
 local levelCount = ldtk.get_level_count()
@@ -43,14 +47,14 @@ function WorldSelectScene:init()
 
     self.starfieldSprite = Starfield(800, 600)
 
+    local completedWorlds = {}
     local worldGap = 400
     local worldY = 200
     self.worlds = {}
     local levelTimes = LEVEL_TIMES
     for i, planetImagetable in ipairs(planetImagetables) do
-        local planetSprite = utilities.animatedSprite(0, 0, planetImagetable, 100, true)
         local worldX = i * worldGap
-        planetSprite:moveTo(worldX, worldY)
+        local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
         table.insert(self.worlds, planetSprite)
 
         worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
@@ -63,6 +67,18 @@ function WorldSelectScene:init()
                 break
             end
             timeTotal += levelTime
+        end
+        completedWorlds[i] = worldCompleted
+
+        local lockImagetable = assets.getImagetable("images/levelSelect/lock")
+        if i ~= 1 then
+            if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
+                utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
+            elseif not completedWorlds[i - 1] then
+                local lockSprite = gfx.sprite.new(lockImagetable[1])
+                lockSprite:moveTo(worldX, worldY)
+                lockSprite:add()
+            end
         end
 
         local worldTimeText = "--:--.---"
@@ -83,6 +99,8 @@ function WorldSelectScene:init()
         worldY = (worldY + 100) % 340
     end
 
+    COMPLETED_WORLDS = completedWorlds
+
     self.selectedWorld = SELECTED_WORLD
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
@@ -92,6 +110,8 @@ function WorldSelectScene:init()
     self.nameSprite:add()
     self:updateName()
 
+    local arrowLeft = assets.getImage("images/levelSelect/arrowLeft")
+    local arrowRight = assets.getImage("images/levelSelect/arrowRight")
     self.leftArrow = gfx.sprite.new(arrowLeft)
     self.leftArrow:moveTo(100, 140)
     self.leftArrow:setIgnoresDrawOffset(true)
@@ -112,7 +132,8 @@ function WorldSelectScene:init()
     setDrawOffset(targetOffsetX, targetOffsetY)
     self.starfieldSprite:moveTo(targetOffsetX/10, targetOffsetY/10 + 120)
 
-    self.transitioning = false
+    self.enteringScene = true
+    self.exitingScene = false
 end
 
 function WorldSelectScene:update()
@@ -125,7 +146,17 @@ function WorldSelectScene:update()
     setDrawOffset(smoothedX, smoothedY)
     self.starfieldSprite:moveTo(smoothedX/10, smoothedY/10 + 120)
 
-    if self.transitioning then
+    if self.enteringScene then
+        if not sceneManager.isTransitioning() then
+            self.enteringScene = false
+            -- Clear crank ticks
+            pd.getCrankTicks(2)
+        else
+            return
+        end
+    end
+
+    if self.exitingScene then
         return
     end
 
@@ -161,18 +192,22 @@ function WorldSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        local transitioning = SceneManager.switchScene(LevelSelectScene)
-        if transitioning then
-            audioManager.play(audioManager.sfx.select)
-            SELECTED_WORLD = self.selectedWorld
-            CUR_LEVEL = baseLevels[SELECTED_WORLD]
-            self.transitioning = true
+        if self.selectedWorld == 1 or COMPLETED_WORLDS[self.selectedWorld - 1] then
+            local exitingScene = sceneManager.switchScene(LevelSelectScene)
+            if exitingScene then
+                audioManager.play(audioManager.sfx.select)
+                SELECTED_WORLD = self.selectedWorld
+                CUR_LEVEL = baseLevels[SELECTED_WORLD]
+                self.exitingScene = true
+            end
+        else
+            -- Level locked sfx
         end
     elseif pd.buttonJustPressed(pd.kButtonB) then
-        local transitioning = SceneManager.switchScene(TitleScene)
-        if transitioning then
+        local exitingScene = sceneManager.switchScene(TitleScene)
+        if exitingScene then
             audioManager.play(audioManager.sfx.select)
-            self.transitioning = true
+            self.exitingScene = true
         end
     end
 end

@@ -37,13 +37,15 @@ TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
 CUR_LEVEL = 1
 SELECTED_WORLD = 1
 LEVEL_TIMES = {}
+COMPLETED_WORLDS = {}
 
 local function loadGameData()
     local gameData = pd.datastore.read()
     if gameData then
-        CUR_LEVEL = gameData.curLevel
-        SELECTED_WORLD = gameData.selectedWorld
-        LEVEL_TIMES = gameData.levelTimes
+        CUR_LEVEL = gameData.curLevel or 1
+        SELECTED_WORLD = gameData.selectedWorld or 1
+        LEVEL_TIMES = gameData.levelTimes or {}
+        COMPLETED_WORLDS = gameData.completedWorlds or {}
     end
 end
 
@@ -54,6 +56,7 @@ local function saveGameData()
         curLevel = CUR_LEVEL,
         selectedWorld = SELECTED_WORLD,
         levelTimes = LEVEL_TIMES,
+        completedWorlds = COMPLETED_WORLDS
     }
 
     pd.datastore.write(gameData)

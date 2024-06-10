@@ -14,6 +14,7 @@ local drawQueue = {}
 local uiQueue = {}
 
 SceneManager = {}
+SceneManager.transitioning = false
 
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
@@ -38,11 +39,16 @@ local uiUpdate = function()
     end
 end
 
+function SceneManager.isTransitioning()
+    return SceneManager.transitioning
+end
+
 function SceneManager.switchScene(scene, xIn, yIn, ...)
     if transitionImage then
         return false
     end
 
+    SceneManager.transitioning = true
     newScene = scene
     local args = {...}
 
@@ -141,6 +147,7 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
         end
 
         transitionTimer.timerEndedCallback = function()
+            SceneManager.transitioning = false
             transitionImage = nil
         end
     end

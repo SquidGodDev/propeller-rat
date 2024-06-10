@@ -1,10 +1,10 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
+
 local utilities <const> = Utilities
-
-local audioManager <const> = AudioManager
-
 local ldtk <const> = LDtk
+local sceneManager <const> = SceneManager
+local audioManager <const> = AudioManager
 
 local assets <const> = Assets
 assets.preloadImages({
@@ -175,7 +175,7 @@ function LevelSelectScene:init()
     stars:add()
 
     local worldIndex = SELECTED_WORLD
-    Utilities.animatedSprite(365, 45, planetImagetables[worldIndex], 100, true)
+    utilities.animatedSprite(365, 45, planetImagetables[worldIndex], 100, true)
 
     self.levelCount = #allLevelPreviews[worldIndex]
     self.baseLevel = worldBaseLevel[worldIndex]
@@ -193,7 +193,8 @@ function LevelSelectScene:init()
     self.nameSprite:add()
     self:updateName()
 
-    self.transitioning = false
+    self.enteringScene = true
+    self.exitingScene = false
 end
 
 function LevelSelectScene:update()
@@ -204,7 +205,17 @@ function LevelSelectScene:update()
         self.levelsSprite:moveTo(lerp(self.levelsSprite.x, targetX, smoothSpeed), previewY)
     end
 
-    if self.transitioning then
+    if self.enteringScene then
+        if not sceneManager.isTransitioning() then
+            self.enteringScene = false
+            -- Clear crank ticks
+            pd.getCrankTicks(3)
+        else
+            return
+        end
+    end
+
+    if self.exitingScene then
         return
     end
 
@@ -240,14 +251,18 @@ function LevelSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        local transitioning = SceneManager.switchScene(GameScene, nil, nil)
-        if transitioning then
+        local exitingScene = sceneManager.switchScene(GameScene, nil, nil)
+        if exitingScene then
             audioManager.play(audioManager.sfx.select)
-            self.transitioning = true
+            self.exitingScene = true
             CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
         end
     elseif pd.buttonJustPressed(pd.kButtonB) then
-        SceneManager.switchScene(WorldSelectScene, nil, nil)
+        local exitingScene = sceneManager.switchScene(WorldSelectScene, nil, nil)
+        if exitingScene then
+            audioManager.play(audioManager.sfx.select)
+            self.exitingScene = true
+        end
     end
 end
 
