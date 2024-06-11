@@ -2,6 +2,7 @@ local pd <const> = playdate
 local gfx <const> = playdate.graphics
 local assets <const> = Assets
 local utilities <const> = Utilities
+local audioManager <const> = AudioManager
 
 local formatTime = utilities.formatTime
 local getElapsedTime = pd.getElapsedTime
@@ -66,7 +67,7 @@ function GameScene:init()
 
     self.timeSprite = gfx.sprite.new()
     self.timeSprite:setCenter(0, 0)
-    self.timeSprite:moveTo(400 - timeTextWidth, 0)
+    self.timeSprite:moveTo(400 - timeTextWidth - 2, 2)
     self.timeSprite:setZIndex(Z_INDEXES.ui)
     self.timeSprite:setIgnoresDrawOffset(true)
     self.timeSprite:add()
@@ -97,18 +98,25 @@ function GameScene:update()
 
     if self.popupActive then
         if pd.buttonJustPressed(pd.kButtonLeft) then
-            self.levelEndOption = math.clamp(self.levelEndOption - 1, 1, 3)
-            self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+            if self.levelEndOption > 1 then
+                audioManager.play(audioManager.sfx.navigate)
+                self.levelEndOption -= 1
+                self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+            end
         elseif pd.buttonJustPressed(pd.kButtonRight) then
-            self.levelEndOption = math.clamp(self.levelEndOption + 1, 1, 3)
-            self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+            if self.levelEndOption < 3 then
+                audioManager.play(audioManager.sfx.navigate)
+                self.levelEndOption += 1
+                self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
+            end
         elseif pd.buttonJustPressed(pd.kButtonA) then
+            audioManager.play(audioManager.sfx.select)
             self.popupActive = false
             if self.levelEndOption == 1 then
                 SceneManager.switchScene(LevelSelectScene)
             elseif self.levelEndOption == 2 then
                 SceneManager.switchScene(GameScene)
-            elseif self.levelEndOption then
+            elseif self.levelEndOption == 3 then
                 self:nextLevel()
             end
         end
