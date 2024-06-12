@@ -75,7 +75,7 @@ function GameScene:init()
     self:updateTimeSprite(0.0)
 
     local systemMenu = pd.getSystemMenu()
-    systemMenu:addMenuItem("Reset", function()
+    systemMenu:addMenuItem("Reset Level", function()
         if self.player then
             self.player:reset()
         end

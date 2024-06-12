@@ -28,11 +28,14 @@ AudioManager.sfx = {
     transitionIn = sp("sound/ui/transitionIn")
 }
 
-local songVolume = 0.5
+local lowVol = 0.2
+local medVol = 0.4
+local highVol = 0.6
 AudioManager.songs = {
     cosmicDust = fp("sound/music/CosmicDust")
 }
-AudioManager.songs.cosmicDust:setVolume(songVolume)
+AudioManager.songs.cosmicDust:setVolume(medVol)
+AudioManager.volume = medVol
 
 AudioManager.playSong = function(song)
     if song == currentlyPlayingSong then
@@ -48,6 +51,24 @@ AudioManager.playSong = function(song)
 
     currentlyPlayingSong = song
     song:play(0)
+end
+
+AudioManager.setMusicVolMenuOption = function()
+    local menu = pd.getSystemMenu()
+    menu:addOptionsMenuItem("Music", {"Off", "Low", "Med", "High"}, CUR_MUSIC_VOL, function(value)
+        if currentlyPlayingSong then
+            CUR_MUSIC_VOL = value
+            local volume = 0.0
+            if value == "Low" then
+                volume = lowVol
+            elseif value == "Med" then
+                volume = medVol
+            elseif value == "High" then
+                volume = highVol
+            end
+            currentlyPlayingSong:setVolume(volume)
+        end
+    end)
 end
 
 AudioManager.play = function(sound, count)

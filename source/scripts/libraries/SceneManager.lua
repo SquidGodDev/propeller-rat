@@ -103,6 +103,7 @@ function cleanupScene()
     uiQueue = {}
     local systemMenu = pd.getSystemMenu()
     systemMenu:removeAllMenuItems()
+    AudioManager.setMusicVolMenuOption()
     local allTimers = pd.timer.allTimers()
     for _, timer in ipairs(allTimers) do
         timer:remove()
