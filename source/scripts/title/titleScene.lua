@@ -77,6 +77,7 @@ end
 
 function TitleScene:update()
     if pd.buttonJustPressed(pd.kButtonA) then
+        audioManager.play(audioManager.sfx.select)
         SceneManager.switchScene(WorldSelectScene)
     end
 end

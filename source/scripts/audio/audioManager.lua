@@ -28,9 +28,9 @@ AudioManager.sfx = {
     transitionIn = sp("sound/ui/transitionIn")
 }
 
-local lowVol = 0.2
-local medVol = 0.4
-local highVol = 0.6
+local lowVol = 0.1
+local medVol = 0.2
+local highVol = 0.4
 AudioManager.songs = {
     cosmicDust = fp("sound/music/CosmicDust")
 }

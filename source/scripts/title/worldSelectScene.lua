@@ -39,13 +39,18 @@ for levelIndex=1,levelCount do
     end
 end
 
+local starfield = Starfield(800, 600)
+
 class("WorldSelectScene").extends()
 
 function WorldSelectScene:init()
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
-    self.starfieldSprite = Starfield(800, 600)
+    self.starfieldSprite = starfield
+    self.starfieldSprite:add()
+
+    self.worldCompleted = 0
 
     local completedWorlds = {}
     local worldGap = 400
@@ -73,6 +78,7 @@ function WorldSelectScene:init()
         local lockImagetable = assets.getImagetable("images/levelSelect/lock")
         if i ~= 1 then
             if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
+                self.worldCompleted = i
                 pd.timer.performAfterDelay(900, function()
                     audioManager.play(audioManager.sfx.unlocked)
                 end)
@@ -154,6 +160,10 @@ function WorldSelectScene:update()
             self.enteringScene = false
             -- Clear crank ticks
             pd.getCrankTicks(2)
+            if self.worldCompleted ~= 0 then
+                SELECTED_WORLD = self.worldCompleted
+                self.selectedWorld = self.worldCompleted
+            end
         else
             return
         end

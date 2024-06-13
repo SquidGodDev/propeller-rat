@@ -11,7 +11,6 @@ function Starfield:init(width, height)
 
     self:setIgnoresDrawOffset(true)
     self:setCenter(0.0, 0.5)
-    self:add()
 
     self:generateStarfield(width, height)
 end
