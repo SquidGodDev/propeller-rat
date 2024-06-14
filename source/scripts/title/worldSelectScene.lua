@@ -19,7 +19,7 @@ local font = FONT
 local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
-local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon"}
+local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon", "Ceres b"}
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
@@ -76,7 +76,7 @@ function WorldSelectScene:init()
         completedWorlds[i] = worldCompleted
 
         local lockImagetable = assets.getImagetable("images/levelSelect/lock")
-        if i ~= 1 then
+        if i ~= 1 and not UNLOCK_ALL_WORLDS then
             if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
                 self.worldCompleted = i
                 pd.timer.performAfterDelay(900, function()
@@ -205,7 +205,7 @@ function WorldSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        if self.selectedWorld == 1 or COMPLETED_WORLDS[self.selectedWorld - 1] then
+        if self.selectedWorld == 1 or COMPLETED_WORLDS[self.selectedWorld - 1] or UNLOCK_ALL_WORLDS then
             local exitingScene = sceneManager.switchScene(LevelSelectScene)
             if exitingScene then
                 audioManager.play(audioManager.sfx.select)

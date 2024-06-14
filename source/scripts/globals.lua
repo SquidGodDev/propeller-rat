@@ -3,8 +3,6 @@ local gfx <const> = pd.graphics
 
 math.randomseed(pd.getSecondsSinceEpoch())
 
-DRAW_FPS = true
-
 TAGS = {
     player = 1,
     hazard = 2,
@@ -27,11 +25,14 @@ local earthPlanet = gfx.imagetable.new("images/decoration/earthPlanet")
 local lightPlanet = gfx.imagetable.new("images/decoration/lightPlanet")
 local darkPlanet = gfx.imagetable.new("images/decoration/darkPlanet")
 local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
-PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPlanet, earthPlanet}
+PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, earthPlanet, earthPlanet, earthPlanet}
 
 FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
 
+-- DEBUG
+DRAW_FPS = true
+UNLOCK_ALL_WORLDS = true
 
 -- Save Data
 CUR_LEVEL = 1

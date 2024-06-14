@@ -72,10 +72,13 @@ function Block:update()
 
     local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed, self.y + self.ySpeed)
 
+    local bounceNormal
     local bounceCollision = false
     for i=1,length do
-        local collisionSprite = collisions[i].other
+        local collision = collisions[i]
+        local collisionSprite = collision.other
         local collisionTag = collisionSprite:getTag()
+        bounceNormal = collision.normal
         if collisionTag == TAGS.player then
             collisionSprite:reset()
         end
@@ -90,8 +93,12 @@ function Block:update()
 
     if bounceCollision then
         audioManager.play(audioManager.sfx.bounce)
-        self.xSpeed = -self.xSpeed
-        self.ySpeed = -self.ySpeed
+        if bounceNormal.x ~= 0 then
+            self.xSpeed = -self.xSpeed
+        end
+        if bounceNormal.y ~= 0 then
+            self.ySpeed = -self.ySpeed
+        end
     end
 end
 
