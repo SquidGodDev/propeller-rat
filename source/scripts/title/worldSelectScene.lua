@@ -65,12 +65,15 @@ function WorldSelectScene:init()
         worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
         local timeTotal = 0.0
         local worldCompleted = true
+        local totalLevelCount = #worldLevelIIDs
+        local completedLevelCount = 0
         for _, iid in ipairs(worldLevelIIDs) do
             local levelTime = levelTimes[iid]
             if not levelTime then
                 worldCompleted = false
                 break
             end
+            completedLevelCount += 1
             timeTotal += levelTime
         end
         completedWorlds[i] = worldCompleted
@@ -94,6 +97,11 @@ function WorldSelectScene:init()
         if worldCompleted then
             worldTimeText = utilities.formatTime(timeTotal)
         end
+
+        local completedLevelsText = string.format("%02d",completedLevelCount) .. "/" .. totalLevelCount
+        local completedLevelsSprite = gfx.sprite.spriteWithText(completedLevelsText, 100, 20, nil, nil, nil, nil, font)
+        completedLevelsSprite:moveTo(worldX + 1, worldY - 65)
+        completedLevelsSprite:add()
 
         local timeTextWidth, timeTextHeight = 64, 13
         local textImage = gfx.image.new(timeTextWidth, timeTextHeight)

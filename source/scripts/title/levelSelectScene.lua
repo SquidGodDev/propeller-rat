@@ -163,6 +163,22 @@ local function getPreviewWithLevelTimes(worldDepth)
     return previewImage
 end
 
+local function getCompletedLevelsText(worldDepth)
+    local levelIIDs = worldIIDs[worldDepth]
+    local worldLevelCount = #allLevelPreviews[worldDepth]
+    local completedLevels = 0
+    for i=1, worldLevelCount do
+        local levelIID = levelIIDs[i]
+        local levelTime = levelTimes[levelIID]
+        if levelTime then
+            completedLevels += 1
+        else
+            break
+        end
+    end
+    return string.format("%02d",completedLevels) .. "/" .. worldLevelCount
+end
+
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init()
@@ -186,6 +202,12 @@ function LevelSelectScene:init()
     local targetX = previewX - borderWidth / 2 - (self.selectedLevel - 1) * (borderWidth + previewGap)
     self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
+
+    local completedLevelsText = getCompletedLevelsText(worldIndex)
+    local completedLevelsSprite = gfx.sprite.spriteWithText(completedLevelsText, 100, 20, nil, nil, nil, nil, font)
+    completedLevelsSprite:setCenter(0, 0)
+    completedLevelsSprite:moveTo(3, 3)
+    completedLevelsSprite:add()
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
     self.nameSprite:setCenter(0.5, 0.5)
