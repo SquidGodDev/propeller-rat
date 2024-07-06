@@ -73,6 +73,12 @@ function TitleScene:init()
             end)
         end
     end
+
+    if DRAW_FPS or UNLOCK_ALL_WORLDS then
+        local debugModeSprite = gfx.sprite.spriteWithText("GAME IN DEBUG MODE", 200, 30, nil, nil, nil, nil, font)
+        debugModeSprite:moveTo(200, 120)
+        debugModeSprite:add()
+    end
 end
 
 function TitleScene:update()

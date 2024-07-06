@@ -98,7 +98,7 @@ function WorldSelectScene:init()
             worldTimeText = utilities.formatTime(timeTotal)
         end
 
-        local completedLevelsText = string.format("%02d",completedLevelCount) .. "/" .. totalLevelCount
+        local completedLevelsText = string.format("%02d",completedLevelCount) .. "/" .. string.format("%02d",totalLevelCount)
         local completedLevelsSprite = gfx.sprite.spriteWithText(completedLevelsText, 100, 20, nil, nil, nil, nil, font)
         completedLevelsSprite:moveTo(worldX + 1, worldY - 65)
         completedLevelsSprite:add()

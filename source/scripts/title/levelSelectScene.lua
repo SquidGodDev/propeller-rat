@@ -174,7 +174,7 @@ local function getCompletedLevelsText(worldDepth)
             completedLevels += 1
         end
     end
-    return string.format("%02d",completedLevels) .. "/" .. worldLevelCount
+    return string.format("%02d",completedLevels) .. "/" .. string.format("%02d",worldLevelCount)
 end
 
 class('LevelSelectScene').extends()

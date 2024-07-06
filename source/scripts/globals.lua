@@ -31,8 +31,8 @@ FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
 
 -- DEBUG
-DRAW_FPS = true
-UNLOCK_ALL_WORLDS = true
+DRAW_FPS = false
+UNLOCK_ALL_WORLDS = false
 
 -- Save Data
 CUR_LEVEL = 1
