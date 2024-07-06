@@ -1,5 +1,7 @@
 name=Propeller Rat
 author=SquidGod
+description=Propeller around as a rat - in space
 bundleID=com.squidgod.propellerrat
 version=1.0
+buildNumber=1
 imagePath=launcherImages
