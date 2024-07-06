@@ -65,6 +65,11 @@ function Turret:update()
     end
 end
 
+
+
+local projectileWidth = 8
+local projectileBorder = 1
+
 class('Projectile').extends(gfx.sprite)
 
 function Projectile:init(x, y, xSpeed, ySpeed)
@@ -80,7 +85,7 @@ function Projectile:init(x, y, xSpeed, ySpeed)
     self:setTag(TAGS.projectile)
     self:setGroups(TAGS.projectile)
     self:setCollidesWithGroups({TAGS.player, TAGS.hazard, TAGS.wall})
-    self:setCollideRect(0, 0, projectileImage:getSize())
+    self:setCollideRect(projectileBorder, projectileBorder, projectileWidth, projectileWidth)
 end
 
 function Projectile:collisionResponse()
