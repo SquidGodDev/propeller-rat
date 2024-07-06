@@ -71,10 +71,10 @@ function WorldSelectScene:init()
             local levelTime = levelTimes[iid]
             if not levelTime then
                 worldCompleted = false
-                break
+            else
+                completedLevelCount += 1
+                timeTotal += levelTime
             end
-            completedLevelCount += 1
-            timeTotal += levelTime
         end
         completedWorlds[i] = worldCompleted
 

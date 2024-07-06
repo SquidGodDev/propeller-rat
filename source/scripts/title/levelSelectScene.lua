@@ -172,8 +172,6 @@ local function getCompletedLevelsText(worldDepth)
         local levelTime = levelTimes[levelIID]
         if levelTime then
             completedLevels += 1
-        else
-            break
         end
     end
     return string.format("%02d",completedLevels) .. "/" .. worldLevelCount
