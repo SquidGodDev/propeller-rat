@@ -75,12 +75,12 @@ function GameScene:init()
     self:updateTimeSprite(0.0)
 
     local systemMenu = pd.getSystemMenu()
-    systemMenu:addMenuItem("Reset Level", function()
+    self.resetLevelMenuItem = systemMenu:addMenuItem("Reset Level", function()
         if self.player then
             self.player:reset()
         end
     end)
-    systemMenu:addMenuItem("Level Select", function()
+    self.levelSelectMenuItem = systemMenu:addMenuItem("Level Select", function()
         if self.player then
             if self.player:isDisabled() then
                 return
@@ -164,6 +164,10 @@ function GameScene:recordLevelTime()
 end
 
 function GameScene:levelEnd()
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:removeMenuItem(self.resetLevelMenuItem)
+    systemMenu:removeMenuItem(self.levelSelectMenuItem)
+
     self.curLevel:stopLevelHazards()
 
     self.popupActive = false
