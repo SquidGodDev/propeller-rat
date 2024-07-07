@@ -20,6 +20,7 @@ AudioManager.sfx = {
     smash = sp("sound/level/smash"),
     teleporterPowerUp = sp("sound/level/teleporterPowerUp"),
     chipPickUp = sp("sound/level/chipPickUp"),
+    release = sp("sound/level/release"),
     navigate = sp("sound/ui/navigate"),
     select = sp("sound/ui/select"),
     error = sp("sound/ui/error"),

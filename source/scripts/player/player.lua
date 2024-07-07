@@ -85,6 +85,7 @@ function Player:update()
 
     if self.frozen then
         if pd.buttonJustPressed(pd.kButtonA) then
+            audioManager.play(audioManager.sfx.release)
             self.frozen = false
             self.aButtonPopup:remove()
             self.gameScene:startLevelTime()
