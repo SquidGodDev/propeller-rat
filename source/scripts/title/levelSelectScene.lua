@@ -91,7 +91,7 @@ for levelIndex=1,levelCount do
                 icon:drawAnchored(entityX, entityY, 0.5, 0.5)
                 icon:drawAnchored(tailX, tailY, 0.5, 0.5)
                 gfx.drawLine(entityX, entityY, tailX, tailY)
-            else
+            elseif icon then
                 icon:drawAnchored(entityX, entityY, 0.5, 0.5)
             end
         end

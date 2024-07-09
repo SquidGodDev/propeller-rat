@@ -3,6 +3,8 @@ local gfx <const> = pd.graphics
 
 local ldtk <const> = LDtk
 
+local font = FONT
+
 class('Level').extends(gfx.sprite)
 
 function Level:init(levelIndex)
@@ -52,6 +54,13 @@ function Level:init(levelIndex)
             table.insert(self.hazards, Laser(entityX, entityY, entity))
         elseif entityName == "Key" then
             table.insert(keys, Key(entityX, entityY))
+        elseif entityName == "HelpText" then
+            local text = entity.fields.text
+            local helpTextSprite = gfx.sprite.spriteWithText(text, 400, 30, nil, nil, nil, nil, font)
+            helpTextSprite:setCenter(0.5, 0.0)
+            helpTextSprite:moveTo(entityX, entityY)
+            helpTextSprite:setZIndex(Z_INDEXES.helpText)
+            helpTextSprite:add()
         end
     end
 

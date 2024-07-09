@@ -24,7 +24,7 @@ local setDisplayOffset = pd.display.setOffset
 
 local smoothSpeed <const> = 0.06
 
-assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat", "images/player/aButtonPopup"})
+assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat", "images/levels/entranceTeleporter", "images/levels/fadingEntranceTeleporter"})
 
 local playerSpeed = 2.5
 local playerAnimationFrameRate = 50 -- ms
@@ -49,8 +49,9 @@ function Player:init(gameScene, x, y)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup, TAGS.wall})
     self:setCollideRect(4, 3, 15, 20)
 
-    self.aButtonPopup = Utilities.animatedSprite(x, y - 28, assets.getImagetable("images/player/aButtonPopup"), 500, true)
-    self.aButtonPopup:setZIndex(Z_INDEXES.ui)
+    self.frozenPlayerSprite = Utilities.animatedSprite(x, y, assets.getImagetable("images/levels/entranceTeleporter"), 100, true)
+    self.frozenPlayerSprite:setZIndex(Z_INDEXES.ui)
+    self:setVisible(false)
 
     self.disabled = true
     self.frozen = true
@@ -84,10 +85,18 @@ function Player:update()
     end
 
     if self.frozen then
-        if pd.buttonJustPressed(pd.kButtonA) then
+        if pd.buttonIsPressed(pd.kButtonA)
+        or pd.buttonIsPressed(pd.kButtonB)
+        or pd.buttonIsPressed(pd.kButtonUp)
+        or pd.buttonIsPressed(pd.kButtonDown)
+        or pd.buttonIsPressed(pd.kButtonLeft)
+        or pd.buttonIsPressed(pd.kButtonRight) then
             audioManager.play(audioManager.sfx.release)
             self.frozen = false
-            self.aButtonPopup:remove()
+            self.frozenPlayerSprite:remove()
+            local fadingEntranceTeleporter = Utilities.animatedSprite(self.x, self.y, assets.getImagetable("images/levels/fadingEntranceTeleporter"), 100, false)
+            fadingEntranceTeleporter:setZIndex(Z_INDEXES.ui)
+            self:setVisible(true)
             self.gameScene:startLevelTime()
         else
             return
@@ -161,8 +170,6 @@ function Player:reset()
     if self.disabled then
         return
     end
-
-    self.aButtonPopup:remove()
 
     audioManager.playRandom(squeaksSfx)
 

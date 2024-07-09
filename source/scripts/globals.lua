@@ -12,6 +12,7 @@ TAGS = {
 }
 
 Z_INDEXES = {
+    helpText = 5,
     level = 10,
     pickup = 20,
     player = 30,
