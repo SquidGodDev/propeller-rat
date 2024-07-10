@@ -24,7 +24,13 @@ local setDisplayOffset = pd.display.setOffset
 
 local smoothSpeed <const> = 0.06
 
-assets.preloadImagetables({"images/player/rat", "images/player/propeller", "images/player/spinningRat", "images/levels/entranceTeleporter", "images/levels/fadingEntranceTeleporter"})
+assets.preloadImagetables({
+    "images/player/rat",
+    "images/player/propeller",
+    "images/player/spinningRat",
+    "images/player/directionArrow",
+    "images/levels/entranceTeleporter",
+    "images/levels/fadingEntranceTeleporter"})
 
 local playerSpeed = 2.5
 local playerAnimationFrameRate = 50 -- ms
@@ -62,6 +68,12 @@ function Player:init(gameScene, x, y)
     self.animationLoop.startFrame = flyStartFrame
     self.animationLoop.endFrame = flyEndFrame
     self:setImage(self.animationLoop:image())
+
+    self.directionArrows = assets.getImagetable("images/player/directionArrow")
+    self.directionArrowSprite = gfx.sprite.new()
+    self.directionArrowSprite:moveTo(x, y)
+    self.directionArrowSprite:setZIndex(Z_INDEXES.ui)
+    self.directionArrowSprite:add()
 end
 
 function Player:collisionResponse()
@@ -98,7 +110,10 @@ function Player:update()
             fadingEntranceTeleporter:setZIndex(Z_INDEXES.ui)
             self:setVisible(true)
             self.gameScene:startLevelTime()
+            self.directionArrowSprite:remove()
         else
+            local crankPosition = math.floor(getCrankPosition()) + 1
+            self.directionArrowSprite:setImage(self.directionArrows[crankPosition])
             return
         end
     end
