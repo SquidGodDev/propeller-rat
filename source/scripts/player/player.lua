@@ -53,7 +53,10 @@ function Player:init(gameScene, x, y)
     self:setTag(TAGS.player)
     self:setGroups(TAGS.player)
     self:setCollidesWithGroups({TAGS.hazard, TAGS.projectile, TAGS.pickup, TAGS.wall})
-    self:setCollideRect(4, 3, 15, 20)
+    self.unflippedCollisionRect = pd.geometry.rect.new(5, 6, 11, 17)
+    self.flippedCollisionRect = pd.geometry.rect.new(7, 6, 11, 17)
+    self:setCollideRect(self.unflippedCollisionRect)
+    self.imageFlip = gfx.kImageUnflipped
 
     self.frozenPlayerSprite = Utilities.animatedSprite(x, y, assets.getImagetable("images/levels/entranceTeleporter"), 100, true)
     self.frozenPlayerSprite:setZIndex(Z_INDEXES.ui)
@@ -81,7 +84,7 @@ function Player:collisionResponse()
 end
 
 function Player:update()
-    self:setImage(self.animationLoop:image())
+    self:setImage(self.animationLoop:image(), self.imageFlip)
 
     local targetOffsetX, targetOffsetY = -(self.x - 200), -(self.y - 120)
     if self.resetting then
@@ -122,10 +125,12 @@ function Player:update()
     local crankPosition = rad(getCrankPosition() - 90)
     local crankCos, crankSin = cos(crankPosition), sin(crankPosition)
     local _, _, collisions, length = self:moveWithCollisions(x + playerSpeed * crankCos, y + playerSpeed * crankSin)
-    if crankCos < 0 then
-        self:setImageFlip(gfx.kImageFlippedX)
-    elseif crankCos > 0 then
-        self:setImageFlip(gfx.kImageUnflipped)
+    if crankCos < 0 and self.imageFlip ~= gfx.kImageFlippedX then
+        self.imageFlip = gfx.kImageFlippedX
+        self:setCollideRect(self.flippedCollisionRect)
+    elseif crankCos > 0 and self.imageFlip ~= gfx.kImageUnflipped then
+        self.imageFlip = gfx.kImageUnflipped
+        self:setCollideRect(self.unflippedCollisionRect)
     end
 
     for i=1, length do
