@@ -14,7 +14,9 @@ function Key:init(x, y)
 
     local keyImage = assets.getImage("images/levels/key")
     self:setImage(keyImage)
-    self:setCollideRect(0, 0, self:getSize())
+    local hitboxBuffer = 4
+    local keyWidth, keyHeight = self:getSize()
+    self:setCollideRect(-hitboxBuffer, -hitboxBuffer, keyWidth + hitboxBuffer*2, keyHeight + hitboxBuffer*2)
 
     local bobTimer = pd.timer.new(1000, -4, 4)
     bobTimer.repeats = true
