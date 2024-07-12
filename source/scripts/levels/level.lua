@@ -7,7 +7,10 @@ local font = FONT
 
 class('Level').extends(gfx.sprite)
 
-function Level:init(levelIndex)
+function Level:init(levelIndex, laserManager, projectileManager)
+    self.laserManager = laserManager
+    self.projectileManager = projectileManager
+
     local levelName = "Level_" .. levelIndex
 
     for layerName, layer in pairs(ldtk.get_layers(levelName)) do
@@ -51,7 +54,11 @@ function Level:init(levelIndex)
         elseif entityName == "Spinner" then
             table.insert(self.hazards, Spinner(entityX, entityY, entity))
         elseif entityName == "Laser" then
-            table.insert(self.hazards, Laser(entityX, entityY, entity))
+            local fields = entity.fields
+            local delay = fields.delay
+            local interval = fields.interval
+            local tailX, tailY = fields.tail.cx * 16 + 8, fields.tail.cy * 16 + 8
+            laserManager:addLaser(entityX, entityY, tailX, tailY, delay, interval)
         elseif entityName == "Key" then
             table.insert(keys, Key(entityX, entityY))
         elseif entityName == "HelpText" then
@@ -76,6 +83,7 @@ function Level:getStartPos()
 end
 
 function Level:stopLevelHazards()
+    self.laserManager:stop()
     for _, hazard in ipairs(self.hazards) do
         hazard:stop()
     end

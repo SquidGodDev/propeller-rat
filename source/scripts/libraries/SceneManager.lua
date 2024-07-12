@@ -10,7 +10,6 @@ local transitionImage = nil
 
 local newScene = nil
 
-local drawQueue = {}
 local uiQueue = {}
 
 SceneManager = {}
@@ -18,16 +17,6 @@ SceneManager.transitioning = false
 
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
-local drawUpdate = function()
-    for i=#drawQueue, 1, -1 do
-        local drawObject = drawQueue[i]
-        local drawUpdate = drawObject.update
-        local remove = drawUpdate(drawObject)
-        if remove then
-            table.remove(drawQueue, i)
-        end
-    end
-end
 local uiUpdate = function()
     for i=#uiQueue, 1, -1 do
         local drawObject = uiQueue[i]
@@ -61,10 +50,6 @@ function SceneManager.startingScene(scene)
     setSceneUpdate(sceneInstance)
 end
 
-function SceneManager.addToDrawQueue(drawObject)
-    table.insert(drawQueue, drawObject)
-end
-
 function SceneManager.addToUiQueue(drawObject)
     table.insert(uiQueue, drawObject)
 end
@@ -82,7 +67,6 @@ function setSceneUpdate(scene)
         spriteUpdate()
         scene:update()
         timerUpdate()
-        drawUpdate()
         uiUpdate()
         if drawFps then
             pd.drawFPS(0, 228)

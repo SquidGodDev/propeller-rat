@@ -46,6 +46,8 @@ local planetImagetables = PLANET_IMAGETABLES
 
 local timeTextWidth, timeTextHeight = 64, 13
 
+local previousTime = nil
+
 assets.preloadImages({"images/decoration/stars"})
 assets.preloadImagetables({"images/levels/ui/selector"})
 
@@ -89,11 +91,27 @@ function GameScene:init()
         end
         SceneManager.switchScene(LevelSelectScene)
     end)
+
+    previousTime = nil
 end
 
 function GameScene:update()
     if self.timerActive then
         self:updateTimeSprite(getElapsedTime())
+    end
+
+    local dt = 0
+    local currentTime <const> = playdate.getCurrentTimeMilliseconds()
+	if previousTime ~= nil then
+		dt = currentTime - previousTime
+	end
+	previousTime = currentTime
+
+    if self.laserManager then
+        self.laserManager:update(dt)
+    end
+    if self.projectileManager then
+        self.projectileManager:update(dt)
     end
 
     if self.popupActive then
@@ -241,7 +259,9 @@ function GameScene:setUpLevel()
     local planet = Utilities.animatedSprite(365, 45, planetImagetable, 100, true)
     planet:setIgnoresDrawOffset(true)
 
-    self.curLevel = Level(self.curLevelNum)
+    self.laserManager = LaserManager()
+    self.projectileManager = nil
+    self.curLevel = Level(self.curLevelNum, self.laserManager, self.projectileManager)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 
