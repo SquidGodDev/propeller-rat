@@ -31,6 +31,8 @@ local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 class('TitleScene').extends()
 
 function TitleScene:init()
+    self.transitioning = false
+
     audioManager.playSong(audioManager.songs.cosmicDust)
 
     gfx.setBackgroundColor(gfx.kColorBlack)
@@ -82,7 +84,8 @@ function TitleScene:init()
 end
 
 function TitleScene:update()
-    if pd.buttonJustPressed(pd.kButtonA) then
+    if pd.buttonJustPressed(pd.kButtonA) and not self.transitioning then
+        self.transitioning = true
         audioManager.play(audioManager.sfx.select)
         SceneManager.switchScene(WorldSelectScene)
     end
