@@ -61,6 +61,12 @@ function LaserManager:clear()
 end
 
 function LaserManager:addLaser(headX, headY, tailX, tailY, delay, interval)
+    local laserSpriteHead = gfx.sprite.new(laserImagetable[1])
+    laserSpriteHead:moveTo(headX, headY)
+    laserSpriteHead:add()
+    local laserSpriteTail = gfx.sprite.new(laserImagetable[1])
+    laserSpriteTail:moveTo(tailX, tailY)
+    laserSpriteTail:add()
     tableInsert(laserHeadX, headX)
     tableInsert(laserHeadY, headY)
     tableInsert(laserTailX, tailX)
@@ -158,12 +164,12 @@ function LaserManager:update(dt)
                         end
                     end
                 end
+
+                -- Draw laser head/tail
+                local laserImage = laserImagetable[animationIndex]
+                laserImage:drawAnchored(headX, headY, 0.5, 0.5)
+                laserImage:drawAnchored(tailX, tailY, 0.5, 0.5)
             end
         end
-
-        -- Draw laser head/tail
-        local laserImage = laserImagetable[animationIndex]
-        laserImage:drawAnchored(headX, headY, 0.5, 0.5)
-        laserImage:drawAnchored(tailX, tailY, 0.5, 0.5)
     end
 end
