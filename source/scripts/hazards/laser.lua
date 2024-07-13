@@ -151,7 +151,6 @@ function LaserManager:update(dt)
                     local remainingFireTime = laserFireTime[i] - dt
                     laserFireTime[i] = remainingFireTime
                     if remainingFireTime > 0 then
-                        print(remainingFireTime/fireTime)
                         local laserWidth = (1 - easeOutExpo(1 - remainingFireTime/fireTime)) * beamWidth
                         if laserWidth > 1 then
                             setLineWidth(laserWidth)

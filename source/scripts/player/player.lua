@@ -32,7 +32,7 @@ assets.preloadImagetables({
     "images/levels/entranceTeleporter",
     "images/levels/fadingEntranceTeleporter"})
 
-local playerSpeed = 2.5
+local playerSpeed = 2.5 * (30 / 1000)
 local playerAnimationFrameRate = 50 -- ms
 local flyStartFrame, flyEndFrame = 1, 12
 
@@ -83,7 +83,7 @@ function Player:collisionResponse()
     return gfx.sprite.kCollisionTypeOverlap
 end
 
-function Player:update()
+function Player:updatePlayer(dt)
     self:setImage(self.animationLoop:image(), self.imageFlip)
 
     local targetOffsetX, targetOffsetY = -(self.x - 200), -(self.y - 120)
@@ -124,7 +124,8 @@ function Player:update()
     local x, y = self.x, self.y
     local crankPosition = rad(getCrankPosition() - 90)
     local crankCos, crankSin = cos(crankPosition), sin(crankPosition)
-    local _, _, collisions, length = self:moveWithCollisions(x + playerSpeed * crankCos, y + playerSpeed * crankSin)
+    local adjustedPlayerSpeed = playerSpeed * dt
+    local _, _, collisions, length = self:moveWithCollisions(x + adjustedPlayerSpeed * crankCos, y + adjustedPlayerSpeed * crankSin)
     if crankCos < 0 and self.imageFlip ~= gfx.kImageFlippedX then
         self.imageFlip = gfx.kImageFlippedX
         self:setCollideRect(self.flippedCollisionRect)

@@ -106,12 +106,14 @@ function GameScene:update()
 		dt = currentTime - previousTime
 	end
 	previousTime = currentTime
-
     if self.laserManager then
         self.laserManager:update(dt)
     end
     if self.projectileManager then
         self.projectileManager:update(dt)
+    end
+    if self.player then
+        self.player:updatePlayer(dt)
     end
 
     if self.popupActive then
