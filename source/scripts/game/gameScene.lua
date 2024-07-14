@@ -109,8 +109,8 @@ function GameScene:update()
     if self.laserManager then
         self.laserManager:update(dt)
     end
-    if self.projectileManager then
-        self.projectileManager:update(dt)
+    if self.turretManager then
+        self.turretManager:update(dt)
     end
     if self.player then
         self.player:updatePlayer(dt)
@@ -262,8 +262,8 @@ function GameScene:setUpLevel()
     planet:setIgnoresDrawOffset(true)
 
     self.laserManager = LaserManager()
-    self.projectileManager = nil
-    self.curLevel = Level(self.curLevelNum, self.laserManager, self.projectileManager)
+    self.turretManager = TurretManager()
+    self.curLevel = Level(self.curLevelNum, self.laserManager, self.turretManager)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 

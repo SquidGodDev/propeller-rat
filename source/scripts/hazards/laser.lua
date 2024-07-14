@@ -11,6 +11,7 @@ local function easeOutExpo(x)
 end
 
 local audioManager <const> = AudioManager
+local laserSfx = audioManager.sfx.laser
 
 local laserImagetable = gfx.imagetable.new("images/hazards/laser")
 local laserImagetableLength = #laserImagetable
@@ -38,6 +39,7 @@ class('LaserManager').extends()
 function LaserManager:init()
     self:clear()
     self.stopped = false
+    self.flashCounter = 0
 end
 
 function LaserManager:stop()
@@ -62,9 +64,11 @@ end
 
 function LaserManager:addLaser(headX, headY, tailX, tailY, delay, interval)
     local laserSpriteHead = gfx.sprite.new(laserImagetable[1])
+    laserSpriteHead:setZIndex(Z_INDEXES.hazard)
     laserSpriteHead:moveTo(headX, headY)
     laserSpriteHead:add()
     local laserSpriteTail = gfx.sprite.new(laserImagetable[1])
+    laserSpriteTail:setZIndex(Z_INDEXES.hazard)
     laserSpriteTail:moveTo(tailX, tailY)
     laserSpriteTail:add()
     tableInsert(laserHeadX, headX)
@@ -83,11 +87,10 @@ end
 function LaserManager:update(dt)
     setColor(kColorWhite)
     local reduceFlashing = pd.getReduceFlashing()
+    local stopped = self.stopped
+    self.flashCounter += 1
+    local flashActive = self.flashCounter % 3 == 0
     for i=#laserHeadX, 1, -1 do
-        local headX, headY = laserHeadX[i], laserHeadY[i]
-        local tailX, tailY = laserTailX[i], laserTailY[i]
-        local animationIndex = laserAnimationIndex[i]
-
         -- Check if laser has starting delay 
         local delay = laserDelay[i]
         if delay > 0 then
@@ -95,7 +98,9 @@ function LaserManager:update(dt)
             laserDelay[i] = delay
         end
 
-        if delay <= 0 and not self.stopped then
+        if delay <= 0 and not stopped then
+            local animationIndex = laserAnimationIndex[i]
+
             -- Update laser interval time
             local currentInterval = laserCurrentInterval[i]
             currentInterval -= dt
@@ -110,20 +115,21 @@ function LaserManager:update(dt)
             end
 
             if animationIndex > 1 then
+                local headX, headY = laserHeadX[i], laserHeadY[i]
+                local tailX, tailY = laserTailX[i], laserTailY[i]
+
                 -- Update laser head/tail animation frame time
                 local animationFrameTime = laserAnimationFrameTime[i]
                 if animationFrameTime > 0 then
                     animationFrameTime -= dt
                 end
 
-                local resetting = false
                 -- Update laser head/tail animation frame
                 if animationFrameTime <= 0 then
                     animationIndex += 1
                     if animationIndex > laserImagetableLength then
                         -- Reset laser head/tail animation
                         animationIndex = 1
-                        resetting = true
                     else
                         animationFrameTime = laserFrameTime
                     end
@@ -132,16 +138,16 @@ function LaserManager:update(dt)
                 laserAnimationFrameTime[i] = animationFrameTime
 
                 local activated = laserInterval[i] - currentInterval >= activateTime
-                if not activated and not resetting then
+                if not activated and animationIndex ~= 1 then
                     -- Draw preparation laser
-                    if currentInterval % 2 == 0 or reduceFlashing then
+                    if animationIndex == 2 or flashActive or reduceFlashing then
                         setLineWidth(1)
                         drawLine(headX, headY, tailX, tailY)
                     end
                 elseif activated then
                     -- Fire laser
                     if not laserFired[i] then
-                        audioManager.play(audioManager.sfx.laser)
+                        audioManager.play(laserSfx)
                         laserFired[i] = true
                         laserFireTime[i] = fireTime
                         local intersectedSprites = gfx.sprite.querySpritesAlongLine(headX, headY, tailX, tailY)
