@@ -51,6 +51,7 @@ AudioManager.playSong = function(song)
     end
 
     currentlyPlayingSong = song
+    AudioManager.updateMusicVol(CUR_MUSIC_VOL)
     song:play(0)
 end
 
@@ -59,17 +60,21 @@ AudioManager.setMusicVolMenuOption = function()
     menu:addOptionsMenuItem("Music", {"Off", "Low", "Med", "High"}, CUR_MUSIC_VOL, function(value)
         if currentlyPlayingSong then
             CUR_MUSIC_VOL = value
-            local volume = 0.0
-            if value == "Low" then
-                volume = lowVol
-            elseif value == "Med" then
-                volume = medVol
-            elseif value == "High" then
-                volume = highVol
-            end
-            currentlyPlayingSong:setVolume(volume)
+            AudioManager.updateMusicVol(value)
         end
     end)
+end
+
+AudioManager.updateMusicVol = function(value)
+    local volume = 0.0
+    if value == "Low" then
+        volume = lowVol
+    elseif value == "Med" then
+        volume = medVol
+    elseif value == "High" then
+        volume = highVol
+    end
+    currentlyPlayingSong:setVolume(volume)
 end
 
 AudioManager.play = function(sound, count)
