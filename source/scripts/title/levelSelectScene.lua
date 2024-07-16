@@ -9,6 +9,7 @@ local audioManager <const> = AudioManager
 local assets <const> = Assets
 assets.preloadImages({
     "images/levelSelect/previewBorder",
+    "images/levelSelect/progressBar",
     "images/decoration/stars"
 })
 
@@ -114,7 +115,7 @@ end
 
 LEVEL_IID_BY_WORLD = worldIIDs
 
-local previewX, previewY = 200, 140
+local previewX, previewY = 200, 124
 local previewGap = 35
 local previewBorder = gfx.image.new("images/levelSelect/previewBorder")
 local borderWidth, borderHeight = previewBorder:getSize()
@@ -163,7 +164,7 @@ local function getPreviewWithLevelTimes(worldDepth)
     return previewImage
 end
 
-local function getCompletedLevelsText(worldDepth)
+local function getCompletedLevelsCount(worldDepth)
     local levelIIDs = worldIIDs[worldDepth]
     local worldLevelCount = #allLevelPreviews[worldDepth]
     local completedLevels = 0
@@ -174,7 +175,7 @@ local function getCompletedLevelsText(worldDepth)
             completedLevels += 1
         end
     end
-    return string.format("%02d",completedLevels) .. "/" .. string.format("%02d",worldLevelCount)
+    return completedLevels, worldLevelCount
 end
 
 class('LevelSelectScene').extends()
@@ -201,15 +202,31 @@ function LevelSelectScene:init()
     self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
 
-    local completedLevelsText = getCompletedLevelsText(worldIndex)
+    local completedLevels, worldLevelCount = getCompletedLevelsCount(worldIndex)
+    local completedLevelsText = string.format("%02d",completedLevels) .. "/" .. string.format("%02d",worldLevelCount)
     local completedLevelsSprite = gfx.sprite.spriteWithText(completedLevelsText, 100, 20, nil, nil, nil, nil, font)
     completedLevelsSprite:setCenter(0, 0)
     completedLevelsSprite:moveTo(3, 3)
     completedLevelsSprite:add()
 
+    local progressBarHeight = 8
+    local progressBarCellSize = 32
+    local progressBarDrawX, progressBarDrawY = 6, 6
+    local progressBarBorderImage = assets.getImage("images/levelSelect/progressBar")
+    local progressBarImage = gfx.image.new(progressBarBorderImage:getSize())
+    gfx.pushContext(progressBarImage)
+        gfx.setColor(gfx.kColorWhite)
+        gfx.fillRect(progressBarDrawX, progressBarDrawY, completedLevels*progressBarCellSize, progressBarHeight)
+        progressBarBorderImage:draw(0, 0)
+    gfx.popContext()
+    self.progressBarSprite = gfx.sprite.new(progressBarImage)
+    self.progressBarSprite:setCenter(0.5, 0.0)
+    self.progressBarSprite:moveTo(200, 210)
+    self.progressBarSprite:add()
+
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
     self.nameSprite:setCenter(0.5, 0.5)
-    self.nameSprite:moveTo(200, 32)
+    self.nameSprite:moveTo(200, 26)
     self.nameSprite:add()
     self:updateName()
 

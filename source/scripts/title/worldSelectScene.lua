@@ -23,7 +23,9 @@ local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon",
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
-    "images/levelSelect/arrowRight"
+    "images/levelSelect/arrowRight",
+    "images/levelSelect/progressBarEmpty",
+    "images/levelSelect/progressBarSeparator"
 })
 
 assets.preloadImagetable("images/levelSelect/lock")
@@ -52,6 +54,7 @@ function WorldSelectScene:init()
 
     self.worldCompleted = 0
 
+    local completedWorldsCount = 0
     local completedWorlds = {}
     local worldGap = 400
     local worldY = 200
@@ -77,6 +80,9 @@ function WorldSelectScene:init()
             end
         end
         completedWorlds[i] = worldCompleted
+        if worldCompleted then
+            completedWorldsCount += 1
+        end
 
         local lockImagetable = assets.getImagetable("images/levelSelect/lock")
         if i ~= 1 and not UNLOCK_ALL_WORLDS then
@@ -122,7 +128,7 @@ function WorldSelectScene:init()
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
     self.nameSprite:setCenter(0.5, 0.5)
-    self.nameSprite:moveTo(200, 32)
+    self.nameSprite:moveTo(200, 22)
     self.nameSprite:setIgnoresDrawOffset(true)
     self.nameSprite:add()
     self:updateName()
@@ -130,13 +136,13 @@ function WorldSelectScene:init()
     local arrowLeft = assets.getImage("images/levelSelect/arrowLeft")
     local arrowRight = assets.getImage("images/levelSelect/arrowRight")
     self.leftArrow = gfx.sprite.new(arrowLeft)
-    self.leftArrow:moveTo(100, 140)
+    self.leftArrow:moveTo(100, 130)
     self.leftArrow:setIgnoresDrawOffset(true)
     self.leftArrow:add()
     self.leftArrow:setVisible(false)
 
     self.rightArrow = gfx.sprite.new(arrowRight)
-    self.rightArrow:moveTo(300, 140)
+    self.rightArrow:moveTo(300, 130)
     self.rightArrow:setIgnoresDrawOffset(true)
     self.rightArrow:add()
     self.rightArrow:setVisible(false)
@@ -145,9 +151,33 @@ function WorldSelectScene:init()
 
     local curWorld = self.worlds[self.selectedWorld]
     local curWorldX, curWorldY = curWorld.x, curWorld.y
-    local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 140)
+    local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 125)
     setDrawOffset(targetOffsetX, targetOffsetY)
     self.starfieldSprite:moveTo(targetOffsetX/10, targetOffsetY/10 + 120)
+
+    local progressBarEmpty = assets.getImage("images/levelSelect/progressBarEmpty"):copy()
+    local progressBarSeparator = assets.getImage("images/levelSelect/progressBarSeparator")
+    local separatorSpace = 320 / #planetImagetables
+    gfx.pushContext(progressBarEmpty)
+        local drawX, drawY = 6+separatorSpace, 4
+        for _=1,#planetImagetables-1 do
+            progressBarSeparator:draw(drawX - 4, drawY)
+            drawX += separatorSpace
+        end
+    gfx.popContext()
+    local progressBarHeight = 8
+    local progressBarDrawX, progressBarDrawY = 6, 6
+    local progressBar = gfx.image.new(progressBarEmpty:getSize())
+    gfx.pushContext(progressBar)
+        gfx.setColor(gfx.kColorWhite)
+        gfx.fillRect(progressBarDrawX, progressBarDrawY, completedWorldsCount*separatorSpace, progressBarHeight)
+        progressBarEmpty:draw(0, 0)
+    gfx.popContext()
+
+    local progressBarSprite = gfx.sprite.new(progressBar)
+    progressBarSprite:moveTo(200, 225)
+    progressBarSprite:setIgnoresDrawOffset(true)
+    progressBarSprite:add()
 
     self.enteringScene = true
     self.exitingScene = false
@@ -156,7 +186,7 @@ end
 function WorldSelectScene:update()
     local curWorld = self.worlds[self.selectedWorld]
     local curWorldX, curWorldY = curWorld.x, curWorld.y
-    local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 140)
+    local targetOffsetX, targetOffsetY = -(curWorldX - 200), -(curWorldY - 125)
     local drawOffsetX, drawOffsetY = getDrawOffset()
     local smoothedX = lerp(drawOffsetX, targetOffsetX, smoothSpeed)
     local smoothedY = lerp(drawOffsetY, targetOffsetY, smoothSpeed)
