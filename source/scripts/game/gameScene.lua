@@ -40,11 +40,11 @@ local popupWidth, popupHeight = levelEndPopupImage:getSize()
 local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
 local selectorBaseX, selectorBaseY = popupX + 56, popupY + 92
 local selectorGap = 41
-local popupTimeX, popupTimeY = 90, 68
+local popupTimeX, popupTimeY = 75, 67
 
 local planetImagetables = PLANET_IMAGETABLES
 
-local timeTextWidth, timeTextHeight = 64, 13
+local timeTextWidth, timeTextHeight = 74, 15
 
 local previousTime = nil
 

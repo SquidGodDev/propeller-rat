@@ -40,7 +40,7 @@ UNLOCK_ALL_WORLDS = debugMode
 CUR_LEVEL = 1
 SELECTED_WORLD = 1
 LEVEL_TIMES = {}
-COMPLETED_WORLDS = {}
+UNLOCKED_WORLDS = {}
 CUR_MUSIC_VOL = "Med"
 
 -- Global Data
@@ -52,7 +52,7 @@ local function loadGameData()
         CUR_LEVEL = gameData.curLevel or CUR_LEVEL
         SELECTED_WORLD = gameData.selectedWorld or SELECTED_WORLD
         LEVEL_TIMES = gameData.levelTimes or LEVEL_TIMES
-        COMPLETED_WORLDS = gameData.completedWorlds or COMPLETED_WORLDS
+        UNLOCKED_WORLDS = gameData.unlockedWorlds or UNLOCKED_WORLDS
         CUR_MUSIC_VOL = gameData.curMusicVol or CUR_MUSIC_VOL
     end
 end
@@ -64,7 +64,7 @@ local function saveGameData()
         curLevel = CUR_LEVEL,
         selectedWorld = SELECTED_WORLD,
         levelTimes = LEVEL_TIMES,
-        completedWorlds = COMPLETED_WORLDS,
+        unlockedWorlds = UNLOCKED_WORLDS,
         curMusicVol = CUR_MUSIC_VOL
     }
 

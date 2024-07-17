@@ -20,12 +20,14 @@ local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
 local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon", "Ceres b"}
+local flagRequirements = {0, 8, 16, 24, 32, 40, 60}
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
     "images/levelSelect/arrowRight",
     "images/levelSelect/progressBarEmpty",
-    "images/levelSelect/progressBarSeparator"
+    "images/levelSelect/progressBarSeparator",
+    "images/levelSelect/flagIcon"
 })
 
 assets.preloadImagetable("images/levelSelect/lock")
@@ -55,12 +57,30 @@ function WorldSelectScene:init()
     self.worldCompleted = 0
     self.unlockingWorld = false
 
+    local levelTimes = LEVEL_TIMES
+    local flags = 0
+    for _, time in pairs(levelTimes) do
+        if time then
+            flags += 1
+        end
+    end
+    local flagSpriteX, flagSpriteY = 6, 6
+    local flagIcon = assets.getImage("images/levelSelect/flagIcon")
+    local flagSprite = gfx.sprite.new(flagIcon)
+    flagSprite:setCenter(0, 0)
+    flagSprite:moveTo(flagSpriteX, flagSpriteY)
+    flagSprite:setIgnoresDrawOffset(true)
+    flagSprite:add()
+    local flagText = gfx.sprite.spriteWithText(tostring(flags), 50, 50, nil, nil, nil, nil, font)
+    flagText:setCenter(0, 0)
+    flagText:moveTo(22, 6)
+    flagText:setIgnoresDrawOffset(true)
+    flagText:add()
+
     local completedWorldsCount = 0
-    local completedWorlds = {}
     local worldGap = 400
     local worldY = 200
     self.worlds = {}
-    local levelTimes = LEVEL_TIMES
     for i, planetImagetable in ipairs(planetImagetables) do
         local worldX = i * worldGap
         local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
@@ -80,14 +100,14 @@ function WorldSelectScene:init()
                 timeTotal += levelTime
             end
         end
-        completedWorlds[i] = worldCompleted
         if worldCompleted then
             completedWorldsCount += 1
         end
 
         local lockImagetable = assets.getImagetable("images/levelSelect/lock")
+        local flagWidth = flagIcon:getSize()
         if i ~= 1 and not UNLOCK_ALL_WORLDS then
-            if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
+            if flags >= flagRequirements[i] and not UNLOCKED_WORLDS[i] then
                 self.worldCompleted = i
                 self.unlockingWorld = true
                 pd.timer.performAfterDelay(900, function()
@@ -95,9 +115,22 @@ function WorldSelectScene:init()
                     self.unlockingWorld = false
                 end)
                 utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
-            elseif not completedWorlds[i - 1] then
+                UNLOCKED_WORLDS[i] = true
+            elseif not UNLOCKED_WORLDS[i] then
+                local flagCountText = gfx.imageWithText(tostring(flagRequirements[i]), 50, 30, nil, nil, nil, nil, font)
+                local flagCountWidth, flagCountHeight = flagCountText:getSize()
+                local spaceBuffer = 2
+                flagCountWidth += flagWidth + spaceBuffer
+                local flagCountImage = gfx.image.new(flagCountWidth, flagCountHeight)
+                gfx.pushContext(flagCountImage)
+                    flagIcon:draw(0, 0)
+                    flagCountText:draw(flagWidth + spaceBuffer, 0)
+                gfx.popContext()
+                local flagCountSprite = gfx.sprite.new(flagCountImage)
+                flagCountSprite:moveTo(worldX, worldY + 25)
+                flagCountSprite:add()
                 local lockSprite = gfx.sprite.new(lockImagetable[1])
-                lockSprite:moveTo(worldX, worldY)
+                lockSprite:moveTo(worldX, worldY - 10)
                 lockSprite:add()
             end
         end
@@ -124,8 +157,6 @@ function WorldSelectScene:init()
 
         worldY = (worldY + 100) % 340
     end
-
-    COMPLETED_WORLDS = completedWorlds
 
     self.selectedWorld = SELECTED_WORLD
 
@@ -246,7 +277,7 @@ function WorldSelectScene:update()
     elseif crankTicks == 1 then
         self:moveRight()
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        if self.selectedWorld == 1 or COMPLETED_WORLDS[self.selectedWorld - 1] or UNLOCK_ALL_WORLDS then
+        if self.selectedWorld == 1 or UNLOCKED_WORLDS[self.selectedWorld] or UNLOCK_ALL_WORLDS then
             local exitingScene = sceneManager.switchScene(LevelSelectScene)
             if exitingScene then
                 audioManager.play(audioManager.sfx.select)

@@ -144,7 +144,7 @@ end
 
 local flagImage = gfx.image.new("images/levelSelect/levelCompleteFlag")
 local flagX, flagY = 15, 0
-local timeX, timeY = 116, 4
+local timeX, timeY = 108, 4
 local levelTimes = LEVEL_TIMES
 local function getPreviewWithLevelTimes(worldDepth)
     local levelIIDs = worldIIDs[worldDepth]
