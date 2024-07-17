@@ -77,11 +77,6 @@ function GameScene:init()
     self:updateTimeSprite(0.0)
 
     local systemMenu = pd.getSystemMenu()
-    self.resetLevelMenuItem = systemMenu:addMenuItem("Reset Level", function()
-        if self.player then
-            self.player:reset()
-        end
-    end)
     self.levelSelectMenuItem = systemMenu:addMenuItem("Level Select", function()
         if self.player then
             if self.player:isDisabled() then
@@ -90,6 +85,11 @@ function GameScene:init()
             self.player:disable()
         end
         SceneManager.switchScene(LevelSelectScene)
+    end)
+    self.resetLevelMenuItem = systemMenu:addMenuItem("Reset Level", function()
+        if self.player then
+            self.player:reset()
+        end
     end)
 
     previousTime = nil
