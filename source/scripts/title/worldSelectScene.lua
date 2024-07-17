@@ -57,6 +57,21 @@ function WorldSelectScene:init()
     self.worldCompleted = 0
     self.unlockingWorld = false
 
+    local deathCountText = gfx.sprite.spriteWithText(tostring(DEATH_COUNT), 100, 30, nil, nil, nil, nil, font)
+    local textWidth = deathCountText:getSize()
+    deathCountText:setCenter(0, 0)
+    deathCountText:setIgnoresDrawOffset(true)
+    deathCountText:setZIndex(Z_INDEXES.ui)
+    deathCountText:moveTo(400 - textWidth - 3, 9)
+    deathCountText:add()
+    local playerImageTable = assets.getImagetable("images/player/rat")
+    local playerIconSprite = gfx.sprite.new(playerImageTable[14])
+    playerIconSprite:setCenter(0, 0)
+    playerIconSprite:setIgnoresDrawOffset(true)
+    playerIconSprite:setZIndex(Z_INDEXES.ui)
+    playerIconSprite:moveTo(400 - textWidth - 27, 0)
+    playerIconSprite:add()
+
     local levelTimes = LEVEL_TIMES
     local flags = 0
     for _, time in pairs(levelTimes) do
@@ -64,17 +79,19 @@ function WorldSelectScene:init()
             flags += 1
         end
     end
-    local flagSpriteX, flagSpriteY = 6, 6
+    local flagSpriteX, flagSpriteY = 6, 9
     local flagIcon = assets.getImage("images/levelSelect/flagIcon")
     local flagSprite = gfx.sprite.new(flagIcon)
     flagSprite:setCenter(0, 0)
     flagSprite:moveTo(flagSpriteX, flagSpriteY)
     flagSprite:setIgnoresDrawOffset(true)
+    flagSprite:setZIndex(Z_INDEXES.ui)
     flagSprite:add()
     local flagText = gfx.sprite.spriteWithText(tostring(flags), 50, 50, nil, nil, nil, nil, font)
     flagText:setCenter(0, 0)
-    flagText:moveTo(22, 6)
+    flagText:moveTo(22, flagSpriteY)
     flagText:setIgnoresDrawOffset(true)
+    flagText:setZIndex(Z_INDEXES.ui)
     flagText:add()
 
     local completedWorldsCount = 0

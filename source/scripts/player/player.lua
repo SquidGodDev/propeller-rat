@@ -193,6 +193,8 @@ function Player:reset()
         return
     end
 
+    DEATH_COUNT += 1
+
     audioManager.playRandom(squeaksSfx)
 
     self.disabled = true

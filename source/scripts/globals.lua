@@ -42,6 +42,7 @@ SELECTED_WORLD = 1
 LEVEL_TIMES = {}
 UNLOCKED_WORLDS = {}
 CUR_MUSIC_VOL = "Med"
+DEATH_COUNT = 0
 
 -- Global Data
 JUST_COMPLETED_LEVEL = nil
@@ -54,6 +55,7 @@ local function loadGameData()
         LEVEL_TIMES = gameData.levelTimes or LEVEL_TIMES
         UNLOCKED_WORLDS = gameData.unlockedWorlds or UNLOCKED_WORLDS
         CUR_MUSIC_VOL = gameData.curMusicVol or CUR_MUSIC_VOL
+        DEATH_COUNT = gameData.deathCount or DEATH_COUNT
     end
 end
 
@@ -65,7 +67,8 @@ local function saveGameData()
         selectedWorld = SELECTED_WORLD,
         levelTimes = LEVEL_TIMES,
         unlockedWorlds = UNLOCKED_WORLDS,
-        curMusicVol = CUR_MUSIC_VOL
+        curMusicVol = CUR_MUSIC_VOL,
+        deathCount = DEATH_COUNT
     }
 
     pd.datastore.write(gameData)
