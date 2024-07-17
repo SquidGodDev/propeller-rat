@@ -116,7 +116,8 @@ function WorldSelectScene:init()
                 end)
                 utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
                 UNLOCKED_WORLDS[i] = true
-            elseif not UNLOCKED_WORLDS[i] then
+            elseif flags < flagRequirements[i] then
+                UNLOCKED_WORLDS[i] = false
                 local flagCountText = gfx.imageWithText(tostring(flagRequirements[i]), 50, 30, nil, nil, nil, nil, font)
                 local flagCountWidth, flagCountHeight = flagCountText:getSize()
                 local spaceBuffer = 2
