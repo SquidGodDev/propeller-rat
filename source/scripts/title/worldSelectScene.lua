@@ -53,6 +53,7 @@ function WorldSelectScene:init()
     self.starfieldSprite:add()
 
     self.worldCompleted = 0
+    self.unlockingWorld = false
 
     local completedWorldsCount = 0
     local completedWorlds = {}
@@ -88,8 +89,10 @@ function WorldSelectScene:init()
         if i ~= 1 and not UNLOCK_ALL_WORLDS then
             if completedWorlds[i-1] and (completedWorlds[i-1] ~= COMPLETED_WORLDS[i-1]) then
                 self.worldCompleted = i
+                self.unlockingWorld = true
                 pd.timer.performAfterDelay(900, function()
                     audioManager.play(audioManager.sfx.unlocked)
+                    self.unlockingWorld = false
                 end)
                 utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
             elseif not completedWorlds[i - 1] then
@@ -207,7 +210,7 @@ function WorldSelectScene:update()
         end
     end
 
-    if self.exitingScene then
+    if self.exitingScene or self.unlockingWorld then
         return
     end
 

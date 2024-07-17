@@ -108,6 +108,7 @@ function Player:updatePlayer(dt)
         or pd.buttonIsPressed(pd.kButtonRight) then
             audioManager.play(audioManager.sfx.release)
             self.frozen = false
+            self.frozenPlayerSprite:setVisible(false)
             self.frozenPlayerSprite:remove()
             local fadingEntranceTeleporter = Utilities.animatedSprite(self.x, self.y, assets.getImagetable("images/levels/fadingEntranceTeleporter"), 100, false)
             fadingEntranceTeleporter:setZIndex(Z_INDEXES.ui)
@@ -196,6 +197,14 @@ function Player:reset()
 
     self.disabled = true
     self.frozen = true
+
+    self.directionArrowSprite:remove()
+
+    if self.frozenPlayerSprite:isVisible() then
+        self.frozenPlayerSprite:remove()
+        local fadingEntranceTeleporter = Utilities.animatedSprite(self.x, self.y, assets.getImagetable("images/levels/fadingEntranceTeleporter"), 100, false)
+        fadingEntranceTeleporter:setZIndex(Z_INDEXES.ui)
+    end
 
     local shakeTimer = pd.timer.new(300, 6, 0)
     shakeTimer.timerEndedCallback = function()

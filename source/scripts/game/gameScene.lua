@@ -170,6 +170,10 @@ function GameScene:recordLevelTime()
     local levelIID = LEVEL_INDEX_TO_IID[self.curLevelNum]
     local oldLevelTime = LEVEL_TIMES[levelIID]
 
+    if not oldLevelTime then
+        JUST_COMPLETED_LEVEL = self.curLevelNum
+    end
+
     local newBestTime = false
     if not oldLevelTime or (levelTime < oldLevelTime) then
         newBestTime = true
@@ -224,21 +228,8 @@ function GameScene:levelEnd()
 end
 
 function GameScene:nextLevel()
-    self.curLevelNum = self.curLevelNum + 1
-    if self.curLevelNum <= levelCount then
-        if SELECTED_WORLD < #baseLevels then
-            local nextWorldStartLevel = baseLevels[SELECTED_WORLD + 1]
-            if self.curLevelNum >= nextWorldStartLevel then
-                SceneManager.switchScene(WorldSelectScene, playerX, playerY)
-                return
-            end
-        end
-        CUR_LEVEL = self.curLevelNum
-        local playerX, playerY = self.player:getScreenPosition()
-        SceneManager.switchScene(GameScene, playerX, playerY)
-    else
-        SceneManager.switchScene(WorldSelectScene, playerX, playerY)
-    end
+    local nextLevel = self.curLevelNum + 1
+    SceneManager.switchScene(LevelSelectScene, playerX, playerY, nextLevel)
 end
 
 function GameScene:clearLevel()

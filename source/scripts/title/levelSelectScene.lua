@@ -10,8 +10,11 @@ local assets <const> = Assets
 assets.preloadImages({
     "images/levelSelect/previewBorder",
     "images/levelSelect/progressBar",
+    "images/levelSelect/flagIcon",
     "images/decoration/stars"
 })
+
+assets.preloadImagetable("images/levelSelect/burst")
 
 local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
@@ -180,7 +183,7 @@ end
 
 class('LevelSelectScene').extends()
 
-function LevelSelectScene:init()
+function LevelSelectScene:init(selectedLevel)
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
@@ -202,13 +205,85 @@ function LevelSelectScene:init()
     self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
 
-    local completedLevels, worldLevelCount = getCompletedLevelsCount(worldIndex)
-    local completedLevelsText = string.format("%02d",completedLevels) .. "/" .. string.format("%02d",worldLevelCount)
-    local completedLevelsSprite = gfx.sprite.spriteWithText(completedLevelsText, 100, 20, nil, nil, nil, nil, font)
-    completedLevelsSprite:setCenter(0, 0)
-    completedLevelsSprite:moveTo(3, 3)
-    completedLevelsSprite:add()
+    local flags = 0
+    for _, time in pairs(levelTimes) do
+        if time then
+            flags += 1
+        end
+    end
 
+    local justCompletedLevel = JUST_COMPLETED_LEVEL
+    JUST_COMPLETED_LEVEL = nil
+
+    local flagSpriteX, flagSpriteY = 6, 6
+    local flagIcon = assets.getImage("images/levelSelect/flagIcon")
+    local flagSprite = gfx.sprite.new(flagIcon)
+    flagSprite:setCenter(0, 0)
+    flagSprite:moveTo(flagSpriteX, flagSpriteY)
+    flagSprite:add()
+    local flagCount = flags
+    if justCompletedLevel then
+        flagCount -= 1
+    end
+    local flagText = gfx.sprite.spriteWithText(tostring(flagCount), 50, 50, nil, nil, nil, nil, font)
+    flagText:setCenter(0, 0)
+    flagText:moveTo(22, 6)
+    flagText:add()
+
+    local burstX, burstY = previewX - borderWidth / 2 + 23, previewY - 57
+    if justCompletedLevel or selectedLevel then
+        local navigateToNextLevel = true
+        if justCompletedLevel then
+            selectedLevel = justCompletedLevel + 1
+        end
+        selectedLevel = selectedLevel - self.baseLevel + 1
+        if selectedLevel > self.levelCount then
+            selectedLevel = self.selectedLevel
+            navigateToNextLevel = false
+        end
+        self.animating = true
+        if justCompletedLevel then
+            Chain():link(500, function()
+                audioManager.play(audioManager.sfx.levelCleared)
+                local movingFlagX, movingFlagY = burstX - 7, burstY - 18
+                local movingFlag = gfx.sprite.new(flagImage)
+                movingFlag:setCenter(0, 0)
+                movingFlag:moveTo(movingFlagX, movingFlagY)
+                movingFlag:add()
+                Utilities.animatedSprite(burstX, burstY, assets.getImagetable("images/levelSelect/burst"), 17, false)
+                local flagTimer = pd.timer.new(700, 0.0, 1.0, pd.easingFunctions.inExpo)
+                flagTimer.updateCallback = function(timer)
+                    movingFlag:moveTo(movingFlagX + (flagSpriteX - movingFlagX)*timer.value, movingFlagY + (flagSpriteY - movingFlagY)*timer.value)
+                end
+                flagTimer.timerEndedCallback = function()
+                    audioManager.play(audioManager.sfx.flagAcquired)
+                    movingFlag:remove()
+                    local flagTextImage = gfx.imageWithText(tostring(flags), 50, 50, nil, nil, nil, nil, font)
+                    flagText:setImage(flagTextImage)
+                end
+            end):link(1000, function()
+                if navigateToNextLevel then
+                    self.selectedLevel = selectedLevel
+                    self.animating = false
+                    CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+                else
+                    self.animating = false
+                end
+            end)
+        else
+            if navigateToNextLevel then
+                pd.timer.performAfterDelay(500, function()
+                    self.selectedLevel = selectedLevel
+                    self.animating = false
+                    CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+                end)
+            else
+                self.animating = false
+            end
+        end
+    end
+
+    local completedLevels = getCompletedLevelsCount(worldIndex)
     local progressBarHeight = 8
     local progressBarCellSize = 32
     local progressBarDrawX, progressBarDrawY = 6, 6
@@ -252,7 +327,7 @@ function LevelSelectScene:update()
         end
     end
 
-    if self.exitingScene then
+    if self.exitingScene or self.animating then
         return
     end
 
@@ -307,6 +382,7 @@ function LevelSelectScene:moveLeft()
     if self.selectedLevel > 1 then
         audioManager.play(audioManager.sfx.navigate)
         self.selectedLevel -= 1
+        CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
         self:updateName()
     end
 end
@@ -315,6 +391,7 @@ function LevelSelectScene:moveRight()
     if self.selectedLevel < self.levelCount then
         audioManager.play(audioManager.sfx.navigate)
         self.selectedLevel += 1
+        CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
         self:updateName()
     end
 end

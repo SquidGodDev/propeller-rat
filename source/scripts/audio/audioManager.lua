@@ -26,7 +26,9 @@ AudioManager.sfx = {
     error = sp("sound/ui/error"),
     unlocked = sp("sound/ui/unlocked"),
     transitionOut = sp("sound/ui/transitionOut"),
-    transitionIn = sp("sound/ui/transitionIn")
+    transitionIn = sp("sound/ui/transitionIn"),
+    levelCleared = sp("sound/ui/levelCleared"),
+    flagAcquired = sp("sound/ui/flagAcquired")
 }
 
 local lowVol = 0.1

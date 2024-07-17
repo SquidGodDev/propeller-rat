@@ -43,14 +43,17 @@ LEVEL_TIMES = {}
 COMPLETED_WORLDS = {}
 CUR_MUSIC_VOL = "Med"
 
+-- Global Data
+JUST_COMPLETED_LEVEL = nil
+
 local function loadGameData()
     local gameData = pd.datastore.read()
     if gameData then
-        CUR_LEVEL = gameData.curLevel or 1
-        SELECTED_WORLD = gameData.selectedWorld or 1
-        LEVEL_TIMES = gameData.levelTimes or {}
-        COMPLETED_WORLDS = gameData.completedWorlds or {}
-        CUR_MUSIC_VOL = gameData.curMusicVol or "Med"
+        CUR_LEVEL = gameData.curLevel or CUR_LEVEL
+        SELECTED_WORLD = gameData.selectedWorld or SELECTED_WORLD
+        LEVEL_TIMES = gameData.levelTimes or LEVEL_TIMES
+        COMPLETED_WORLDS = gameData.completedWorlds or COMPLETED_WORLDS
+        CUR_MUSIC_VOL = gameData.curMusicVol or CUR_MUSIC_VOL
     end
 end
 
@@ -97,6 +100,7 @@ import "scripts/libraries/LDtk"
 import "scripts/libraries/Utilities"
 import "scripts/libraries/Assets"
 import "scripts/libraries/SceneManager"
+import "scripts/libraries/Chain"
 
 -- Game
 import "scripts/player/player"
