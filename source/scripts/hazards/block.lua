@@ -48,8 +48,8 @@ function Block:init(x, y, entity)
     self.width = entity.size.width
     self.height = entity.size.height
     local fields = entity.fields
-    self.xSpeed = fields.xSpeed
-    self.ySpeed = fields.ySpeed
+    self.xSpeed = fields.xSpeed * (30 / 1000)
+    self.ySpeed = fields.ySpeed * (30 / 1000)
 
     local blockImage = getBoxImage(self.width, self.height)
     self:setImage(blockImage)
@@ -65,12 +65,12 @@ function Block:collisionResponse(other)
     return gfx.sprite.kCollisionTypeBounce
 end
 
-function Block:update()
+function Block:updateHazard(dt)
     if self.stopped then
        return
     end
 
-    local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed, self.y + self.ySpeed)
+    local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed * dt, self.y + self.ySpeed * dt)
 
     local bounceNormal
     local bounceCollision = false

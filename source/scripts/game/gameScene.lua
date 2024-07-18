@@ -112,6 +112,9 @@ function GameScene:update()
     if self.turretManager then
         self.turretManager:update(dt)
     end
+    if self.hazardManager then
+        self.hazardManager:update(dt)
+    end
     if self.player then
         self.player:updatePlayer(dt)
     end
@@ -254,7 +257,8 @@ function GameScene:setUpLevel()
 
     self.laserManager = LaserManager()
     self.turretManager = TurretManager()
-    self.curLevel = Level(self.curLevelNum, self.laserManager, self.turretManager)
+    self.hazardManager = HazardManager()
+    self.curLevel = Level(self.curLevelNum, self.laserManager, self.turretManager, self.hazardManager)
     local startX, startY = self.curLevel:getStartPos()
     self.player = Player(self, startX, startY)
 

@@ -7,9 +7,10 @@ local font = FONT
 
 class('Level').extends(gfx.sprite)
 
-function Level:init(levelIndex, laserManager, turretManager)
+function Level:init(levelIndex, laserManager, turretManager, hazardManager)
     self.laserManager = laserManager
     self.turretManager = turretManager
+    self.hazardManager = hazardManager
 
     local levelName = "Level_" .. levelIndex
 
@@ -49,6 +50,7 @@ function Level:init(levelIndex, laserManager, turretManager)
             levelEnd = LevelEnd(entityX, entityY)
         elseif entityName == "Block" then
             table.insert(self.hazards, Block(entityX, entityY, entity))
+            hazardManager:addHazard(Block(entityX, entityY, entity))
         elseif entityName == "Turret" then
             local fields = entity.fields
             local xSpeed, ySpeed = fields.xSpeed, fields.ySpeed
