@@ -193,11 +193,17 @@ function LevelSelectScene:init(selectedLevel)
     stars:add()
 
     local worldIndex = SELECTED_WORLD
+    self.worldIndex = worldIndex
     utilities.animatedSprite(365, 45, planetImagetables[worldIndex], 100, true)
 
     self.levelCount = #allLevelPreviews[worldIndex]
     self.baseLevel = worldBaseLevel[worldIndex]
     self.selectedLevel = CUR_LEVEL - self.baseLevel + 1
+    if LAST_SELECTED_LEVEL[worldIndex] then
+        self.selectedLevel = LAST_SELECTED_LEVEL[worldIndex]
+    else
+        LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
+    end
     local previewImage = getPreviewWithLevelTimes(worldIndex)
     self.levelsSprite = gfx.sprite.new(previewImage)
     self.levelsSprite:setCenter(0.0, 0.5)
@@ -266,6 +272,7 @@ function LevelSelectScene:init(selectedLevel)
                     self.selectedLevel = selectedLevel
                     self.animating = false
                     CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+                    LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
                 else
                     self.animating = false
                 end
@@ -276,6 +283,7 @@ function LevelSelectScene:init(selectedLevel)
                     self.selectedLevel = selectedLevel
                     self.animating = false
                     CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+                    LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
                 end)
             else
                 self.animating = false
@@ -383,6 +391,7 @@ function LevelSelectScene:moveLeft()
         audioManager.play(audioManager.sfx.navigate)
         self.selectedLevel -= 1
         CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+        LAST_SELECTED_LEVEL[self.worldIndex] = self.selectedLevel
         self:updateName()
     end
 end
@@ -392,6 +401,7 @@ function LevelSelectScene:moveRight()
         audioManager.play(audioManager.sfx.navigate)
         self.selectedLevel += 1
         CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
+        LAST_SELECTED_LEVEL[self.worldIndex] = self.selectedLevel
         self:updateName()
     end
 end
