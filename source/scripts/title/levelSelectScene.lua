@@ -273,6 +273,7 @@ function LevelSelectScene:init(selectedLevel)
                     self.animating = false
                     CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
                     LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
+                    self:updateName()
                 else
                     self.animating = false
                 end
@@ -284,6 +285,7 @@ function LevelSelectScene:init(selectedLevel)
                     self.animating = false
                     CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
                     LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
+                    self:updateName()
                 end)
             else
                 self.animating = false

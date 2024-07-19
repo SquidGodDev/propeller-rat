@@ -8,6 +8,7 @@ local assets <const> = Assets
 local animatedSprite = Utilities.animatedSprite
 
 local shootSfx = audioManager.sfx.shoot
+local smashSfx = audioManager.sfx.smash
 local playerTag <const> = TAGS.player
 local hazardTag <const> = TAGS.hazard
 local wallTag <const> = TAGS.wall
@@ -166,6 +167,7 @@ function TurretManager:update(dt)
         end
 
         if destroy then
+            audioManager.play(smashSfx)
             animatedSprite(x, y, projectileBreakImagetable, 20, false)
             tableRemove(projectileX, i)
             tableRemove(projectileY, i)
