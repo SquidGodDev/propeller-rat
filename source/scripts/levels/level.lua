@@ -49,7 +49,6 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
         elseif entityName == "End" then
             levelEnd = LevelEnd(entityX, entityY)
         elseif entityName == "Block" then
-            table.insert(self.hazards, Block(entityX, entityY, entity))
             hazardManager:addHazard(Block(entityX, entityY, entity))
         elseif entityName == "Turret" then
             local fields = entity.fields
@@ -91,6 +90,7 @@ end
 function Level:stopLevelHazards()
     self.laserManager:stop()
     self.turretManager:stop()
+    self.hazardManager:stop()
     for _, hazard in ipairs(self.hazards) do
         hazard:stop()
     end

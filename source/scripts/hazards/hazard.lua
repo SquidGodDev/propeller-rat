@@ -18,6 +18,13 @@ function HazardManager:update(dt)
     end
 end
 
+function HazardManager:stop()
+    for i=1, #self.hazards do
+        local hazard = self.hazards[i]
+        hazard:stop()
+    end
+end
+
 class('Hazard').extends(gfx.sprite)
 
 function Hazard:init(x, y)
