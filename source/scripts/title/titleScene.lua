@@ -28,6 +28,9 @@ local ratChar = 9
 local letterOrder = {li.p, li.r, li.o, li.p, li.e, li.l, li.l, li.e, li.r, li.r, li.a, li.t}
 local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 
+local buttonQueueMax = 7
+local debugQueueMatch = {"up", "right", "down", "left", "b", "b", "b"}
+
 class('TitleScene').extends()
 
 function TitleScene:init()
@@ -76,11 +79,13 @@ function TitleScene:init()
         end
     end
 
+    self.debugModeSprite = gfx.sprite.spriteWithText("GAME IN DEBUG MODE", 200, 30, nil, nil, nil, nil, font)
+    self.debugModeSprite:moveTo(200, 120)
     if DRAW_FPS or UNLOCK_ALL_WORLDS then
-        local debugModeSprite = gfx.sprite.spriteWithText("GAME IN DEBUG MODE", 200, 30, nil, nil, nil, nil, font)
-        debugModeSprite:moveTo(200, 120)
-        debugModeSprite:add()
+        self.debugModeSprite:add()
     end
+
+    self.buttonQueue = {}
 end
 
 function TitleScene:update()
@@ -88,5 +93,44 @@ function TitleScene:update()
         self.transitioning = true
         audioManager.play(audioManager.sfx.select)
         SceneManager.switchScene(WorldSelectScene)
+    end
+
+    if pd.buttonJustPressed(pd.kButtonUp) then
+        self:addToButtonQueue("up")
+    elseif pd.buttonJustPressed(pd.kButtonRight) then
+        self:addToButtonQueue("right")
+    elseif pd.buttonJustPressed(pd.kButtonDown) then
+        self:addToButtonQueue("down")
+    elseif pd.buttonJustPressed(pd.kButtonLeft) then
+        self:addToButtonQueue("left")
+    elseif pd.buttonJustPressed(pd.kButtonB) then
+        self:addToButtonQueue("b")
+
+    end
+end
+
+function TitleScene:addToButtonQueue(button)
+    if #self.buttonQueue >= buttonQueueMax then
+        table.remove(self.buttonQueue, 1)
+    end
+    table.insert(self.buttonQueue, button)
+    if #self.buttonQueue == buttonQueueMax then
+        local matched = true
+        for i=1,#self.buttonQueue do
+            if self.buttonQueue[i] ~= debugQueueMatch[i] then
+                matched = false
+            end
+        end
+        if matched then
+            if UNLOCK_ALL_WORLDS then
+                UNLOCK_ALL_WORLDS = false
+                DRAW_FPS = false
+                self.debugModeSprite:remove()
+            else
+                UNLOCK_ALL_WORLDS = true
+                DRAW_FPS = true
+                self.debugModeSprite:add()
+            end
+        end
     end
 end
