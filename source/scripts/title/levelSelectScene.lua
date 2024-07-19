@@ -183,7 +183,7 @@ end
 
 class('LevelSelectScene').extends()
 
-function LevelSelectScene:init(selectedLevel)
+function LevelSelectScene:init(nextLevel)
     gfx.setBackgroundColor(gfx.kColorBlack)
     gfx.clear()
 
@@ -237,19 +237,22 @@ function LevelSelectScene:init(selectedLevel)
     flagText:add()
 
     local burstX, burstY = previewX - borderWidth / 2 + 23, previewY - 57
-    if justCompletedLevel or selectedLevel then
-        local navigateToNextLevel = true
+    if justCompletedLevel or nextLevel then
+        local gameCompleted = false
         if justCompletedLevel then
-            selectedLevel = justCompletedLevel + 1
+            nextLevel = justCompletedLevel + 1
         end
-        selectedLevel = selectedLevel - self.baseLevel + 1
-        if selectedLevel > self.levelCount then
-            selectedLevel = self.selectedLevel
-            navigateToNextLevel = false
+        if nextLevel > levelCount and flags >= levelCount then
+            if not GAME_END_SHOWN_1_0_0 then
+                gameCompleted = true
+                GAME_END_SHOWN_1_0_0 = true
+            end
         end
+
         self.animating = true
+        local animationDelay = 700
         if justCompletedLevel then
-            Chain():link(500, function()
+            pd.timer.performAfterDelay(500, function ()
                 audioManager.play(audioManager.sfx.levelCleared)
                 local movingFlagX, movingFlagY = burstX - 7, burstY - 18
                 local movingFlag = gfx.sprite.new(flagImage)
@@ -267,30 +270,27 @@ function LevelSelectScene:init(selectedLevel)
                     local flagTextImage = gfx.imageWithText(tostring(flags), 50, 50, nil, nil, nil, nil, font)
                     flagText:setImage(flagTextImage)
                 end
-            end):link(1000, function()
-                if navigateToNextLevel then
-                    self.selectedLevel = selectedLevel
-                    self.animating = false
-                    CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
-                    LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
-                    self:updateName()
-                else
-                    self.animating = false
-                end
             end)
-        else
-            if navigateToNextLevel then
-                pd.timer.performAfterDelay(500, function()
-                    self.selectedLevel = selectedLevel
-                    self.animating = false
-                    CUR_LEVEL = self.baseLevel + self.selectedLevel - 1
-                    LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
-                    self:updateName()
-                end)
+            animationDelay += 500
+        end
+
+        local selectedLevel = nextLevel - self.baseLevel + 1
+        pd.timer.performAfterDelay(animationDelay, function()
+            if selectedLevel <= self.levelCount then
+                self.selectedLevel = selectedLevel
+                self.animating = false
+                CUR_LEVEL = nextLevel
+                LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
+                self:updateName()
             else
                 self.animating = false
+                if gameCompleted then
+                    -- Switch scene to game completed screen
+                else
+                    SceneManager.switchScene(WorldSelectScene)
+                end
             end
-        end
+        end)
     end
 
     local completedLevels = getCompletedLevelsCount(worldIndex)
