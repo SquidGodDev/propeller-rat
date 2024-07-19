@@ -140,31 +140,30 @@ function TurretManager:update(dt)
         end
     end
 
-    if stopped then
-        return
-    end
-
     for i=#projectileX, 1, -1 do
         local x, y = projectileX[i], projectileY[i]
-        local turretIndex = projectileTurretIndex[i]
-        local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
-
-        x += xSpeed * dt
-        y += ySpeed * dt
-
         local destroy = false
-        local collidedSprites = querySpritesInRect(x - projectileHitboxHalfSize, y - projectileHitboxHalfSize, projectileHitboxSize, projectileHitboxSize)
-        for spriteIdx=1, #collidedSprites do
-            local sprite = collidedSprites[spriteIdx]
-            local collisionTag = sprite:getTag()
-            if collisionTag == playerTag then
-                sprite:reset()
-            end
+        if not stopped then
+            local turretIndex = projectileTurretIndex[i]
+            local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
 
-            if collisionTag == wallTag or collisionTag == hazardTag then
-                destroy = true
+            x += xSpeed * dt
+            y += ySpeed * dt
+
+            local collidedSprites = querySpritesInRect(x - projectileHitboxHalfSize, y - projectileHitboxHalfSize, projectileHitboxSize, projectileHitboxSize)
+            for spriteIdx=1, #collidedSprites do
+                local sprite = collidedSprites[spriteIdx]
+                local collisionTag = sprite:getTag()
+                if collisionTag == playerTag then
+                    sprite:reset()
+                end
+
+                if collisionTag == wallTag or collisionTag == hazardTag then
+                    destroy = true
+                end
             end
         end
+
 
         if destroy then
             audioManager.play(smashSfx)

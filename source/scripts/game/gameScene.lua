@@ -119,6 +119,16 @@ function GameScene:update()
         self.player:updatePlayer(dt)
     end
 
+    local popupSprite = self.popupSprite
+    if popupSprite then
+        popupSprite:getImage():drawIgnoringOffset(popupSprite.x, popupSprite.y)
+    end
+    local selectorSprite = self.selectorSprite
+    if selectorSprite then
+        selectorSprite:update()
+        selectorSprite:getImage():drawIgnoringOffset(selectorSprite.x, selectorSprite.y)
+    end
+
     if self.popupActive then
         if pd.buttonJustPressed(pd.kButtonLeft) then
             if self.levelEndOption > 1 then
@@ -209,14 +219,15 @@ function GameScene:levelEnd()
     popupSprite:setZIndex(Z_INDEXES.ui)
     popupSprite:setCenter(0, 0)
     popupSprite:moveTo(popupX, popupY + 240)
-    popupSprite:add()
     local popupTimer = pd.timer.new(900, popupSprite.y, popupY, pd.easingFunctions.outBack)
     popupTimer.updateCallback = function(timer)
         popupSprite:moveTo(popupX, timer.value)
     end
+    self.popupSprite = popupSprite
 
     local selectorImagetable = assets.getImagetable("images/levels/ui/selector")
     local selectorSprite = Utilities.animatedSprite(selectorBaseX + selectorGap * 2, selectorBaseY + 240, selectorImagetable, 50, true)
+    selectorSprite:remove()
     selectorSprite:setIgnoresDrawOffset(true)
     selectorSprite:setZIndex(Z_INDEXES.ui)
     selectorSprite:setCenter(0, 0)
