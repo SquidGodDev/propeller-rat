@@ -86,13 +86,21 @@ function TitleScene:init()
     end
 
     self.buttonQueue = {}
+
+    self.enteringScene = true
 end
 
 function TitleScene:update()
+    if not SceneManager.isTransitioning() then
+        self.enteringScene = false
+    else
+        return
+    end
+
     if pd.buttonJustPressed(pd.kButtonA) and not self.transitioning then
+        SceneManager.switchScene(WorldSelectScene)
         self.transitioning = true
         audioManager.play(audioManager.sfx.select)
-        SceneManager.switchScene(WorldSelectScene)
     end
 
     if pd.buttonJustPressed(pd.kButtonUp) then
@@ -126,10 +134,12 @@ function TitleScene:addToButtonQueue(button)
                 UNLOCK_ALL_WORLDS = false
                 DRAW_FPS = false
                 self.debugModeSprite:remove()
+                audioManager.play(audioManager.sfx.navigate)
             else
                 UNLOCK_ALL_WORLDS = true
                 DRAW_FPS = true
                 self.debugModeSprite:add()
+                audioManager.play(audioManager.sfx.select)
             end
         end
     end
