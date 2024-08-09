@@ -54,7 +54,6 @@ function WorldSelectScene:init()
     self.starfieldSprite = starfield
     self.starfieldSprite:add()
 
-    self.worldCompleted = 0
     self.unlockingWorld = false
 
     local deathCountText = gfx.sprite.spriteWithText(tostring(DEATH_COUNT), 100, 30, nil, nil, nil, nil, font)
@@ -94,10 +93,12 @@ function WorldSelectScene:init()
     flagText:setZIndex(Z_INDEXES.ui)
     flagText:add()
 
+    local lockImagetable = assets.getImagetable("images/levelSelect/lock")
     local completedWorldsCount = 0
     local worldGap = 400
     local worldY = 200
     self.worlds = {}
+    local worldUnlockQueue = {}
     for i, planetImagetable in ipairs(planetImagetables) do
         local worldX = i * worldGap
         local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
@@ -121,17 +122,19 @@ function WorldSelectScene:init()
             completedWorldsCount += 1
         end
 
-        local lockImagetable = assets.getImagetable("images/levelSelect/lock")
         local flagWidth = flagIcon:getSize()
         if i ~= 1 and not UNLOCK_ALL_WORLDS then
             if flags >= flagRequirements[i] and not UNLOCKED_WORLDS[i] then
-                self.worldCompleted = i
+                local unlockData = {
+                    index = i,
+                    worldX = worldX,
+                    worldY = worldY
+                }
                 self.unlockingWorld = true
-                pd.timer.performAfterDelay(900, function()
-                    audioManager.play(audioManager.sfx.unlocked)
-                    self.unlockingWorld = false
-                end)
-                utilities.animatedSprite(worldX, worldY, lockImagetable, 100, false)
+                if #worldUnlockQueue == 0 then
+                    self.selectedWorld = worldIndex
+                end
+                table.insert(worldUnlockQueue, unlockData)
                 UNLOCKED_WORLDS[i] = true
             elseif flags < flagRequirements[i] then
                 UNLOCKED_WORLDS[i] = false
@@ -177,6 +180,25 @@ function WorldSelectScene:init()
     end
 
     self.selectedWorld = SELECTED_WORLD
+
+    local unlockDelay = 900
+    local unlockGapDelay = 1300
+    for i=1, #worldUnlockQueue do
+        local unlockData = worldUnlockQueue[i]
+        local worldIndex = unlockData.index
+        pd.timer.performAfterDelay(unlockDelay + (i-1)*unlockGapDelay, function()
+            SELECTED_WORLD = worldIndex
+            audioManager.play(audioManager.sfx.unlocked)
+            if #worldUnlockQueue == worldIndex then
+                self.unlockingWorld = false
+            end
+        end)
+        local curWorldX, curWorldY = unlockData.worldX, unlockData.worldY
+        pd.timer.performAfterDelay((i-1)*unlockGapDelay, function()
+            self.selectedWorld = worldIndex
+            utilities.animatedSprite(curWorldX, curWorldY, lockImagetable, 100, false)
+        end)
+    end
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
     self.nameSprite:setCenter(0.5, 0.5)
@@ -250,10 +272,6 @@ function WorldSelectScene:update()
             self.enteringScene = false
             -- Clear crank ticks
             pd.getCrankTicks(2)
-            if self.worldCompleted ~= 0 then
-                SELECTED_WORLD = self.worldCompleted
-                self.selectedWorld = self.worldCompleted
-            end
         else
             return
         end
