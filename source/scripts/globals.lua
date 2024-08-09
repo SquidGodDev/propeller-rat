@@ -47,6 +47,7 @@ LEVEL_TIMES = {}
 UNLOCKED_WORLDS = {}
 CUR_MUSIC_VOL = "Med"
 DEATH_COUNT = 0
+SHOW_DEATH_COUNT = false
 GAME_END_SHOWN_1_0_0 = false
 
 -- Global Data
@@ -62,6 +63,7 @@ local function loadGameData()
         UNLOCKED_WORLDS = gameData.unlockedWorlds or UNLOCKED_WORLDS
         CUR_MUSIC_VOL = gameData.curMusicVol or CUR_MUSIC_VOL
         DEATH_COUNT = gameData.deathCount or DEATH_COUNT
+        SHOW_DEATH_COUNT = gameData.showDeathCount or SHOW_DEATH_COUNT
         GAME_END_SHOWN_1_0_0 = gameData.gameEndShown100 or GAME_END_SHOWN_1_0_0
     end
 end
@@ -77,6 +79,7 @@ local function saveGameData()
         unlockedWorlds = UNLOCKED_WORLDS,
         curMusicVol = CUR_MUSIC_VOL,
         deathCount = DEATH_COUNT,
+        showDeathCount = SHOW_DEATH_COUNT,
         gameEndShown100 = GAME_END_SHOWN_1_0_0
     }
 

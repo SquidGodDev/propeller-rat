@@ -62,14 +62,29 @@ function WorldSelectScene:init()
     deathCountText:setIgnoresDrawOffset(true)
     deathCountText:setZIndex(Z_INDEXES.ui)
     deathCountText:moveTo(400 - textWidth - 3, 9)
-    deathCountText:add()
     local playerImageTable = assets.getImagetable("images/player/rat")
     local playerIconSprite = gfx.sprite.new(playerImageTable[14])
     playerIconSprite:setCenter(0, 0)
     playerIconSprite:setIgnoresDrawOffset(true)
     playerIconSprite:setZIndex(Z_INDEXES.ui)
     playerIconSprite:moveTo(400 - textWidth - 27, 0)
-    playerIconSprite:add()
+
+    if SHOW_DEATH_COUNT then
+        deathCountText:add()
+        playerIconSprite:add()
+    end
+
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:addCheckmarkMenuItem("Crash Count", SHOW_DEATH_COUNT, function(value)
+        SHOW_DEATH_COUNT = value
+        if value then
+            deathCountText:add()
+            playerIconSprite:add()
+        else
+            deathCountText:remove()
+            playerIconSprite:remove()
+        end
+    end)
 
     local levelTimes = LEVEL_TIMES
     local flags = 0
