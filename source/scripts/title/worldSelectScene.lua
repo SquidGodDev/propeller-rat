@@ -45,6 +45,7 @@ end
 
 local starfield = Starfield(800, 600)
 
+WorldSelectScene = {}
 class("WorldSelectScene").extends()
 
 function WorldSelectScene:init()

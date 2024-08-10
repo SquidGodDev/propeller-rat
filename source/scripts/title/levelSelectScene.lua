@@ -274,16 +274,18 @@ function LevelSelectScene:init(nextLevel)
             animationDelay += 500
         end
 
+        local maxWorldLevel = 10
         local selectedLevel = nextLevel - self.baseLevel + 1
         pd.timer.performAfterDelay(animationDelay, function()
-            if selectedLevel <= self.levelCount then
+            self.animating = false
+            if selectedLevel > maxWorldLevel then
+                SceneManager.switchScene(WorldSelectScene)
+            elseif selectedLevel <= self.levelCount then
                 self.selectedLevel = selectedLevel
-                self.animating = false
                 CUR_LEVEL = nextLevel
                 LAST_SELECTED_LEVEL[worldIndex] = self.selectedLevel
                 self:updateName()
             else
-                self.animating = false
                 if gameCompleted then
                     -- SceneManager.switchScene(GameCompletedScene)
                 else
