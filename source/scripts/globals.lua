@@ -142,6 +142,7 @@ import "scripts/title/starfield"
 import "scripts/title/titleScene"
 import "scripts/title/levelSelectScene"
 import "scripts/title/worldSelectScene"
+import "scripts/title/gameCompletedScene"
 
 if pd.isSimulator then
     sanityChecks()

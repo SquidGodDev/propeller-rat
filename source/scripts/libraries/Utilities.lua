@@ -33,6 +33,7 @@ local pd <const> = playdate
 local gfx <const> = pd.graphics
 
 Utilities = {}
+local utilities <const> = Utilities
 
 function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
     if type(imagetable) == 'string' then
@@ -70,4 +71,17 @@ function Utilities.formatTime(seconds)
     local milliseconds = math.floor((seconds - math.floor(seconds)) * 1000)
 
     return string.format("%02d:%02d.%03d", minutes, remainingSeconds, milliseconds)
+end
+
+function Utilities.imageWithText(string, font)
+	local textImage = gfx.image.new(font:getTextWidth(string), font:getHeight())
+	gfx.pushContext(textImage)
+        font:drawText(string, 0, 0)
+    gfx.popContext()
+    return textImage
+end
+
+function Utilities.spriteWithText(string, font)
+   local textImage = utilities.imageWithText(string, font)
+   return gfx.sprite.new(textImage)
 end

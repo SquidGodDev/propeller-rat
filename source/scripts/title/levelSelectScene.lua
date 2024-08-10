@@ -242,7 +242,7 @@ function LevelSelectScene:init(nextLevel)
         if justCompletedLevel then
             nextLevel = justCompletedLevel + 1
         end
-        if nextLevel > levelCount and flags >= levelCount then
+        if flags >= levelCount then
             if not GAME_END_SHOWN_1_0_0 then
                 gameCompleted = true
                 GAME_END_SHOWN_1_0_0 = true
@@ -285,7 +285,7 @@ function LevelSelectScene:init(nextLevel)
             else
                 self.animating = false
                 if gameCompleted then
-                    -- Switch scene to game completed screen
+                    -- SceneManager.switchScene(GameCompletedScene)
                 else
                     SceneManager.switchScene(WorldSelectScene)
                 end

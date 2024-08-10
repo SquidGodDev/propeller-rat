@@ -28,7 +28,10 @@ AudioManager.sfx = {
     transitionOut = sp("sound/ui/transitionOut"),
     transitionIn = sp("sound/ui/transitionIn"),
     levelCleared = sp("sound/ui/levelCleared"),
-    flagAcquired = sp("sound/ui/flagAcquired")
+    flagAcquired = sp("sound/ui/flagAcquired"),
+    thud = sp("sound/ui/thud"),
+    celebrate = sp("sound/ui/celebrate"),
+    blip = sp("sound/ui/blip")
 }
 
 local lowVol = 0.1
