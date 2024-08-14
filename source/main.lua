@@ -1,4 +1,4 @@
 -- Globals
 import "scripts/globals"
 
-SceneManager.startingScene(GameCompletedScene)
+SceneManager.startingScene(TitleScene)

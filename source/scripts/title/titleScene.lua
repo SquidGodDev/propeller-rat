@@ -31,6 +31,7 @@ local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 local buttonQueueMax = 7
 local debugQueueMatch = {"up", "right", "down", "left", "b", "b", "b"}
 
+TitleScene = {}
 class('TitleScene').extends()
 
 function TitleScene:init()
