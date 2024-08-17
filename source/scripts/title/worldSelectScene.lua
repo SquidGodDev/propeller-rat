@@ -205,7 +205,7 @@ function WorldSelectScene:init()
         pd.timer.performAfterDelay(unlockDelay + (i-1)*unlockGapDelay, function()
             SELECTED_WORLD = worldIndex
             audioManager.play(audioManager.sfx.unlocked)
-            if #worldUnlockQueue == worldIndex then
+            if #worldUnlockQueue == i then
                 self.unlockingWorld = false
             end
         end)
