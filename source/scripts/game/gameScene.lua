@@ -68,11 +68,7 @@ function GameScene:init()
     self.titleSprite:add()
 
     self.timeSprite = gfx.sprite.new()
-    self.timeSprite:setCenter(0, 0)
     self.timeSprite:moveTo(400 - timeTextWidth - 2, 2)
-    self.timeSprite:setZIndex(Z_INDEXES.ui)
-    self.timeSprite:setIgnoresDrawOffset(true)
-    self.timeSprite:add()
 
     self:updateTimeSprite(0.0)
 
@@ -128,6 +124,8 @@ function GameScene:update()
         selectorSprite:update()
         selectorSprite:getImage():drawIgnoringOffset(selectorSprite.x, selectorSprite.y)
     end
+    local timeSprite = self.timeSprite
+    timeSprite:getImage():drawIgnoringOffset(timeSprite.x, timeSprite.y)
 
     if self.popupActive then
         if pd.buttonJustPressed(pd.kButtonLeft) then
