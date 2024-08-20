@@ -51,6 +51,7 @@ local previousTime = nil
 assets.preloadImages({"images/decoration/stars"})
 assets.preloadImagetables({"images/levels/ui/selector"})
 
+GameScene = {}
 class('GameScene').extends()
 
 function GameScene:init()
@@ -198,10 +199,14 @@ function GameScene:recordLevelTime()
     self.levelTimeText = levelTimeText
 end
 
-function GameScene:levelEnd()
+function GameScene:removeMenuItems()
     local systemMenu = pd.getSystemMenu()
     systemMenu:removeMenuItem(self.resetLevelMenuItem)
     systemMenu:removeMenuItem(self.levelSelectMenuItem)
+end
+
+function GameScene:levelEnd()
+    self:removeMenuItems()
 
     self.curLevel:stopLevelHazards()
 

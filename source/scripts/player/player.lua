@@ -193,6 +193,8 @@ function Player:reset()
         return
     end
 
+    self.gameScene:removeMenuItems()
+
     DEATH_COUNT += 1
 
     audioManager.playRandom(squeaksSfx)
