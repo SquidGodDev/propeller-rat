@@ -75,13 +75,14 @@ function GameScene:init()
 
     local systemMenu = pd.getSystemMenu()
     self.levelSelectMenuItem = systemMenu:addMenuItem("Level Select", function()
-        if self.player then
-            if self.player:isDisabled() then
-                return
+        if SceneManager.switchScene(LevelSelectScene) then
+            if self.player then
+                if self.player:isDisabled() then
+                    return
+                end
+                self.player:disable()
             end
-            self.player:disable()
         end
-        SceneManager.switchScene(LevelSelectScene)
     end)
     self.resetLevelMenuItem = systemMenu:addMenuItem("Reset Level", function()
         if self.player then
