@@ -28,6 +28,7 @@ local ratChar = 9
 local letterOrder = {li.p, li.r, li.o, li.p, li.e, li.l, li.l, li.e, li.r, li.r, li.a, li.t}
 local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 
+local DEBUG_MODE_ENABLED <const> = true
 local buttonQueueMax = 7
 local debugQueueMatch = {"up", "right", "down", "left", "b", "b", "b"}
 
@@ -114,7 +115,6 @@ function TitleScene:update()
         self:addToButtonQueue("left")
     elseif pd.buttonJustPressed(pd.kButtonB) then
         self:addToButtonQueue("b")
-
     end
 end
 
@@ -130,15 +130,21 @@ function TitleScene:addToButtonQueue(button)
                 matched = false
             end
         end
-        if matched then
+        if matched and DEBUG_MODE_ENABLED then
             if UNLOCK_ALL_WORLDS then
                 UNLOCK_ALL_WORLDS = false
                 DRAW_FPS = false
+                if pd.isSimulator then
+                    LEVEL_PASS_KEY = false
+                end
                 self.debugModeSprite:remove()
                 audioManager.play(audioManager.sfx.navigate)
             else
                 UNLOCK_ALL_WORLDS = true
                 DRAW_FPS = true
+                if pd.isSimulator then
+                    LEVEL_PASS_KEY = true
+                end
                 self.debugModeSprite:add()
                 audioManager.play(audioManager.sfx.select)
             end

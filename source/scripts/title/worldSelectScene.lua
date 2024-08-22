@@ -147,9 +147,7 @@ function WorldSelectScene:init()
                     worldY = worldY
                 }
                 self.unlockingWorld = true
-                if #worldUnlockQueue == 0 then
-                    self.selectedWorld = worldIndex
-                end
+                self.selectedWorld = worldIndex
                 table.insert(worldUnlockQueue, unlockData)
                 UNLOCKED_WORLDS[i] = true
             elseif flags < flagRequirements[i] then
@@ -199,21 +197,23 @@ function WorldSelectScene:init()
 
     local unlockDelay = 900
     local unlockGapDelay = 1300
-    for i=1, #worldUnlockQueue do
+    local curDelay = 0
+    for i=#worldUnlockQueue, 1, -1 do
         local unlockData = worldUnlockQueue[i]
         local worldIndex = unlockData.index
-        pd.timer.performAfterDelay(unlockDelay + (i-1)*unlockGapDelay, function()
-            SELECTED_WORLD = worldIndex
-            audioManager.play(audioManager.sfx.unlocked)
-            if #worldUnlockQueue == i then
-                self.unlockingWorld = false
-            end
-        end)
         local curWorldX, curWorldY = unlockData.worldX, unlockData.worldY
-        pd.timer.performAfterDelay((i-1)*unlockGapDelay, function()
+        pd.timer.performAfterDelay(curDelay, function()
             self.selectedWorld = worldIndex
             utilities.animatedSprite(curWorldX, curWorldY, lockImagetable, 100, false)
         end)
+        pd.timer.performAfterDelay(unlockDelay + curDelay, function()
+            SELECTED_WORLD = worldIndex
+            audioManager.play(audioManager.sfx.unlocked)
+            if i == 1 then
+                self.unlockingWorld = false
+            end
+        end)
+        curDelay += unlockGapDelay
     end
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))

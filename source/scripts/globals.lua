@@ -38,6 +38,7 @@ TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
 local debugMode = false
 DRAW_FPS = debugMode
 UNLOCK_ALL_WORLDS = debugMode
+LEVEL_PASS_KEY = debugMode
 
 -- Save Data
 CUR_LEVEL = 1

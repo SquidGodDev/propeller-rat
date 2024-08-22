@@ -38,6 +38,8 @@ local flyStartFrame, flyEndFrame = 1, 12
 
 local spinningPlayerFrameRate = 20
 
+local levelPassKey = LEVEL_PASS_KEY
+
 class('Player').extends(gfx.sprite)
 
 function Player:init(gameScene, x, y)
@@ -119,6 +121,12 @@ function Player:updatePlayer(dt)
             local crankPosition = math.floor(getCrankPosition()) + 1
             self.directionArrowSprite:setImage(self.directionArrows[crankPosition])
             return
+        end
+    end
+
+    if levelPassKey then
+        if pd.buttonJustPressed(pd.kButtonUp) then
+            self:levelEnd(self.x, self.y)
         end
     end
 
