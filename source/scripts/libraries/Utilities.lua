@@ -26,7 +26,7 @@ end
 
 local sign <const> = math.sign
 function math.zeroSign(_value)
-	return _value == 0 and 0 or sign(_value)
+	return (_value == 0 and 0) or sign(_value)
 end
 
 local pd <const> = playdate
@@ -84,4 +84,51 @@ end
 function Utilities.spriteWithText(string, font)
    local textImage = utilities.imageWithText(string, font)
    return gfx.sprite.new(textImage)
+end
+
+
+-- ==========================================================
+-- Input Utilities                                          |
+-- ==========================================================
+
+local getCrankPosition <const> = pd.getCrankPosition
+local abs <const> = math.abs
+CrankTracker = {}
+class('CrankTracker').extends()
+
+function CrankTracker:init(tickAngle)
+    self.tickAngle = tickAngle
+    self.crankTotal = 0
+    self.lastCrankPos = getCrankPosition()
+end
+
+function CrankTracker:getCrankTick()
+    local curCrankPos = getCrankPosition()
+    local difference = curCrankPos - self.lastCrankPos
+	if difference > 180 then
+        difference -= 360
+    elseif difference < -180 then
+        difference += 360
+    end
+    self.lastCrankPos = curCrankPos
+
+    local crankTotal = self.crankTotal
+    if difference ~= 0 then
+        if sign(crankTotal) ~= sign(difference) then
+            crankTotal = difference
+        else
+            crankTotal += difference
+        end
+    end
+
+    local tickAngle = self.tickAngle
+    if abs(crankTotal) >= tickAngle then
+        local tickDirection = sign(crankTotal)
+        crankTotal %= tickAngle
+        self.crankTotal = crankTotal
+        return tickDirection
+    end
+
+    self.crankTotal = crankTotal
+    return 0
 end

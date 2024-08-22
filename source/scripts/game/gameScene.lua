@@ -90,6 +90,8 @@ function GameScene:init()
     end)
 
     previousTime = nil
+
+    self.crankTracker = nil
 end
 
 function GameScene:update()
@@ -129,13 +131,14 @@ function GameScene:update()
     timeSprite:getImage():drawIgnoringOffset(timeSprite.x, timeSprite.y)
 
     if self.popupActive then
-        if pd.buttonJustPressed(pd.kButtonLeft) then
+        local crankTick = self.crankTracker:getCrankTick()
+        if pd.buttonJustPressed(pd.kButtonLeft) or crankTick == -1 then
             if self.levelEndOption > 1 then
                 audioManager.play(audioManager.sfx.navigate)
                 self.levelEndOption -= 1
                 self.selectorSprite:moveTo(selectorBaseX + (self.levelEndOption - 1) * selectorGap, selectorBaseY)
             end
-        elseif pd.buttonJustPressed(pd.kButtonRight) then
+        elseif pd.buttonJustPressed(pd.kButtonRight) or crankTick == 1 then
             if self.levelEndOption < 3 then
                 audioManager.play(audioManager.sfx.navigate)
                 self.levelEndOption += 1
@@ -237,6 +240,7 @@ function GameScene:levelEnd()
     self.selectorSprite = selectorSprite
     pd.timer.performAfterDelay(200, function()
         self.popupActive = true
+        self.crankTracker = CrankTracker(120)
         local selectorTimer = pd.timer.new(900, selectorSprite.y, selectorBaseY, pd.easingFunctions.outBack)
         selectorTimer.updateCallback = function(timer)
             selectorSprite:moveTo(selectorSprite.x, timer.value)
