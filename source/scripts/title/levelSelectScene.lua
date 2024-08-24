@@ -272,6 +272,10 @@ function LevelSelectScene:init(nextLevel)
                 end
             end)
             animationDelay += 500
+        elseif nextLevel then
+            pd.timer.performAfterDelay(500, function ()
+                audioManager.play(audioManager.sfx.levelCleared)
+            end)
         end
 
         local maxWorldLevel = 10
