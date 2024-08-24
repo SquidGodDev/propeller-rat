@@ -1,6 +1,7 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+HazardManager = {}
 class('HazardManager').extends()
 
 function HazardManager:init()
@@ -25,6 +26,7 @@ function HazardManager:stop()
     end
 end
 
+Hazard = {}
 class('Hazard').extends(gfx.sprite)
 
 function Hazard:init(x, y)

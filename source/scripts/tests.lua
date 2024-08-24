@@ -1,4 +1,4 @@
-function sanityChecks()
+function SANITY_CHECKS()
     local ldtk = LDtk
     local levelCount = ldtk.get_level_count()
 

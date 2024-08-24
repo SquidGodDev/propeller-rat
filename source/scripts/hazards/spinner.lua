@@ -5,6 +5,7 @@ local assets <const> = Assets
 
 assets.preloadImagetable("images/hazards/spinner")
 
+Spinner = {}
 class('Spinner').extends(Hazard)
 
 function Spinner:init(x, y, entity)

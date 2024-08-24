@@ -1,5 +1,17 @@
+local pd <const> = playdate
+local gfx <const> = pd.graphics
+
+Utilities = {}
+local utilities <const> = Utilities
+
+-- Math constants
 local max <const> = math.max
 local min <const> = math.min
+local abs <const> = math.abs
+local ceil <const> = math.ceil
+
+-- Playdate constants
+local getCrankPosition <const> = pd.getCrankPosition
 
 function math.clamp(_value, _min, _max)
 	if (_min > _max) then
@@ -29,13 +41,11 @@ function math.zeroSign(_value)
 	return (_value == 0 and 0) or sign(_value)
 end
 
-local pd <const> = playdate
-local gfx <const> = pd.graphics
+-- ==========================================================
+-- Sprite/image utilities                                   |
+-- ==========================================================
 
-Utilities = {}
-local utilities <const> = Utilities
-
-function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
+function utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
     if type(imagetable) == 'string' then
         imagetable = Assets.getImagetable(imagetable)
     end
@@ -61,7 +71,7 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
     return sprite
 end
 
-function Utilities.formatTime(seconds)
+function utilities.formatTime(seconds)
     if seconds >= 5999.999 then
         seconds = 5999.999
     end
@@ -73,7 +83,7 @@ function Utilities.formatTime(seconds)
     return string.format("%02d:%02d.%03d", minutes, remainingSeconds, milliseconds)
 end
 
-function Utilities.imageWithText(string, font)
+function utilities.imageWithText(string, font)
 	local textImage = gfx.image.new(font:getTextWidth(string), font:getHeight())
 	gfx.pushContext(textImage)
         font:drawText(string, 0, 0)
@@ -81,18 +91,33 @@ function Utilities.imageWithText(string, font)
     return textImage
 end
 
-function Utilities.spriteWithText(string, font)
+function utilities.spriteWithText(string, font)
    local textImage = utilities.imageWithText(string, font)
    return gfx.sprite.new(textImage)
 end
 
+-- ==========================================================
+-- Timing Utilities                                         |
+-- ==========================================================
+
+local performAfterDelay <const> = pd.timer.performAfterDelay
+Chain = {}
+class('Chain').extends()
+function Chain:init()
+    self.time = 0
+end
+function Chain:link(time, callback)
+    self.time += time
+    if callback then
+        performAfterDelay(self.time, callback)
+    end
+    return self
+end
 
 -- ==========================================================
 -- Input Utilities                                          |
 -- ==========================================================
 
-local getCrankPosition <const> = pd.getCrankPosition
-local abs <const> = math.abs
 CrankTracker = {}
 class('CrankTracker').extends()
 
@@ -100,9 +125,33 @@ function CrankTracker:init(tickAngle)
     self.tickAngle = tickAngle
     self.crankTotal = 0
     self.lastCrankPos = getCrankPosition()
+    self.tickOffset = (tickAngle / 2) - (self.lastCrankPos % tickAngle)
 end
 
-function CrankTracker:getCrankTick()
+function CrankTracker:getCrankTicksAbsolute()
+	local curCrankPos = pd.getCrankPosition()
+
+	local difference = curCrankPos - self.lastCrankPos
+	if difference > 180 or difference < -180 then
+		if self.lastCrankPos >= 180 then
+			self.lastCrankPos -= 360
+		else
+			self.lastCrankPos += 360
+		end
+
+	end
+
+	local thisSegment = ceil((curCrankPos + self.tickOffset) / self.tickAngle)
+	local lastSegment = ceil((self.lastCrankPos + self.tickOffset) / self.tickAngle)
+
+	local segmentBoundariesCrossed = thisSegment - lastSegment
+
+	self.lastCrankPos = curCrankPos
+
+	return segmentBoundariesCrossed
+end
+
+function CrankTracker:getCrankTicksRelative()
     local curCrankPos = getCrankPosition()
     local difference = curCrankPos - self.lastCrankPos
 	if difference > 180 then

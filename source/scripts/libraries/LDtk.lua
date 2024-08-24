@@ -1,3 +1,6 @@
+---@diagnostic disable
+--cSpell:disable
+
 -- version 1.05
 --
 -- Copyright 2022-2023 Nic Magnier

@@ -40,6 +40,7 @@ local function getBoxImage(width, height)
     return image
 end
 
+Block = {}
 class('Block').extends(Hazard)
 
 function Block:init(x, y, entity)

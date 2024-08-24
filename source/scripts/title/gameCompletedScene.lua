@@ -14,6 +14,7 @@ local font = FONT
 
 local levelTimes = LEVEL_TIMES
 
+GameCompletedScene = {}
 class('GameCompletedScene').extends()
 
 function GameCompletedScene:init()
@@ -30,8 +31,8 @@ function GameCompletedScene:init()
     local animateTime = 1500
     audioManager.play(audioManager.sfx.celebrate)
     local animateTimer = pd.timer.new(animateTime, thanksForPlayingSprite.y, thanksForPlayingY, pd.easingFunctions.outBack)
-    animateTimer.updateCallback = function(timer)
-        thanksForPlayingSprite:moveTo(200, timer.value)
+    animateTimer.updateCallback = function()
+        thanksForPlayingSprite:moveTo(200, animateTimer.value)
     end
 
     local levelTimeTotal = 0

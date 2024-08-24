@@ -10,22 +10,51 @@ local transitionImage = nil
 
 local newScene = nil
 
-local uiQueue = {}
-
 SceneManager = {}
 SceneManager.transitioning = false
 
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
-local uiUpdate = function()
-    for i=#uiQueue, 1, -1 do
-        local drawObject = uiQueue[i]
-        local uiUpdate = drawObject.update
-        local remove = uiUpdate(drawObject)
-        if remove then
-            table.remove(uiQueue, i)
+
+local function setSceneUpdate(scene)
+    local drawFps = DRAW_FPS
+    pd.update = function()
+        local frameStart = ms()
+        spriteUpdate()
+        scene:update()
+        timerUpdate()
+        if drawFps then
+            pd.drawFPS(0, 228)
         end
+        if transitionImage then
+            transitionImage:drawIgnoringOffset(0, 0)
+        end
+        audioManager.clearPlayedThisFrame()
+        lazyLoadAssets(frameStart)
     end
+end
+
+local function cleanupScene()
+    gfx.sprite.removeAll()
+    gfx.setDrawOffset(0, 0)
+    pd.display.setOffset(0, 0)
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:removeAllMenuItems()
+    AudioManager.setMusicVolMenuOption()
+    local allTimers = pd.timer.allTimers()
+    for _, timer in ipairs(allTimers) do
+        timer:remove()
+    end
+end
+
+local function loadNewScene(args)
+    if not newScene then
+        return
+    end
+
+    cleanupScene()
+    local sceneInstance = newScene(table.unpack(args))
+    setSceneUpdate(sceneInstance)
 end
 
 function SceneManager.isTransitioning()
@@ -50,60 +79,16 @@ function SceneManager.startingScene(scene)
     setSceneUpdate(sceneInstance)
 end
 
-function SceneManager.addToUiQueue(drawObject)
-    table.insert(uiQueue, drawObject)
-end
-
-function loadNewScene(args)
-    cleanupScene()
-    local sceneInstance = newScene(table.unpack(args))
-    setSceneUpdate(sceneInstance)
-end
-
-function setSceneUpdate(scene)
-    local drawFps = DRAW_FPS
-    pd.update = function()
-        local frameStart = ms()
-        spriteUpdate()
-        scene:update()
-        timerUpdate()
-        uiUpdate()
-        if drawFps then
-            pd.drawFPS(0, 228)
-        end
-        if transitionImage then
-            transitionImage:drawIgnoringOffset(0, 0)
-        end
-        audioManager.clearPlayedThisFrame()
-        lazyLoadAssets(frameStart)
-    end
-end
-
-function cleanupScene()
-    gfx.sprite.removeAll()
-    gfx.setDrawOffset(0, 0)
-    pd.display.setOffset(0, 0)
-    drawQueue = {}
-    uiQueue = {}
-    local systemMenu = pd.getSystemMenu()
-    systemMenu:removeAllMenuItems()
-    AudioManager.setMusicVolMenuOption()
-    local allTimers = pd.timer.allTimers()
-    for _, timer in ipairs(allTimers) do
-        timer:remove()
-    end
-end
-
 function SceneManager.startTransition(xIn, yIn, callback, args)
     xIn = xIn and xIn or 200
     yIn = yIn and yIn or 120
-    xOut = xIn
-    yOut = yIn
+    local xOut = xIn
+    local yOut = yIn
 
     audioManager.play(audioManager.sfx.transitionOut)
     local transitionTime = 500
     local startRadius, endRadius = 0, 500
-    transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
+    local transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
     transitionTimer.updateCallback = function()
         transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
         local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
@@ -136,17 +121,4 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
             transitionImage = nil
         end
     end
-end
-
-function createTransitionTimer(startRadius, endRadius)
-    local transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius)
-    transitionTimer.easingFunction = pd.easingFunctions.inCubic
-    transitionTimer.updateCallback = function(timer)
-        transitionImage = gfx.image.new(400, 240)
-        gfx.pushContext(transitionImage)
-            gfx.setColor(gfx.kColorWhite)
-            gfx.fillCircleAtPoint(200, 120, timer.value)
-        gfx.popContext()
-    end
-    return transitionTimer
 end

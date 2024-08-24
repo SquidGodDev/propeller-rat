@@ -1,6 +1,7 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
+Starfield = {}
 class('Starfield').extends(gfx.sprite)
 
 function Starfield:init(width, height)

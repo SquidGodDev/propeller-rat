@@ -181,6 +181,7 @@ local function getCompletedLevelsCount(worldDepth)
     return completedLevels, worldLevelCount
 end
 
+LevelSelectScene = {}
 class('LevelSelectScene').extends()
 
 function LevelSelectScene:init(nextLevel)
@@ -261,8 +262,8 @@ function LevelSelectScene:init(nextLevel)
                 movingFlag:add()
                 Utilities.animatedSprite(burstX, burstY, assets.getImagetable("images/levelSelect/burst"), 17, false)
                 local flagTimer = pd.timer.new(700, 0.0, 1.0, pd.easingFunctions.inExpo)
-                flagTimer.updateCallback = function(timer)
-                    movingFlag:moveTo(movingFlagX + (flagSpriteX - movingFlagX)*timer.value, movingFlagY + (flagSpriteY - movingFlagY)*timer.value)
+                flagTimer.updateCallback = function()
+                    movingFlag:moveTo(movingFlagX + (flagSpriteX - movingFlagX)*flagTimer.value, movingFlagY + (flagSpriteY - movingFlagY)*flagTimer.value)
                 end
                 flagTimer.timerEndedCallback = function()
                     audioManager.play(audioManager.sfx.flagAcquired)
@@ -323,6 +324,8 @@ function LevelSelectScene:init(nextLevel)
 
     self.enteringScene = true
     self.exitingScene = false
+
+    self.crankTracker = CrankTracker(120)
 end
 
 function LevelSelectScene:update()
@@ -336,8 +339,6 @@ function LevelSelectScene:update()
     if self.enteringScene then
         if not sceneManager.isTransitioning() then
             self.enteringScene = false
-            -- Clear crank ticks
-            pd.getCrankTicks(3)
         else
             return
         end
@@ -373,7 +374,7 @@ function LevelSelectScene:update()
         end
     end
 
-    local crankTicks = pd.getCrankTicks(3)
+    local crankTicks = self.crankTracker:getCrankTicksAbsolute()
     if crankTicks == -1 then
         self:moveLeft()
     elseif crankTicks == 1 then
@@ -416,11 +417,6 @@ end
 
 function LevelSelectScene:getTargetX()
     return previewX - borderWidth / 2 - (self.selectedLevel - 1) * (borderWidth + previewGap)
-end
-
-function LevelSelectScene:getSelectedLevel()
-    local _, row, col = gridview:getSelection()
-    return columnCount * (row - 1) + col
 end
 
 function LevelSelectScene:updateName()

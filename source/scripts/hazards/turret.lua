@@ -44,6 +44,7 @@ local projectileX <const> = {}
 local projectileY <const> = {}
 local projectileTurretIndex <const> = {}
 
+TurretManager = {}
 class('TurretManager').extends()
 
 function TurretManager:init()
@@ -155,6 +156,7 @@ function TurretManager:update(dt)
                 local sprite = collidedSprites[spriteIdx]
                 local collisionTag = sprite:getTag()
                 if collisionTag == playerTag then
+                    ---@diagnostic disable-next-line: undefined-field
                     sprite:reset()
                 end
 

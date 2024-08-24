@@ -34,6 +34,7 @@ local laserAnimationFrameTime <const> = {}
 local laserFired <const> = {}
 local laserFireTime <const> = {}
 
+LaserManager = {}
 class('LaserManager').extends()
 
 function LaserManager:init()
@@ -154,6 +155,7 @@ function LaserManager:update(dt)
                         for spriteIdx=1, #intersectedSprites do
                             local sprite = intersectedSprites[spriteIdx]
                             if sprite:getTag() == TAGS.player then
+                                ---@diagnostic disable-next-line: undefined-field
                                 sprite:reset()
                             end
                         end

@@ -91,7 +91,7 @@ function pd.gameWillTerminate()
     saveGameData()
 end
 
-function pd.gameWillSleep()
+function pd.deviceWillSleep()
     saveGameData()
 end
 
@@ -116,7 +116,6 @@ import "scripts/libraries/LDtk"
 import "scripts/libraries/Utilities"
 import "scripts/libraries/Assets"
 import "scripts/libraries/SceneManager"
-import "scripts/libraries/Chain"
 
 -- Game
 import "scripts/player/player"
@@ -146,5 +145,5 @@ import "scripts/title/worldSelectScene"
 import "scripts/title/gameCompletedScene"
 
 if pd.isSimulator then
-    sanityChecks()
+    SANITY_CHECKS()
 end

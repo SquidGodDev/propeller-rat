@@ -62,8 +62,8 @@ function TitleScene:init()
         local delayTime = i * 100
         pd.timer.performAfterDelay(delayTime, function()
             local moveTimer = pd.timer.new(moveTime, offScreenY, letterY, pd.easingFunctions.outBack)
-            moveTimer.updateCallback = function(timer)
-                letterSprite:moveTo(letterX, timer.value)
+            moveTimer.updateCallback = function()
+                letterSprite:moveTo(letterX, moveTimer.value)
             end
         end)
 

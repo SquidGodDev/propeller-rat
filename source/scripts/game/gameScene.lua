@@ -132,7 +132,7 @@ function GameScene:update()
     timeSprite:getImage():drawIgnoringOffset(timeSprite.x, timeSprite.y)
 
     if self.popupActive then
-        local crankTick = self.crankTracker:getCrankTick()
+        local crankTick = self.crankTracker:getCrankTicksRelative()
         if pd.buttonJustPressed(pd.kButtonLeft) or crankTick == -1 then
             if self.levelEndOption > 1 then
                 audioManager.play(audioManager.sfx.navigate)
@@ -227,8 +227,8 @@ function GameScene:levelEnd()
     popupSprite:setCenter(0, 0)
     popupSprite:moveTo(popupX, popupY + 240)
     local popupTimer = pd.timer.new(900, popupSprite.y, popupY, pd.easingFunctions.outBack)
-    popupTimer.updateCallback = function(timer)
-        popupSprite:moveTo(popupX, timer.value)
+    popupTimer.updateCallback = function()
+        popupSprite:moveTo(popupX, popupTimer.value)
     end
     self.popupSprite = popupSprite
 
@@ -243,15 +243,15 @@ function GameScene:levelEnd()
         self.popupActive = true
         self.crankTracker = CrankTracker(120)
         local selectorTimer = pd.timer.new(900, selectorSprite.y, selectorBaseY, pd.easingFunctions.outBack)
-        selectorTimer.updateCallback = function(timer)
-            selectorSprite:moveTo(selectorSprite.x, timer.value)
+        selectorTimer.updateCallback = function()
+            selectorSprite:moveTo(selectorSprite.x, selectorTimer.value)
         end
     end)
 end
 
 function GameScene:nextLevel()
     local nextLevel = self.curLevelNum + 1
-    SceneManager.switchScene(LevelSelectScene, playerX, playerY, nextLevel)
+    SceneManager.switchScene(LevelSelectScene, self.player.y, self.player.y, nextLevel)
 end
 
 function GameScene:clearLevel()
@@ -304,14 +304,14 @@ function GameScene:showLevelTitle()
     local titleShowTime = 2000
     pd.timer.performAfterDelay(startDelay, function()
         local titleTimer = pd.timer.new(titleTransitionTime, -titleHeight, titleY, pd.easingFunctions.outCubic)
-        titleTimer.updateCallback = function(timer)
-            titleSprite:moveTo(titleX, timer.value)
+        titleTimer.updateCallback = function()
+            titleSprite:moveTo(titleX, titleTimer.value)
         end
         titleTimer.timerEndedCallback = function()
             pd.timer.performAfterDelay(titleShowTime, function()
                 titleTimer = pd.timer.new(titleTransitionTime, titleSprite.y, -titleHeight, pd.easingFunctions.inCubic)
-                titleTimer.updateCallback = function(timer)
-                    titleSprite:moveTo(titleX, timer.value)
+                titleTimer.updateCallback = function()
+                    titleSprite:moveTo(titleX, titleTimer.value)
                 end
                 titleTimer.timerEndedCallback= function()
                     titleSprite:remove()

@@ -5,6 +5,7 @@ local ldtk <const> = LDtk
 
 local font = FONT
 
+Level = {}
 class('Level').extends(gfx.sprite)
 
 function Level:init(levelIndex, laserManager, turretManager, hazardManager)
@@ -17,6 +18,10 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
     for layerName, layer in pairs(ldtk.get_layers(levelName)) do
         if layer.tiles then
             local tilemap = ldtk.create_tilemap(levelName, layerName)
+
+            if not tilemap then
+                return
+            end
 
             local layerSprite = gfx.sprite.new()
             layerSprite:setTilemap(tilemap)
@@ -31,7 +36,7 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
                 for i=1, #wallSprites do
                     local wallSprite = wallSprites[i]
                     wallSprite:setTag(TAGS.wall)
-                    wallSprite:setGroups(TAGS.wall)
+                    wallSprite:setGroups({TAGS.wall})
                 end
             end
         end

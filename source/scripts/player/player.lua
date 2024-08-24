@@ -40,6 +40,7 @@ local spinningPlayerFrameRate = 20
 
 local levelPassKey = LEVEL_PASS_KEY
 
+Player = {}
 class('Player').extends(gfx.sprite)
 
 function Player:init(gameScene, x, y)
@@ -70,7 +71,9 @@ function Player:init(gameScene, x, y)
 
     local playerImageTable = assets.getImagetable("images/player/rat")
     self.animationLoop = gfx.animation.loop.new(playerAnimationFrameRate, playerImageTable, true)
+    ---@diagnostic disable-next-line: inject-field
     self.animationLoop.startFrame = flyStartFrame
+    ---@diagnostic disable-next-line: inject-field
     self.animationLoop.endFrame = flyEndFrame
     self:setImage(self.animationLoop:image())
 
@@ -172,8 +175,8 @@ function Player:levelEnd(x, y)
     propellerSprite:setZIndex(Z_INDEXES.player)
     propellerSprite:moveTo(x, y)
     local propellerTimer = pd.timer.new(1500, y, y - 200, pd.easingFunctions.inCubic)
-    propellerTimer.updateCallback = function(timer)
-        propellerSprite:moveTo(x, timer.value)
+    propellerTimer.updateCallback = function()
+        propellerSprite:moveTo(x, propellerTimer.value)
     end
 
     self.gameScene:recordLevelTime()
@@ -222,11 +225,11 @@ function Player:reset()
     shakeTimer.timerEndedCallback = function()
         setDisplayOffset(0, 0)
     end
-    shakeTimer.updateCallback = function(timer)
-        local shakeAmount = timer.value
+    shakeTimer.updateCallback = function()
+        local shakeAmount = shakeTimer.value
         local shakeAngle = random()*3.14*2;
-        shakeX = floor(cos(shakeAngle)*shakeAmount);
-        shakeY = floor(sin(shakeAngle)*shakeAmount);
+        local shakeX = floor(cos(shakeAngle)*shakeAmount);
+        local shakeY = floor(sin(shakeAngle)*shakeAmount);
         setDisplayOffset(shakeX, shakeY)
     end
 
@@ -238,8 +241,8 @@ function Player:reset()
     local spinningPlayerSprite = Utilities.animatedSprite(deathX, deathY, spinningPlayerImagetable, spinningPlayerFrameRate, true, nil, nil, self:getImageFlip())
     spinningPlayerSprite:setZIndex(Z_INDEXES.player)
     local moveTimer = pd.timer.new(1000, deathY, deathY + 200, pd.easingFunctions.inBack)
-    moveTimer.updateCallback = function(timer)
-        spinningPlayerSprite:moveTo(deathX, timer.value)
+    moveTimer.updateCallback = function()
+        spinningPlayerSprite:moveTo(deathX, moveTimer.value)
     end
     moveTimer.timerEndedCallback = function()
         spinningPlayerSprite:remove()
@@ -250,8 +253,8 @@ function Player:reset()
     propellerSprite:setZIndex(Z_INDEXES.player)
     propellerSprite:moveTo(deathX, deathY)
     local propellerTimer = pd.timer.new(1500, deathY, deathY - 200, pd.easingFunctions.inCubic)
-    propellerTimer.updateCallback = function(timer)
-        propellerSprite:moveTo(deathX, timer.value)
+    propellerTimer.updateCallback = function()
+        propellerSprite:moveTo(deathX, propellerTimer.value)
     end
     propellerTimer.timerEndedCallback = function()
         propellerSprite:remove()

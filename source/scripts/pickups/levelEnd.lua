@@ -12,6 +12,7 @@ local idleEndFrame = 4
 local teleportStartFrame = 5
 local teleportEndFrame = 20
 
+LevelEnd = {}
 class('LevelEnd').extends(Pickup)
 
 function LevelEnd:init(x, y)

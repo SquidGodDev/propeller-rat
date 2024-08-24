@@ -7,6 +7,7 @@ local audioManager <const> = AudioManager
 assets.preloadImage("images/levels/key")
 assets.preloadImagetable("images/levels/pickupParticles")
 
+Key = {}
 class('Key').extends(Pickup)
 
 function Key:init(x, y)
@@ -21,8 +22,8 @@ function Key:init(x, y)
     local bobTimer = pd.timer.new(1000, -4, 4)
     bobTimer.repeats = true
     bobTimer.reverses = true
-    bobTimer.updateCallback = function(timer)
-        self:moveTo(x, y - timer.value)
+    bobTimer.updateCallback = function()
+        self:moveTo(x, y - bobTimer.value)
     end
 end
 

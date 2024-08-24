@@ -1,6 +1,7 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
+Pickup = {}
 class('Pickup').extends(gfx.sprite)
 
 function Pickup:init(x, y)

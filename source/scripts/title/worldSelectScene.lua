@@ -19,6 +19,7 @@ local font = FONT
 local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
+-- cSpell:disable-next-line
 local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon", "Ceres b"}
 local flagRequirements = {0, 8, 16, 24, 32, 40, 60}
 
@@ -120,7 +121,7 @@ function WorldSelectScene:init()
         local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
         table.insert(self.worlds, planetSprite)
 
-        worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
+        local worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
         local timeTotal = 0.0
         local worldCompleted = true
         local totalLevelCount = #worldLevelIIDs
@@ -147,7 +148,7 @@ function WorldSelectScene:init()
                     worldY = worldY
                 }
                 self.unlockingWorld = true
-                self.selectedWorld = worldIndex
+                self.selectedWorld = i
                 table.insert(worldUnlockQueue, unlockData)
                 UNLOCKED_WORLDS[i] = true
             elseif flags < flagRequirements[i] then
@@ -271,6 +272,8 @@ function WorldSelectScene:init()
 
     self.enteringScene = true
     self.exitingScene = false
+
+    self.crankTracker = CrankTracker(180)
 end
 
 function WorldSelectScene:update()
@@ -286,8 +289,6 @@ function WorldSelectScene:update()
     if self.enteringScene then
         if not sceneManager.isTransitioning() then
             self.enteringScene = false
-            -- Clear crank ticks
-            pd.getCrankTicks(2)
         else
             return
         end
@@ -323,7 +324,7 @@ function WorldSelectScene:update()
         end
     end
 
-    local crankTicks = pd.getCrankTicks(2)
+    local crankTicks = self.crankTracker:getCrankTicksAbsolute()
     if crankTicks == -1 then
         self:moveLeft()
     elseif crankTicks == 1 then
