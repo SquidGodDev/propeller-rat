@@ -20,7 +20,7 @@ local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
 -- cSpell:disable-next-line
-local planetNames = {"Citer 12", "Koyopa", "Hairu", "ESO-317", "Yuchi", "Dagon", "Ceres b"}
+local planetNames = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa"}
 local flagRequirements = {0, 8, 16, 24, 32, 40, 60}
 
 assets.preloadImages({
