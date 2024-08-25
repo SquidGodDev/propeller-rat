@@ -4,11 +4,12 @@ local assets <const> = Assets
 local utilities <const> = Utilities
 local audioManager <const> = AudioManager
 
-local formatTime = utilities.formatTime
+local formatTime <const> = utilities.formatTime
 local getElapsedTime = pd.getElapsedTime
 local pushContext = gfx.pushContext
 local popContext = gfx.popContext
 local newImage = gfx.image.new
+local getDrawOffset = gfx.getDrawOffset
 
 local font = FONT
 
@@ -45,6 +46,8 @@ local popupTimeX, popupTimeY = 75, 67
 local planetImagetables = PLANET_IMAGETABLES
 
 local timeTextWidth, timeTextHeight = 74, 15
+local timeX, timeY = 400 - timeTextWidth - 2, 2
+local timerTime = 0.0
 
 local previousTime = nil
 
@@ -68,10 +71,7 @@ function GameScene:init()
     self.titleSprite:setIgnoresDrawOffset(true)
     self.titleSprite:add()
 
-    self.timeSprite = gfx.sprite.new()
-    self.timeSprite:moveTo(400 - timeTextWidth - 2, 2)
-
-    self:updateTimeSprite(0.0)
+    timerTime = 0.0
 
     local systemMenu = pd.getSystemMenu()
     self.levelSelectMenuItem = systemMenu:addMenuItem("Level Select", function()
@@ -93,13 +93,11 @@ function GameScene:init()
     previousTime = nil
 
     self.crankTracker = nil
+
+    gfx.setImageDrawMode(gfx.kDrawModeCopy)
 end
 
 function GameScene:update()
-    if self.timerActive then
-        self:updateTimeSprite(getElapsedTime())
-    end
-
     local dt = 0
     local currentTime <const> = playdate.getCurrentTimeMilliseconds()
 	if previousTime ~= nil then
@@ -128,8 +126,12 @@ function GameScene:update()
         selectorSprite:update()
         selectorSprite:getImage():drawIgnoringOffset(selectorSprite.x, selectorSprite.y)
     end
-    local timeSprite = self.timeSprite
-    timeSprite:getImage():drawIgnoringOffset(timeSprite.x, timeSprite.y)
+
+    if self.timerActive then
+        timerTime = getElapsedTime()
+    end
+    local drawOffsetX, drawOffsetY = getDrawOffset()
+    font:drawText(formatTime(timerTime), timeX - drawOffsetX, timeY - drawOffsetY)
 
     if self.popupActive then
         local crankTick = self.crankTracker:getCrankTicksRelative()
@@ -163,15 +165,6 @@ function GameScene:update()
     end
 end
 
-function GameScene:updateTimeSprite(time)
-    local levelTimeText = formatTime(time)
-    local textImage = newImage(timeTextWidth, timeTextHeight)
-    pushContext(textImage)
-        font:drawText(levelTimeText, 0, 0)
-    popContext()
-    self.timeSprite:setImage(textImage)
-end
-
 function GameScene:startLevelTime()
     self.timerActive = true
     pd.resetElapsedTime()
@@ -181,7 +174,7 @@ function GameScene:recordLevelTime()
     self.timerActive = false
     local levelTime = getElapsedTime()
 
-    self:updateTimeSprite(levelTime)
+    timerTime = levelTime
 
     local levelIID = LEVEL_INDEX_TO_IID[self.curLevelNum]
     local oldLevelTime = LEVEL_TIMES[levelIID]
@@ -233,7 +226,7 @@ function GameScene:levelEnd()
     self.popupSprite = popupSprite
 
     local selectorImagetable = assets.getImagetable("images/levels/ui/selector")
-    local selectorSprite = Utilities.animatedSprite(selectorBaseX + selectorGap * 2, selectorBaseY + 240, selectorImagetable, 50, true)
+    local selectorSprite = utilities.animatedSprite(selectorBaseX + selectorGap * 2, selectorBaseY + 240, selectorImagetable, 50, true)
     selectorSprite:remove()
     selectorSprite:setIgnoresDrawOffset(true)
     selectorSprite:setZIndex(Z_INDEXES.ui)
@@ -271,7 +264,7 @@ function GameScene:setUpLevel()
     stars:add()
 
     local planetImagetable = planetImagetables[SELECTED_WORLD]
-    local planet = Utilities.animatedSprite(365, 45, planetImagetable, 100, true)
+    local planet = utilities.animatedSprite(365, 45, planetImagetable, 100, true)
     planet:setIgnoresDrawOffset(true)
 
     self.laserManager = LaserManager()
