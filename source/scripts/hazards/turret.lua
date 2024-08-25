@@ -3,8 +3,6 @@ local gfx <const> = pd.graphics
 
 local audioManager <const> = AudioManager
 
-local animatedSprite = Utilities.animatedSprite
-
 local shootSfx <const> = audioManager.sfx.shoot
 local smashSfx <const> = audioManager.sfx.smash
 local playSfx <const> = audioManager.play
@@ -46,6 +44,44 @@ local turretCurFrameTime <const> = {}
 local projectileX <const> = {}
 local projectileY <const> = {}
 local projectileTurretIndex <const> = {}
+
+local projectileBreakSpriteCount = 50
+local projectileBreakSprites <const> = table.create(projectileBreakSpriteCount, 0)
+
+local spriteNew <const> = gfx.sprite.new
+local spriteSetImage <const> = gfx.sprite.setImage
+local spriteMoveTo <const> = gfx.sprite.moveTo
+local spriteAdd <const> = gfx.sprite.add
+local spriteRemove <const> = gfx.sprite.remove
+
+local animationLoopNew <const> = gfx.animation.loop.new
+local animationLoopImage <const> = gfx.animation.loop.image
+local animationLoopIsValid <const> = gfx.animation.loop.isValid
+local function createProjectileBreakSprite()
+    local sprite = spriteNew(projectileBreakImagetable[1])
+    local animationLoop = animationLoopNew(20, projectileBreakImagetable, false)
+    ---@diagnostic disable-next-line: inject-field
+    sprite.animationLoop = animationLoop
+    local curFrame = animationLoop.startFrame
+    sprite.update = function()
+        local frame = animationLoop.frame
+        if frame ~= curFrame then
+            curFrame = frame
+            spriteSetImage(sprite, animationLoopImage(animationLoop))
+        end
+        if not animationLoopIsValid(animationLoop) then
+            curFrame = 1
+            animationLoop.frame = 1
+            spriteRemove(sprite)
+            tableInsert(projectileBreakSprites, sprite)
+        end
+    end
+    return sprite
+end
+
+for i=1,projectileBreakSpriteCount do
+    projectileBreakSprites[i] = createProjectileBreakSprite()
+end
 
 TurretManager = {}
 class('TurretManager').extends()
@@ -172,7 +208,12 @@ function TurretManager:update(dt)
 
         if destroy then
             playSfx(smashSfx)
-            animatedSprite(x, y, projectileBreakImagetable, 20, false)
+            local projectileBreakSprite = tableRemove(projectileBreakSprites)
+            if projectileBreakSprite then
+                projectileBreakSprite.animationLoop.frame = 1
+                spriteMoveTo(projectileBreakSprite, x, y)
+                spriteAdd(projectileBreakSprite)
+            end
             tableRemove(projectileX, i)
             tableRemove(projectileY, i)
             tableRemove(projectileTurretIndex, i)
