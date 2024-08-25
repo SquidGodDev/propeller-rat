@@ -5,11 +5,11 @@ local utilities <const> = Utilities
 local audioManager <const> = AudioManager
 
 local formatTime <const> = utilities.formatTime
-local getElapsedTime = pd.getElapsedTime
-local pushContext = gfx.pushContext
-local popContext = gfx.popContext
-local newImage = gfx.image.new
-local getDrawOffset = gfx.getDrawOffset
+local getElapsedTime <const> = pd.getElapsedTime
+local pushContext <const> = gfx.pushContext
+local popContext <const> = gfx.popContext
+local newImage <const> = gfx.image.new
+local getDrawOffset <const> = gfx.getDrawOffset
 
 local font = FONT
 
@@ -45,8 +45,8 @@ local popupTimeX, popupTimeY = 75, 67
 
 local planetImagetables = PLANET_IMAGETABLES
 
-local timeTextWidth, timeTextHeight = 74, 15
-local timeX, timeY = 400 - timeTextWidth - 2, 2
+local timeTextWidth = 74
+local timeX <const>, timeY <const> = 400 - timeTextWidth - 2, 2
 local timerTime = 0.0
 
 local previousTime = nil
@@ -93,8 +93,6 @@ function GameScene:init()
     previousTime = nil
 
     self.crankTracker = nil
-
-    gfx.setImageDrawMode(gfx.kDrawModeCopy)
 end
 
 function GameScene:update()
