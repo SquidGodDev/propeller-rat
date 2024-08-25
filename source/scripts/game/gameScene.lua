@@ -35,7 +35,7 @@ for levelIndex=1,levelCount do
     end
 end
 
-local levelEndPopupImage = gfx.image.new("images/levels/ui/levelEndPopup")
+local levelEndPopupImage = newImage("images/levels/ui/levelEndPopup")
 local popupWidth, popupHeight = levelEndPopupImage:getSize()
 local popupX, popupY = 200 - popupWidth / 2, 120 - popupHeight / 2
 local selectorBaseX, selectorBaseY = popupX + 56, popupY + 92
@@ -251,7 +251,7 @@ end
 
 function GameScene:nextLevel()
     local nextLevel = self.curLevelNum + 1
-    SceneManager.switchScene(LevelSelectScene, self.player.y, self.player.y, nextLevel)
+    SceneManager.switchScene(LevelSelectScene, nil, nil, nextLevel)
 end
 
 function GameScene:clearLevel()
@@ -264,7 +264,7 @@ function GameScene:clearLevel()
 end
 
 function GameScene:setUpLevel()
-    local starsImage = Assets.getImage("images/decoration/stars")
+    local starsImage = assets.getImage("images/decoration/stars")
     local stars = gfx.sprite.new(starsImage)
     stars:setIgnoresDrawOffset(true)
     stars:moveTo(200, 120)
