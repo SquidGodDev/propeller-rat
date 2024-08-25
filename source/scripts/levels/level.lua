@@ -5,6 +5,8 @@ local ldtk <const> = LDtk
 
 local font = FONT
 
+local spriteMoveTo <const> = gfx.sprite.moveTo
+
 Level = {}
 class('Level').extends(gfx.sprite)
 
@@ -45,6 +47,7 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
     self.hazards = {}
     local levelEnd
     local keys = {}
+    local keyPosY = {}
     for _, entity in ipairs(ldtk.get_entities(levelName)) do
         local entityX, entityY = entity.position.x, entity.position.y
         local entityName = entity.name
@@ -71,6 +74,7 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
             laserManager:addLaser(entityX, entityY, tailX, tailY, delay, interval)
         elseif entityName == "Key" then
             table.insert(keys, Key(entityX, entityY))
+            table.insert(keyPosY, entityY)
         elseif entityName == "HelpText" then
             local text = entity.fields.text
             local helpTextSprite = gfx.sprite.spriteWithText(text, 400, 30, nil, nil, nil, nil, font)
@@ -86,6 +90,16 @@ function Level:init(levelIndex, laserManager, turretManager, hazardManager)
         key:setLevelEnd(levelEnd)
     end
     levelEnd:setKeyCount(#keys)
+
+    local bobTimer = pd.timer.new(1000, -4, 4)
+    bobTimer.repeats = true
+    bobTimer.reverses = true
+    bobTimer.updateCallback = function()
+        for i=1,#keys do
+            local key = keys[i]
+            spriteMoveTo(key, key.x, keyPosY[i] + bobTimer.value)
+        end
+    end
 end
 
 function Level:getStartPos()

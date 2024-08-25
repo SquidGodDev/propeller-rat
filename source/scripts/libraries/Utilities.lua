@@ -52,6 +52,7 @@ local spriteMoveTo <const> = gfx.sprite.moveTo
 local spriteAdd <const> = gfx.sprite.add
 local spriteRemove <const> = gfx.sprite.remove
 
+local animationLoopNew <const> = gfx.animation.loop.new
 local animationLoopImage <const> = gfx.animation.loop.image
 local animationLoopIsValid <const> = gfx.animation.loop.isValid
 
@@ -64,7 +65,7 @@ function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
     local sprite = spriteNew(imagetable[1])
     spriteMoveTo(sprite, x, y)
     spriteAdd(sprite)
-    local animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
+    local animationLoop = animationLoopNew(frameTime, imagetable, repeats)
     animationLoop.startFrame = startFrame or 1
     animationLoop.endFrame = endFrame or #imagetable
     local curFrame = animationLoop.startFrame
