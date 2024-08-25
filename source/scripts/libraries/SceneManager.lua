@@ -16,6 +16,14 @@ SceneManager.transitioning = false
 local timerUpdate = pd.timer.updateTimers
 local spriteUpdate = gfx.sprite.update
 
+local newImage <const> = gfx.image.new
+local pushContext <const> = gfx.pushContext
+local popContext <const> = gfx.popContext
+local setColor <const> = gfx.setColor
+local fillCircleAtPoint <const> = gfx.fillCircleAtPoint
+local kColorBlack <const> = gfx.kColorBlack
+local kColorWhite <const> = gfx.kColorWhite
+
 local function setSceneUpdate(scene)
     local drawFps = DRAW_FPS
     pd.update = function()
@@ -89,13 +97,13 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
     local transitionTime = 500
     local startRadius, endRadius = 0, 500
     local transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
+    transitionImage = newImage(400, 240)
     transitionTimer.updateCallback = function()
-        transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
-        local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
-        gfx.pushContext(transitionMask)
-            gfx.setColor(gfx.kColorBlack)
-            gfx.fillCircleAtPoint(xOut, yOut, transitionTimer.value)
-        gfx.popContext()
+        local transitionMask = newImage(400, 240, kColorWhite)
+        pushContext(transitionMask)
+            setColor(kColorBlack)
+            fillCircleAtPoint(xOut, yOut, transitionTimer.value)
+        popContext()
         transitionImage:setMaskImage(transitionMask)
     end
 
@@ -106,13 +114,13 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
 
         audioManager.play(audioManager.sfx.transitionIn)
         transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
+        transitionImage = newImage(400, 240, kColorBlack)
+        local transitionMask = newImage(400, 240, kColorWhite)
         transitionTimer.updateCallback = function()
-            transitionImage = gfx.image.new(400, 240, gfx.kColorBlack)
-            local transitionMask = gfx.image.new(400, 240, gfx.kColorWhite)
-            gfx.pushContext(transitionMask)
-                gfx.setColor(gfx.kColorBlack)
-                gfx.fillCircleAtPoint(xOut, yOut, transitionTimer.value)
-            gfx.popContext()
+            pushContext(transitionMask)
+                setColor(kColorBlack)
+                fillCircleAtPoint(xOut, yOut, transitionTimer.value)
+            popContext()
             transitionImage:setMaskImage(transitionMask)
         end
 

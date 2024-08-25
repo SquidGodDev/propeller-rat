@@ -45,15 +45,25 @@ end
 -- Sprite/image utilities                                   |
 -- ==========================================================
 
-function utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
+local kImageUnflipped <const> = gfx.kImageUnflipped
+local spriteNew <const> = gfx.sprite.new
+local spriteSetImage <const> = gfx.sprite.setImage
+local spriteMoveTo <const> = gfx.sprite.moveTo
+local spriteAdd <const> = gfx.sprite.add
+local spriteRemove <const> = gfx.sprite.remove
+
+local animationLoopImage <const> = gfx.animation.loop.image
+local animationLoopIsValid <const> = gfx.animation.loop.isValid
+
+function Utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFrame, endFrame, flip)
     if type(imagetable) == 'string' then
-        imagetable = Assets.getImagetable(imagetable)
+        imagetable = gfx.imagetable.new(imagetable)
     end
     assert(imagetable)
-    flip = flip or gfx.kImageUnflipped
-    local sprite = gfx.sprite.new(imagetable[1])
-    sprite:moveTo(x, y)
-    sprite:add()
+    flip = flip or kImageUnflipped
+    local sprite = spriteNew(imagetable[1])
+    spriteMoveTo(sprite, x, y)
+    spriteAdd(sprite)
     local animationLoop = gfx.animation.loop.new(frameTime, imagetable, repeats)
     animationLoop.startFrame = startFrame or 1
     animationLoop.endFrame = endFrame or #imagetable
@@ -62,16 +72,16 @@ function utilities.animatedSprite(x, y, imagetable, frameTime, repeats, startFra
         local frame = animationLoop.frame
         if frame ~= curFrame then
             curFrame = frame
-            sprite:setImage(animationLoop:image(), flip)
+            spriteSetImage(sprite, animationLoopImage(animationLoop), flip)
         end
-        if not animationLoop:isValid() then
-            sprite:remove()
+        if not animationLoopIsValid(animationLoop) then
+            spriteRemove(sprite)
         end
     end
     return sprite
 end
 
-function utilities.formatTime(seconds)
+function Utilities.formatTime(seconds)
     if seconds >= 5999.999 then
         seconds = 5999.999
     end
@@ -83,7 +93,7 @@ function utilities.formatTime(seconds)
     return string.format("%02d:%02d.%03d", minutes, remainingSeconds, milliseconds)
 end
 
-function utilities.imageWithText(string, font)
+function Utilities.imageWithText(string, font)
 	local textImage = gfx.image.new(font:getTextWidth(string), font:getHeight())
 	gfx.pushContext(textImage)
         font:drawText(string, 0, 0)
@@ -91,7 +101,7 @@ function utilities.imageWithText(string, font)
     return textImage
 end
 
-function utilities.spriteWithText(string, font)
+function Utilities.spriteWithText(string, font)
    local textImage = utilities.imageWithText(string, font)
    return gfx.sprite.new(textImage)
 end
