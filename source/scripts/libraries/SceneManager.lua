@@ -31,11 +31,11 @@ local function setSceneUpdate(scene)
         spriteUpdate()
         scene:update()
         timerUpdate()
-        if drawFps then
-            pd.drawFPS(0, 228)
-        end
         if transitionImage then
             transitionImage:drawIgnoringOffset(0, 0)
+        end
+        if drawFps then
+            pd.drawFPS(0, 228)
         end
         audioManager.clearPlayedThisFrame()
         lazyLoadAssets(frameStart)
