@@ -1,16 +1,19 @@
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-local setColor = gfx.setColor
-local kColorWhite = gfx.kColorWhite
-local setLineWidth = gfx.setLineWidth
-local drawLine = gfx.drawLine
+local setColor <const> = gfx.setColor
+local kColorWhite <const> = gfx.kColorWhite
+local setLineWidth <const> = gfx.setLineWidth
+local drawLine <const> = gfx.drawLine
+local setImage <const> = gfx.sprite.setImage
+local querySpritesAlongLine <const> = gfx.sprite.querySpritesAlongLine
 
 local function easeOutExpo(x)
     return x == 1 and 1 or 1 - 2^(-10 * x)
 end
 
 local audioManager <const> = AudioManager
+local playSfx <const> = audioManager.play
 local laserSfx = audioManager.sfx.laser
 
 local laserImagetable = gfx.imagetable.new("images/hazards/laser")
@@ -22,6 +25,8 @@ local beamWidth = 8.0
 local fireTime = 1000.0 -- ms
 
 local tableInsert = table.insert
+local laserHeadSprites <const> = {}
+local laserTailSprites <const> = {}
 local laserHeadX <const> = {}
 local laserHeadY <const> = {}
 local laserTailX <const> = {}
@@ -49,6 +54,8 @@ end
 
 function LaserManager:clear()
     for i=#laserHeadX,1,-1 do
+        laserHeadSprites[i] = nil
+        laserTailSprites[i] = nil
         laserHeadX[i] = nil
         laserHeadY[i] = nil
         laserTailX[i] = nil
@@ -72,6 +79,8 @@ function LaserManager:addLaser(headX, headY, tailX, tailY, delay, interval)
     laserSpriteTail:setZIndex(Z_INDEXES.hazard)
     laserSpriteTail:moveTo(tailX, tailY)
     laserSpriteTail:add()
+    tableInsert(laserHeadSprites, laserSpriteHead)
+    tableInsert(laserTailSprites, laserSpriteTail)
     tableInsert(laserHeadX, headX)
     tableInsert(laserHeadY, headY)
     tableInsert(laserTailX, tailX)
@@ -148,10 +157,10 @@ function LaserManager:update(dt)
                 elseif activated then
                     -- Fire laser
                     if not laserFired[i] then
-                        audioManager.play(laserSfx)
+                        playSfx(laserSfx)
                         laserFired[i] = true
                         laserFireTime[i] = fireTime
-                        local intersectedSprites = gfx.sprite.querySpritesAlongLine(headX, headY, tailX, tailY)
+                        local intersectedSprites = querySpritesAlongLine(headX, headY, tailX, tailY)
                         for spriteIdx=1, #intersectedSprites do
                             local sprite = intersectedSprites[spriteIdx]
                             if sprite:getTag() == TAGS.player then
@@ -175,8 +184,12 @@ function LaserManager:update(dt)
 
                 -- Draw laser head/tail
                 local laserImage = laserImagetable[animationIndex]
-                laserImage:drawAnchored(headX, headY, 0.5, 0.5)
-                laserImage:drawAnchored(tailX, tailY, 0.5, 0.5)
+                setImage(laserHeadSprites[i], laserImage)
+                setImage(laserTailSprites[i], laserImage)
+            else
+                local laserImage = laserImagetable[1]
+                setImage(laserHeadSprites[i], laserImage)
+                setImage(laserTailSprites[i], laserImage)
             end
         end
     end

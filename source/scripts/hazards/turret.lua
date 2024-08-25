@@ -3,33 +3,36 @@ local gfx <const> = pd.graphics
 
 local audioManager <const> = AudioManager
 
-local assets <const> = Assets
-
 local animatedSprite = Utilities.animatedSprite
 
-local shootSfx = audioManager.sfx.shoot
-local smashSfx = audioManager.sfx.smash
+local shootSfx <const> = audioManager.sfx.shoot
+local smashSfx <const> = audioManager.sfx.smash
+local playSfx <const> = audioManager.play
 local playerTag <const> = TAGS.player
 local hazardTag <const> = TAGS.hazard
 local wallTag <const> = TAGS.wall
+local getTag <const> = gfx.sprite.getTag
 
-local turretProjectileImage = gfx.image.new("images/hazards/turretProjectile")
-local turretImagetable = gfx.imagetable.new("images/hazards/turret")
-local turretImagetableSize = #turretImagetable
-local projectileBreakImagetable = gfx.imagetable.new("images/hazards/projectileBreak")
+local turretProjectileImage <const> = gfx.image.new("images/hazards/turretProjectile")
+local turretImagetable <const> = gfx.imagetable.new("images/hazards/turret")
+local turretImagetableSize <const> = #turretImagetable
+local projectileBreakImagetable <const> = gfx.imagetable.new("images/hazards/projectileBreak")
 
-local turretFrameTime = 80 -- ms
-local projectileWidth = 10
-local projectileBorder = 2
-local projectileHitboxSize = projectileWidth - projectileBorder * 2
-local projectileHitboxHalfSize = projectileHitboxSize / 2
-local speedMultiplierConstant = 30 / 1000
+local turretFrameTime <const> = 80 -- ms
+local projectileWidth <const> = 10
+local projectileBorder <const> = 2
+local projectileHitboxSize <const> = projectileWidth - projectileBorder * 2
+local projectileHitboxHalfSize <const> = projectileHitboxSize / 2
+local speedMultiplierConstant <const> = 30 / 1000
 
-local querySpritesInRect = gfx.sprite.querySpritesInRect
+local querySpritesInRect <const> = gfx.sprite.querySpritesInRect
+local drawAnchored <const> = gfx.image.drawAnchored
+local setImage <const> = gfx.sprite.setImage
 
-local tableInsert = table.insert
-local tableRemove = table.remove
+local tableInsert <const> = table.insert
+local tableRemove <const> = table.remove
 
+local turretSprites <const> = {}
 local turretX <const> = {}
 local turretY <const> = {}
 local turretXSpeed <const> = {}
@@ -49,6 +52,7 @@ class('TurretManager').extends()
 
 function TurretManager:init()
     for i=#turretX, 1, -1 do
+        turretSprites[i] = nil
         turretX[i] = nil
         turretY[i] = nil
         turretXSpeed[i] = nil
@@ -72,6 +76,7 @@ function TurretManager:addTurret(x, y, xSpeed, ySpeed, time, startDelay)
     turretSprite:setZIndex(Z_INDEXES.hazard)
     turretSprite:moveTo(x, y)
     turretSprite:add()
+    tableInsert(turretSprites, turretSprite)
     tableInsert(turretX, x)
     tableInsert(turretY, y)
     tableInsert(turretXSpeed, xSpeed * speedMultiplierConstant)
@@ -129,13 +134,13 @@ function TurretManager:update(dt)
                 local x, y = turretX[i], turretY[i]
                 -- If animation is being reset, that means it's time to fire the projectile
                 if animationIndex == 1 then
-                    audioManager.play(shootSfx)
+                    playSfx(shootSfx)
                     tableInsert(projectileX, x)
                     tableInsert(projectileY, y)
                     tableInsert(projectileTurretIndex, i)
+                    setImage(turretSprites[i], turretImagetable[1])
                 else
-                    local turretImage = turretImagetable[animationIndex]
-                    turretImage:drawAnchored(x, y, 0.5, 0.5)
+                    setImage(turretSprites[i], turretImagetable[animationIndex])
                 end
             end
         end
@@ -154,13 +159,11 @@ function TurretManager:update(dt)
             local collidedSprites = querySpritesInRect(x - projectileHitboxHalfSize, y - projectileHitboxHalfSize, projectileHitboxSize, projectileHitboxSize)
             for spriteIdx=1, #collidedSprites do
                 local sprite = collidedSprites[spriteIdx]
-                local collisionTag = sprite:getTag()
+                local collisionTag = getTag(sprite)
                 if collisionTag == playerTag then
                     ---@diagnostic disable-next-line: undefined-field
                     sprite:reset()
-                end
-
-                if collisionTag == wallTag or collisionTag == hazardTag then
+                elseif collisionTag == wallTag or collisionTag == hazardTag then
                     destroy = true
                 end
             end
@@ -168,7 +171,7 @@ function TurretManager:update(dt)
 
 
         if destroy then
-            audioManager.play(smashSfx)
+            playSfx(smashSfx)
             animatedSprite(x, y, projectileBreakImagetable, 20, false)
             tableRemove(projectileX, i)
             tableRemove(projectileY, i)
@@ -176,7 +179,7 @@ function TurretManager:update(dt)
         else
             projectileX[i] = x
             projectileY[i] = y
-            turretProjectileImage:drawAnchored(x, y, 0.5, 0.5)
+            drawAnchored(turretProjectileImage, x, y, 0.5, 0.5)
         end
     end
 end
