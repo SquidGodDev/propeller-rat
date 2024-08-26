@@ -12,6 +12,8 @@ local wallTag <const> = TAGS.wall
 local getTag <const> = gfx.sprite.getTag
 
 local turretProjectileImage <const> = gfx.image.new("images/hazards/turretProjectile")
+local turretProjectileWidth <const> = turretProjectileImage:getSize()
+local turretProjectileHalfWidth <const> = turretProjectileWidth / 2
 local turretImagetable <const> = gfx.imagetable.new("images/hazards/turret")
 local turretImagetableSize <const> = #turretImagetable
 local projectileBreakImagetable <const> = gfx.imagetable.new("images/hazards/projectileBreak")
@@ -20,11 +22,10 @@ local turretFrameTime <const> = 80 -- ms
 local projectileWidth <const> = 10
 local projectileBorder <const> = 2
 local projectileHitboxSize <const> = projectileWidth - projectileBorder * 2
-local projectileHitboxHalfSize <const> = projectileHitboxSize / 2
 local speedMultiplierConstant <const> = 30 / 1000
 
 local querySpritesInRect <const> = gfx.sprite.querySpritesInRect
-local drawAnchored <const> = gfx.image.drawAnchored
+local draw <const> = gfx.image.draw
 local setImage <const> = gfx.sprite.setImage
 
 local tableInsert <const> = table.insert
@@ -41,9 +42,13 @@ local turretStartDelay <const> = {}
 local turretCurFrame <const> = {}
 local turretCurFrameTime <const> = {}
 
-local projectileX <const> = {}
-local projectileY <const> = {}
-local projectileTurretIndex <const> = {}
+local collisionCheckRate <const> = 2
+local collisionCheckCount = 0
+
+local maxProjectileCount <const> = 50
+local projectileX <const> = table.create(maxProjectileCount, 0)
+local projectileY <const> = table.create(maxProjectileCount, 0)
+local projectileTurretIndex <const> = table.create(maxProjectileCount, 0)
 
 local projectileBreakSpriteCount = 50
 local projectileBreakSprites <const> = table.create(projectileBreakSpriteCount, 0)
@@ -100,10 +105,10 @@ function TurretManager:init()
         turretCurFrameTime[i] = nil
     end
 
-    for i=#projectileX, 1, -1 do
-        projectileX[i] = nil
-        projectileY[i] = nil
-        projectileTurretIndex[i] = nil
+    for i=1, maxProjectileCount do
+        projectileX[i] = -1
+        projectileY[i] = -1
+        projectileTurretIndex[i] = -1
     end
 end
 
@@ -130,6 +135,7 @@ end
 
 function TurretManager:update(dt)
     local stopped = self.stopped
+    collisionCheckCount = (collisionCheckCount + 1) % collisionCheckRate
     for i=#turretX, 1, -1 do
         local startDelay = turretStartDelay[i]
         if startDelay > 0 then
@@ -171,9 +177,14 @@ function TurretManager:update(dt)
                 -- If animation is being reset, that means it's time to fire the projectile
                 if animationIndex == 1 then
                     playSfx(shootSfx)
-                    tableInsert(projectileX, x)
-                    tableInsert(projectileY, y)
-                    tableInsert(projectileTurretIndex, i)
+                    for idx=1, maxProjectileCount do
+                        if projectileTurretIndex[idx] == -1 then
+                            projectileX[idx] = x - turretProjectileHalfWidth
+                            projectileY[idx] = y - turretProjectileHalfWidth
+                            projectileTurretIndex[idx] = i
+                            break
+                        end
+                    end
                     setImage(turretSprites[i], turretImagetable[1])
                 else
                     setImage(turretSprites[i], turretImagetable[animationIndex])
@@ -182,45 +193,46 @@ function TurretManager:update(dt)
         end
     end
 
-    for i=#projectileX, 1, -1 do
-        local x, y = projectileX[i], projectileY[i]
-        local destroy = false
-        if not stopped then
-            local turretIndex = projectileTurretIndex[i]
-            local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
+    for i=1, maxProjectileCount do
+        local turretIndex = projectileTurretIndex[i]
+        if turretIndex ~= -1 then
+            local x, y = projectileX[i], projectileY[i]
+            local destroy = false
+            if not stopped then
+                local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
 
-            x += xSpeed * dt
-            y += ySpeed * dt
+                x += xSpeed * dt
+                y += ySpeed * dt
 
-            local collidedSprites = querySpritesInRect(x - projectileHitboxHalfSize, y - projectileHitboxHalfSize, projectileHitboxSize, projectileHitboxSize)
-            for spriteIdx=1, #collidedSprites do
-                local sprite = collidedSprites[spriteIdx]
-                local collisionTag = getTag(sprite)
-                if collisionTag == playerTag then
-                    ---@diagnostic disable-next-line: undefined-field
-                    sprite:reset()
-                elseif collisionTag == wallTag or collisionTag == hazardTag then
-                    destroy = true
+                if collisionCheckCount == 0 then
+                    local collidedSprites = querySpritesInRect(x + projectileBorder, y + projectileBorder, projectileHitboxSize, projectileHitboxSize)
+                    for spriteIdx=1, #collidedSprites do
+                        local sprite = collidedSprites[spriteIdx]
+                        local collisionTag = getTag(sprite)
+                        if collisionTag == playerTag then
+                            ---@diagnostic disable-next-line: undefined-field
+                            sprite:reset()
+                        elseif collisionTag == wallTag or collisionTag == hazardTag then
+                            destroy = true
+                        end
+                    end
                 end
             end
-        end
 
-
-        if destroy then
-            playSfx(smashSfx)
-            local projectileBreakSprite = tableRemove(projectileBreakSprites)
-            if projectileBreakSprite then
-                projectileBreakSprite.animationLoop.frame = 1
-                spriteMoveTo(projectileBreakSprite, x, y)
-                spriteAdd(projectileBreakSprite)
+            if destroy then
+                playSfx(smashSfx)
+                local projectileBreakSprite = tableRemove(projectileBreakSprites)
+                if projectileBreakSprite then
+                    projectileBreakSprite.animationLoop.frame = 1
+                    spriteMoveTo(projectileBreakSprite, x + 2, y + 2)
+                    spriteAdd(projectileBreakSprite)
+                end
+                projectileTurretIndex[i] = -1
+            else
+                projectileX[i] = x
+                projectileY[i] = y
+                draw(turretProjectileImage, x, y)
             end
-            tableRemove(projectileX, i)
-            tableRemove(projectileY, i)
-            tableRemove(projectileTurretIndex, i)
-        else
-            projectileX[i] = x
-            projectileY[i] = y
-            drawAnchored(turretProjectileImage, x, y, 0.5, 0.5)
         end
     end
 end
@@ -228,6 +240,6 @@ end
 function TurretManager:debugDraw()
     for i=#projectileX, 1, -1 do
         local x, y = projectileX[i], projectileY[i]
-        gfx.drawRect(x - projectileHitboxHalfSize, y - projectileHitboxHalfSize, projectileHitboxSize, projectileHitboxSize)
+        gfx.drawRect(x + projectileBorder, y + projectileBorder, projectileHitboxSize, projectileHitboxSize)
     end
 end

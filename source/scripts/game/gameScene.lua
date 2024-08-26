@@ -275,6 +275,10 @@ function GameScene:setUpLevel()
     self:showLevelTitle()
 
     self.player:enable()
+
+    -- pd.debugDraw = function()
+    --     self.turretManager:debugDraw()
+    -- end
 end
 
 function GameScene:showLevelTitle()
