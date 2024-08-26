@@ -12,9 +12,18 @@ local sin <const> = math.sin
 local floor <const> = math.floor
 local random <const> = math.random
 
+local pickupTag <const> = TAGS.pickup
+local wallTag <const> = TAGS.wall
+
 local getCrankPosition <const> = pd.getCrankPosition
 local getDrawOffset <const> = gfx.getDrawOffset
 local setDrawOffset <const> = gfx.setDrawOffset
+local spriteSetImage <const> = gfx.sprite.setImage
+local moveWithCollisions <const> = gfx.sprite.moveWithCollisions
+local setCollideRect <const> = gfx.sprite.setCollideRect
+local animationLoopImage <const> = gfx.animation.loop.image
+local kImageUnflipped <const> = gfx.kImageUnflipped
+local kImageFlippedX <const> = gfx.kImageFlippedX
 
 local lerp <const> = function(a, b, t)
     return a * (1-t) + b * t
@@ -59,7 +68,7 @@ function Player:init(gameScene, x, y)
     self.unflippedCollisionRect = pd.geometry.rect.new(5, 6, 11, 17)
     self.flippedCollisionRect = pd.geometry.rect.new(7, 6, 11, 17)
     self:setCollideRect(self.unflippedCollisionRect)
-    self.imageFlip = gfx.kImageUnflipped
+    self.imageFlip = kImageUnflipped
 
     self.frozenPlayerSprite = Utilities.animatedSprite(x, y, assets.getImagetable("images/levels/entranceTeleporter"), 100, true)
     self.frozenPlayerSprite:setZIndex(Z_INDEXES.ui)
@@ -89,9 +98,10 @@ function Player:collisionResponse()
 end
 
 function Player:updatePlayer(dt)
-    self:setImage(self.animationLoop:image(), self.imageFlip)
+    local x, y = self.x, self.y
+    spriteSetImage(self, animationLoopImage(self.animationLoop), self.imageFlip)
 
-    local targetOffsetX, targetOffsetY = -(self.x - 200), -(self.y - 120)
+    local targetOffsetX, targetOffsetY = -(x - 200), -(y - 120)
     if self.resetting then
         targetOffsetX, targetOffsetY = -(self.startX - 200), -(self.startY - 120)
     end
@@ -133,26 +143,25 @@ function Player:updatePlayer(dt)
         end
     end
 
-    local x, y = self.x, self.y
     local crankPosition = rad(getCrankPosition() - 90)
     local crankCos, crankSin = cos(crankPosition), sin(crankPosition)
     local adjustedPlayerSpeed = playerSpeed * dt
-    local _, _, collisions, length = self:moveWithCollisions(x + adjustedPlayerSpeed * crankCos, y + adjustedPlayerSpeed * crankSin)
-    if crankCos < 0 and self.imageFlip ~= gfx.kImageFlippedX then
-        self.imageFlip = gfx.kImageFlippedX
-        self:setCollideRect(self.flippedCollisionRect)
-    elseif crankCos > 0 and self.imageFlip ~= gfx.kImageUnflipped then
-        self.imageFlip = gfx.kImageUnflipped
-        self:setCollideRect(self.unflippedCollisionRect)
+    local _, _, collisions, length = moveWithCollisions(self, x + adjustedPlayerSpeed * crankCos, y + adjustedPlayerSpeed * crankSin)
+    if crankCos < 0 and self.imageFlip ~= kImageFlippedX then
+        self.imageFlip = kImageFlippedX
+        setCollideRect(self, self.flippedCollisionRect)
+    elseif crankCos > 0 and self.imageFlip ~= kImageUnflipped then
+        self.imageFlip = kImageUnflipped
+        setCollideRect(self, self.unflippedCollisionRect)
     end
 
     for i=1, length do
         local collision = collisions[i]
         local collisionSprite = collision.other
         local collisionTag = collisionSprite:getTag()
-        if collisionTag == TAGS.pickup then
+        if collisionTag == pickupTag then
             collisionSprite:pickup(self)
-        elseif collisionTag == TAGS.wall then
+        elseif collisionTag == wallTag then
             self:reset()
         end
     end
