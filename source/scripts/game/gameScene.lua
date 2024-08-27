@@ -75,7 +75,7 @@ function GameScene:init()
 
     local systemMenu = pd.getSystemMenu()
     self.levelSelectMenuItem = systemMenu:addMenuItem("Level Select", function()
-        if SceneManager.switchScene(LevelSelectScene) then
+        if SceneManager.switchSceneOverride(LevelSelectScene) then
             if self.player then
                 if self.player:isDisabled() then
                     return
@@ -194,15 +194,7 @@ function GameScene:recordLevelTime()
     self.levelTimeText = levelTimeText
 end
 
-function GameScene:removeMenuItems()
-    local systemMenu = pd.getSystemMenu()
-    systemMenu:removeMenuItem(self.resetLevelMenuItem)
-    systemMenu:removeMenuItem(self.levelSelectMenuItem)
-end
-
 function GameScene:levelEnd()
-    self:removeMenuItems()
-
     self.curLevel:stopLevelHazards()
 
     self.popupActive = false

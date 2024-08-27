@@ -293,6 +293,7 @@ function LevelSelectScene:init(nextLevel)
             else
                 if gameCompleted then
                     -- SceneManager.switchScene(GameCompletedScene)
+                    SceneManager.switchScene(WorldSelectScene)
                 else
                     SceneManager.switchScene(WorldSelectScene)
                 end

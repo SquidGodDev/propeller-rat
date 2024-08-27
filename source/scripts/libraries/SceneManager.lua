@@ -2,11 +2,13 @@ local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
 local audioManager <const> = AudioManager
+local clearPlayedThisFrame = audioManager.clearPlayedThisFrame
 
 local lazyLoadAssets = Assets.lazyLoad
 local ms = pd.getCurrentTimeMilliseconds
 
-local transitionImage = nil
+local transitionStartImage = nil
+local transitionEndImage = nil
 
 local newScene = nil
 
@@ -26,18 +28,22 @@ local kColorWhite <const> = gfx.kColorWhite
 
 local function setSceneUpdate(scene)
     local drawFps = DRAW_FPS
+    local sceneUpdate = scene.update
     pd.update = function()
         local frameStart = ms()
         spriteUpdate()
-        scene:update()
+        sceneUpdate(scene)
         timerUpdate()
-        if transitionImage then
-            transitionImage:drawIgnoringOffset(0, 0)
+        if transitionStartImage then
+            transitionStartImage:drawIgnoringOffset(0, 0)
+        end
+        if transitionEndImage then
+            transitionEndImage:drawIgnoringOffset(0, 0)
         end
         if drawFps then
             pd.drawFPS(0, 228)
         end
-        audioManager.clearPlayedThisFrame()
+        clearPlayedThisFrame()
         lazyLoadAssets(frameStart)
     end
 end
@@ -69,8 +75,18 @@ function SceneManager.isTransitioning()
     return SceneManager.transitioning
 end
 
+function SceneManager.switchSceneOverride(scene)
+    SceneManager.transitioning = true
+    newScene = scene
+
+    if not transitionStartImage then
+        SceneManager.startTransition(nil, nil, loadNewScene, {})
+    end
+    return true
+end
+
 function SceneManager.switchScene(scene, xIn, yIn, ...)
-    if transitionImage then
+    if transitionStartImage then
         return false
     end
 
@@ -97,14 +113,14 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
     local transitionTime = 500
     local startRadius, endRadius = 0, 500
     local transitionTimer = pd.timer.new(transitionTime, endRadius, startRadius, pd.easingFunctions.outCubic)
-    transitionImage = newImage(400, 240)
+    transitionStartImage = newImage(400, 240)
     transitionTimer.updateCallback = function()
         local transitionMask = newImage(400, 240, kColorWhite)
         pushContext(transitionMask)
             setColor(kColorBlack)
             fillCircleAtPoint(xOut, yOut, transitionTimer.value)
         popContext()
-        transitionImage:setMaskImage(transitionMask)
+        transitionStartImage:setMaskImage(transitionMask)
     end
 
     transitionTimer.timerEndedCallback = function()
@@ -112,21 +128,22 @@ function SceneManager.startTransition(xIn, yIn, callback, args)
             callback(args)
         end
 
+        transitionStartImage = nil
         audioManager.play(audioManager.sfx.transitionIn)
         transitionTimer = pd.timer.new(transitionTime, startRadius, endRadius, pd.easingFunctions.inCubic)
-        transitionImage = newImage(400, 240, kColorBlack)
+        transitionEndImage = newImage(400, 240, kColorBlack)
         local transitionMask = newImage(400, 240, kColorWhite)
         transitionTimer.updateCallback = function()
             pushContext(transitionMask)
                 setColor(kColorBlack)
                 fillCircleAtPoint(xOut, yOut, transitionTimer.value)
             popContext()
-            transitionImage:setMaskImage(transitionMask)
+            transitionEndImage:setMaskImage(transitionMask)
         end
 
         transitionTimer.timerEndedCallback = function()
             SceneManager.transitioning = false
-            transitionImage = nil
+            transitionEndImage = nil
         end
     end
 end

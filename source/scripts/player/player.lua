@@ -221,8 +221,6 @@ function Player:reset()
         return
     end
 
-    self.gameScene:removeMenuItems()
-
     if not self.frozen then
         DEATH_COUNT += 1
     end
