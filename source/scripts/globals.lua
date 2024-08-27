@@ -29,7 +29,8 @@ local moonPlanet = gfx.imagetable.new("images/decoration/moonPlanet")
 local cloudPlanet = gfx.imagetable.new("images/decoration/cloudPlanet")
 local lightMoonPlanet = gfx.imagetable.new("images/decoration/lightMoonPlanet")
 local sunPlanet = gfx.imagetable.new("images/decoration/sunPlanet")
-PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, cloudPlanet, lightMoonPlanet, sunPlanet}
+local gasPlanet = gfx.imagetable.new("images/decoration/gasPlanet")
+PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, cloudPlanet, lightMoonPlanet, sunPlanet, gasPlanet}
 
 FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")

@@ -20,8 +20,8 @@ local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
 -- cSpell:disable-next-line
-local planetNames = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa"}
-local flagRequirements = {0, 8, 16, 24, 32, 40, 60}
+local planetNames = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede"}
+local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 68}
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
@@ -373,7 +373,6 @@ end
 function WorldSelectScene:updateName()
     local name = planetNames[self.selectedWorld]
     local nameImage = gfx.imageWithText(name --[[@as string]], 400, 50, nil, nil, nil, kTextAlignment.center, titleFont)
-    self.nameSprite:setImageDrawMode(gfx.kDrawModeFillWhite)
     self.nameSprite:setImage(nameImage)
 end
 

@@ -28,7 +28,7 @@ local ratChar = 9
 local letterOrder = {li.p, li.r, li.o, li.p, li.e, li.l, li.l, li.e, li.r, li.r, li.a, li.t}
 local xPositions = {59, 97, 124, 164, 201, 240, 256, 271, 310, 153, 182, 220}
 
-local DEBUG_MODE_ENABLED <const> = true
+local DEBUG_MODE_ALLOWED <const> = true
 local buttonQueueMax = 7
 local debugQueueMatch = {"up", "right", "down", "left", "b", "b", "b"}
 
@@ -130,7 +130,7 @@ function TitleScene:addToButtonQueue(button)
                 matched = false
             end
         end
-        if matched and DEBUG_MODE_ENABLED then
+        if matched and DEBUG_MODE_ALLOWED then
             if UNLOCK_ALL_WORLDS then
                 UNLOCK_ALL_WORLDS = false
                 DRAW_FPS = false
