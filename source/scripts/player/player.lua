@@ -160,6 +160,7 @@ function Player:updatePlayer(dt)
         local collisionSprite = collision.other
         local collisionTag = collisionSprite:getTag()
         if collisionTag == pickupTag then
+            ---@diagnostic disable-next-line: undefined-field
             collisionSprite:pickup(self)
         elseif collisionTag == wallTag then
             self:reset()
@@ -208,6 +209,13 @@ function Player:enable()
     self:setCollisionsEnabled(true)
 end
 
+function Player:collide()
+    if self.frozen then
+        return
+    end
+    self:reset()
+end
+
 function Player:reset()
     if self.disabled then
         return
@@ -215,7 +223,9 @@ function Player:reset()
 
     self.gameScene:removeMenuItems()
 
-    DEATH_COUNT += 1
+    if not self.frozen then
+        DEATH_COUNT += 1
+    end
 
     audioManager.playRandom(squeaksSfx)
 

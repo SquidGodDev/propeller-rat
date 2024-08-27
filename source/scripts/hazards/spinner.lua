@@ -35,7 +35,7 @@ function Spinner:update()
     if length > 0 then
         local player = collisions[1].other
         if player:getTag() == TAGS.player and self:alphaCollision(player) then
-            player:reset()
+            player:collide()
         end
     end
 end

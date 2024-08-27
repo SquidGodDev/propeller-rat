@@ -165,7 +165,7 @@ function LaserManager:update(dt)
                             local sprite = intersectedSprites[spriteIdx]
                             if sprite:getTag() == TAGS.player then
                                 ---@diagnostic disable-next-line: undefined-field
-                                sprite:reset()
+                                sprite:collide()
                             end
                         end
                     end

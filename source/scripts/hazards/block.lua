@@ -81,7 +81,7 @@ function Block:updateHazard(dt)
         local collisionTag = collisionSprite:getTag()
         bounceNormal = collision.normal
         if collisionTag == TAGS.player then
-            collisionSprite:reset()
+            collisionSprite:collide()
         end
 
         if collisionTag == TAGS.hazard then

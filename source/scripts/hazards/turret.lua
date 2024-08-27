@@ -211,7 +211,7 @@ function TurretManager:update(dt)
                         local collisionTag = getTag(sprite)
                         if collisionTag == playerTag then
                             ---@diagnostic disable-next-line: undefined-field
-                            sprite:reset()
+                            sprite:collide()
                         elseif collisionTag == wallTag or collisionTag == hazardTag then
                             destroy = true
                         end
