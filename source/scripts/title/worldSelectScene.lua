@@ -56,6 +56,9 @@ function WorldSelectScene:init()
     self.starfieldSprite = starfield
     self.starfieldSprite:add()
 
+    self.storyManager = StoryManager(1)
+    self.storyManager:animateIn()
+
     self.unlockingWorld = false
 
     local deathCountText = gfx.sprite.spriteWithText(tostring(DEATH_COUNT), 100, 30, nil, nil, nil, nil, font)
@@ -295,6 +298,18 @@ function WorldSelectScene:update()
     end
 
     if self.exitingScene or self.unlockingWorld then
+        return
+    end
+
+    if self.storyManager:isActive() then
+        if self.storyManager:isInputActive() then
+            if pd.buttonJustPressed(pd.kButtonA)
+            or pd.buttonJustPressed(pd.kButtonB)
+            or pd.buttonJustPressed(pd.kButtonDown)
+            or pd.buttonJustPressed(pd.kButtonRight) then
+                self.storyManager:progress()
+            end
+        end
         return
     end
 

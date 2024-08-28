@@ -19,6 +19,7 @@ Z_INDEXES = {
     hazard = 40,
     projectile = 50,
     ui = 100,
+    dialog = 200,
     transition = 1000
 }
 
@@ -144,6 +145,10 @@ import "scripts/title/titleScene"
 import "scripts/title/levelSelectScene"
 import "scripts/title/worldSelectScene"
 import "scripts/title/gameCompletedScene"
+
+-- Story
+import "scripts/story/storyManager"
+import "scripts/story/introScene"
 
 if pd.isSimulator then
     SANITY_CHECKS()
