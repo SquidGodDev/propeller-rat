@@ -191,45 +191,6 @@ function StoryManager:animateOut()
     end
 end
 
-local cMajorScale = {
-    48, 50, 52, 53, 55, 57, 59, 60,  -- C3 to C4
-    62, 64, 65, 67, 69, 71, 72, 73,  -- C4 to C5
-    74, 76, 77, 79, 81, 83, 84, 85,  -- C5 to C6
-    86, 88  -- C6 to C6
-}
-
--- Function to find the closest MIDI note in the C Major scale (hard-coded list)
-local function closestCNoteInScale(midiNote)
-    local closestNote = cMajorScale[1]
-    local smallestDifference = math.abs(midiNote - closestNote)
-
-    for _, note in ipairs(cMajorScale) do
-        local difference = math.abs(midiNote - note)
-        if difference < smallestDifference then
-            smallestDifference = difference
-            closestNote = note
-        end
-    end
-
-    return closestNote
-end
-
-local charToMidiDict = {}
-
-local aByte = string.byte('a')
-local zByte = string.byte('z')
-local midiMin = cMajorScale[1]
-local midiMax = cMajorScale[#cMajorScale]
-local midiMid = cMajorScale[math.floor(#cMajorScale/2)]
-local function charToMidiNote(char)
-    local charByte = string.byte(char)
-    return closestCNoteInScale((charByte - aByte)/(zByte - aByte)*(midiMax-midiMin)+midiMin)
-end
-for i=aByte, zByte do
-    local char = string.char(i)
-    charToMidiDict[char] = charToMidiNote(char)
-end
-
 function StoryManager:progress()
     if self.typeTimer then
         local curLineString = self.dialog[self.curLine]
@@ -254,12 +215,7 @@ function StoryManager:progress()
                 curChar = curLineString:sub(self.curIndex, self.curIndex)
             end
             self.dialogSprite:setImage(self.dialogBox:getDialogImage(self.curIndex))
-            -- typeSound:playNote(800, 0.6, 0.03)
-            local midiNote = midiMid
-            if charToMidiDict[curChar] then
-                midiNote = charToMidiDict[curChar]
-            end
-            typeSound:playMIDINote(midiNote, 0.6, 0.03)
+            typeSound:playMIDINote(85, 0.6, 0.03)
             if self.curIndex >= #curLineString then
                 self.typeTimer:remove()
                 self.typeTimer = nil
