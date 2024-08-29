@@ -177,22 +177,16 @@ function StoryManager:animateOut()
     self.active = false
     self.inputActive = false
 
-    local _, portraitHeight = self.portraitSprite:getSize()
-    local _, gradientHeight = self.gradientSprite:getSize()
-    local _, dialogHeight = self.dialogSprite:getSize()
-    local animateTimer = pd.timer.new(600, 1.0, 0.0, pd.easingFunctions.outCubic)
-    animateTimer.updateCallback = function()
-        self.portraitSprite:moveTo(self.portraitSprite.x, 240 - animateTimer.value * portraitHeight)
-        self.gradientSprite:moveTo(self.gradientSprite.x, 240 - animateTimer.value * gradientHeight)
-        self.nameSprite:moveTo(self.nameSprite.x, 240 - animateTimer.value * 90)
-        self.dialogSprite:moveTo(self.dialogSprite.x, 240 - animateTimer.value * dialogHeight)
-    end
-    animateTimer.timerEndedCallback = function ()
-        self.portraitSprite:remove()
-        self.gradientSprite:remove()
-        self.nameSprite:remove()
+    local easingFunc = pd.easingFunctions.inCubic
+    createAnimation(self.dialogSprite, 0, 700, 240, easingFunc)
+    createAnimation(self.portraitSprite, 0, 700, 240, easingFunc)
+    createAnimation(self.nameSprite, 300, 700, 240, easingFunc)
+    createAnimation(self.gradientSprite, 500, 700, 240, easingFunc, function()
         self.dialogSprite:remove()
-    end
+        self.portraitSprite:remove()
+        self.nameSprite:remove()
+        self.gradientSprite:remove()
+    end)
 end
 
 function StoryManager:progress()
