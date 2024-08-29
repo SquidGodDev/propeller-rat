@@ -7,11 +7,15 @@ local typeSound = pd.sound.synth.new(pd.sound.kWaveSquare)
 typeSound:setADSR(0.0, 0.02915, 0.006710, 0.0)
 
 local dialog = {
+    -- World 1
     {
-        "wow. i can't believe i actually made it into the RODENT program!",
-        "this is a test string 1",
-        "this is another test string 2",
-        "o wow!!! a longer test string to test double line display"
+        "wow. my first day at RODENT academy!",
+        "still getting used to this propeller...",
+        "i hope the orientation world isn't too rough!"
+    },
+    -- World 2
+    {
+        ""
     }
 }
 
@@ -123,6 +127,16 @@ function StoryManager:init(world)
     self.dialogSprite:setIgnoresDrawOffset(true)
     self.dialogSprite:add()
 
+    local arrowImagetable = gfx.imagetable.new("images/story/downArrow")
+    self.arrowSprite = gfx.sprite.new()
+    self.arrowSprite:moveTo(380, 225)
+    self.arrowSprite:setZIndex(Z_INDEXES.dialog)
+    self.arrowSprite:setIgnoresDrawOffset(true)
+    local arrowAnimation = gfx.animation.loop.new(200, arrowImagetable, true)
+    self.arrowSprite.update = function()
+        self.arrowSprite:setImage(arrowAnimation:image())
+    end
+
     local maxDialogLen = 25
     local lineSpacing = 1
     self.dialogBox = DialogBox(maxDialogLen, lineSpacing)
@@ -169,11 +183,13 @@ function StoryManager:animateIn()
     createAnimation(self.nameSprite, 1000, 1000, 150, nil, function()
         self.inputActive = true
         self.curLine = 0
+        self.arrowSprite:add()
         self:progress()
     end)
 end
 
 function StoryManager:animateOut()
+    self.arrowSprite:remove()
     self.active = false
     self.inputActive = false
 
@@ -198,6 +214,7 @@ function StoryManager:progress()
     else
         self.curLine += 1
         if self.curLine > #self.dialog then
+            self.arrowSprite:remove()
             self:animateOut()
             return
         end
@@ -213,7 +230,7 @@ function StoryManager:progress()
                 curChar = curLineString:sub(self.curIndex, self.curIndex)
             end
             self.dialogSprite:setImage(self.dialogBox:getDialogImage(self.curIndex))
-            typeSound:playMIDINote(85, 0.6, 0.03)
+            typeSound:playMIDINote(76, 0.4, 0.03)
             if self.curIndex >= #curLineString then
                 self.typeTimer:remove()
                 self.typeTimer = nil
@@ -225,6 +242,6 @@ function StoryManager:progress()
                 self.typeTimer = pd.timer.new(typeDelay, typeTimerCallback)
             end
         end
-        typeTimerCallback()
+        self.typeTimer = pd.timer.new(40, typeTimerCallback)
     end
 end
