@@ -47,39 +47,41 @@ function TitleScene:init()
     backgroundSprite:moveTo(200, 120)
     backgroundSprite:add()
 
-    for i=1, #letterOrder do
-        local letterX = xPositions[i]
-        local letterY = i <= ratChar and topRowY or bottomRowY
-        local letterImage = letterOrder[i]
-        if i == ratChar and math.random() < ratChance then
-            letterImage = li.rat
-        end
-        local letterSprite = gfx.sprite.new(letterImage)
-        letterSprite:setCenter(0, 0)
-        letterSprite:moveTo(letterX, offScreenY)
-        letterSprite:add()
-
-        local delayTime = i * 100
-        pd.timer.performAfterDelay(delayTime, function()
-            local moveTimer = pd.timer.new(moveTime, offScreenY, letterY, pd.easingFunctions.outBack)
-            moveTimer.updateCallback = function()
-                letterSprite:moveTo(letterX, moveTimer.value)
+    pd.timer.performAfterDelay(400, function()
+        for i=1, #letterOrder do
+            local letterX = xPositions[i]
+            local letterY = i <= ratChar and topRowY or bottomRowY
+            local letterImage = letterOrder[i]
+            if i == ratChar and math.random() < ratChance then
+                letterImage = li.rat
             end
-        end)
+            local letterSprite = gfx.sprite.new(letterImage)
+            letterSprite:setCenter(0, 0)
+            letterSprite:moveTo(letterX, offScreenY)
+            letterSprite:add()
 
-        if i == #letterOrder then
-            pd.timer.performAfterDelay(delayTime + 1000, function()
-                local startText = gfx.sprite.spriteWithText("Press A to start", 400, 40, nil, nil, nil, kTextAlignment.center, font)
-                startText:moveTo(200, 200)
-                startText:add()
-
-                local blinkerTimer = pd.timer.new(500, function()
-                    startText:setVisible(not startText:isVisible())
-                end)
-                blinkerTimer.repeats = true
+            local delayTime = i * 100
+            pd.timer.performAfterDelay(delayTime, function()
+                local moveTimer = pd.timer.new(moveTime, offScreenY, letterY, pd.easingFunctions.outBack)
+                moveTimer.updateCallback = function()
+                    letterSprite:moveTo(letterX, moveTimer.value)
+                end
             end)
+
+            if i == #letterOrder then
+                pd.timer.performAfterDelay(delayTime + 1000, function()
+                    local startText = gfx.sprite.spriteWithText("Press A to start", 400, 40, nil, nil, nil, kTextAlignment.center, font)
+                    startText:moveTo(200, 200)
+                    startText:add()
+
+                    local blinkerTimer = pd.timer.new(500, function()
+                        startText:setVisible(not startText:isVisible())
+                    end)
+                    blinkerTimer.repeats = true
+                end)
+            end
         end
-    end
+    end)
 
     self.debugModeSprite = gfx.sprite.spriteWithText("GAME IN DEBUG MODE", 200, 30, nil, nil, nil, nil, font)
     self.debugModeSprite:moveTo(200, 120)
