@@ -22,12 +22,58 @@ local dialog = {
 DialogBox = {}
 class('DialogBox').extends()
 
-function DialogBox:init(maxLineLen, lineSpacing)
+function DialogBox:init(lines, dialogSprite, maxLineLen, lineSpacing, finishCallback)
+    self.lines = lines
+    self.dialogSprite = dialogSprite
     self.fontHeight = font:getHeight()
     self.maxLineLen = maxLineLen
     self.lineSpacing = lineSpacing
+    self.finishCallback = finishCallback
 
     self.lineBreakIndexes = nil
+    self.curLine = 0
+    self.curIndex = 0
+    self.typeTimer = nil
+end
+
+function DialogBox:progress()
+    if self.typeTimer then
+        local curLineString = self.lines[self.curLine]
+        self.typeTimer:remove()
+        self.typeTimer = nil
+        self.dialogSprite:setImage(self:getDialogImage(#curLineString))
+    else
+        self.curLine += 1
+        if self.curLine > #self.lines then
+            self.finishCallback()
+            return
+        end
+
+        self.curIndex = 0
+        local curLineString = self.lines[self.curLine]
+        self:setString(curLineString)
+        local function typeTimerCallback()
+            self.curIndex += 1
+            local curChar = curLineString:sub(self.curIndex, self.curIndex)
+            while curChar == ' ' do
+                self.curIndex += 1
+                curChar = curLineString:sub(self.curIndex, self.curIndex)
+            end
+            self.dialogSprite:setImage(self:getDialogImage(self.curIndex))
+            typeSound:playMIDINote(76, 0.4, 0.03)
+            if self.curIndex >= #curLineString then
+                self.typeTimer:remove()
+                self.typeTimer = nil
+            else
+                local typeDelay = 40
+                if curChar == '.' then
+                    typeDelay = 100
+                end
+                self.typeTimer = pd.timer.new(typeDelay, typeTimerCallback)
+            end
+        end
+        self.typeTimer = pd.timer.new(40, typeTimerCallback)
+    end
 end
 
 function DialogBox:setString(string)
@@ -90,8 +136,6 @@ StoryManager = {}
 class('StoryManager').extends()
 
 function StoryManager:init(world)
-    self.dialog = dialog[world]
-
     local gradientImage = gfx.image.new("images/story/gradient")
     self.gradientSprite = gfx.sprite.new(gradientImage)
     self.gradientSprite:setCenter(0, 0)
@@ -139,13 +183,12 @@ function StoryManager:init(world)
 
     local maxDialogLen = 25
     local lineSpacing = 1
-    self.dialogBox = DialogBox(maxDialogLen, lineSpacing)
+    self.dialogBox = DialogBox(dialog[world], self.dialogSprite, maxDialogLen, lineSpacing, function()
+        self:animateOut()
+    end)
 
     self.active = false
     self.inputActive = false
-    self.curLine = 1
-    self.curIndex = 1
-    self.typeTimer = nil
 end
 
 function StoryManager:isActive()
@@ -182,7 +225,6 @@ function StoryManager:animateIn()
     createAnimation(self.portraitSprite, 500, 1000, 240 - portraitHeight)
     createAnimation(self.nameSprite, 1000, 1000, 150, nil, function()
         self.inputActive = true
-        self.curLine = 0
         self.arrowSprite:add()
         self:progress()
     end)
@@ -206,42 +248,5 @@ function StoryManager:animateOut()
 end
 
 function StoryManager:progress()
-    if self.typeTimer then
-        local curLineString = self.dialog[self.curLine]
-        self.typeTimer:remove()
-        self.typeTimer = nil
-        self.dialogSprite:setImage(self.dialogBox:getDialogImage(#curLineString))
-    else
-        self.curLine += 1
-        if self.curLine > #self.dialog then
-            self.arrowSprite:remove()
-            self:animateOut()
-            return
-        end
-
-        self.curIndex = 0
-        local curLineString = self.dialog[self.curLine]
-        self.dialogBox:setString(curLineString)
-        local function typeTimerCallback()
-            self.curIndex += 1
-            local curChar = curLineString:sub(self.curIndex, self.curIndex)
-            while curChar == ' ' do
-                self.curIndex += 1
-                curChar = curLineString:sub(self.curIndex, self.curIndex)
-            end
-            self.dialogSprite:setImage(self.dialogBox:getDialogImage(self.curIndex))
-            typeSound:playMIDINote(76, 0.4, 0.03)
-            if self.curIndex >= #curLineString then
-                self.typeTimer:remove()
-                self.typeTimer = nil
-            else
-                local typeDelay = 40
-                if curChar == '.' then
-                    typeDelay = 100
-                end
-                self.typeTimer = pd.timer.new(typeDelay, typeTimerCallback)
-            end
-        end
-        self.typeTimer = pd.timer.new(40, typeTimerCallback)
-    end
+    self.dialogBox:progress()
 end
