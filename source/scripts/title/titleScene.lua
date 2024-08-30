@@ -102,7 +102,11 @@ function TitleScene:update()
     end
 
     if pd.buttonJustPressed(pd.kButtonA) and not self.transitioning then
-        SceneManager.switchScene(WorldSelectScene)
+        if true then
+            SceneManager.switchScene(IntroScene)
+        else
+            SceneManager.switchScene(WorldSelectScene)
+        end
         self.transitioning = true
         audioManager.play(audioManager.sfx.select)
     end

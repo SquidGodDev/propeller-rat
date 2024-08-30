@@ -34,6 +34,17 @@ function DialogBox:init(lines, dialogSprite, maxLineLen, lineSpacing, finishCall
     self.curLine = 0
     self.curIndex = 0
     self.typeTimer = nil
+
+    self.note = 76
+    self.centerAlign = false
+end
+
+function DialogBox:setCenterAlignment()
+    self.centerAlign = true
+end
+
+function DialogBox:setTypeSFXNote(note)
+    self.note = note
 end
 
 function DialogBox:progress()
@@ -60,7 +71,7 @@ function DialogBox:progress()
                 curChar = curLineString:sub(self.curIndex, self.curIndex)
             end
             self.dialogSprite:setImage(self:getDialogImage(self.curIndex))
-            typeSound:playMIDINote(76, 0.4, 0.03)
+            typeSound:playMIDINote(self.note, 0.4, 0.03)
             if self.curIndex >= #curLineString then
                 self.typeTimer:remove()
                 self.typeTimer = nil
@@ -68,6 +79,8 @@ function DialogBox:progress()
                 local typeDelay = 40
                 if curChar == '.' then
                     typeDelay = 100
+                elseif curChar == '-' or curChar == ',' or curChar == '(' or curChar == ')' then
+                    typeDelay = 80
                 end
                 self.typeTimer = pd.timer.new(typeDelay, typeTimerCallback)
             end
@@ -78,34 +91,43 @@ end
 
 function DialogBox:setString(string)
     self.string = string
-    self.lineBreakIndexes = self:calculateLineBreakIndex(string)
+    self.lineBreakIndexes = self:calculateLineBreakIndexes(string)
 end
 
-function DialogBox:calculateLineBreakIndex(string)
+function DialogBox:calculateLineBreakIndexes(string)
     local maxLineLen <const> = self.maxLineLen
     local lineBreakIndexes = {}
     if #string <= maxLineLen then
         table.insert(lineBreakIndexes, #string)
-        return lineBreakIndexes
-    end
-
-    for line=1, math.floor((#string - 1) / maxLineLen) do
-        for i=line * maxLineLen, (line - 1) * maxLineLen + 1, -1 do
-            local char = string:sub(i, i)
-            if char == ' ' then
-                table.insert(lineBreakIndexes, i - 1)
-                break
+    else
+        for line=1, math.floor((#string - 1) / maxLineLen) do
+            for i=line * maxLineLen, (line - 1) * maxLineLen + 1, -1 do
+                local char = string:sub(i, i)
+                if char == ' ' then
+                    table.insert(lineBreakIndexes, i - 1)
+                    break
+                end
             end
         end
+        table.insert(lineBreakIndexes, #string)
     end
 
-    table.insert(lineBreakIndexes, #string)
+    local maxLineWidth = 0
+    for i=1, #lineBreakIndexes do
+        local lineStartIndex <const> = i > 1 and (lineBreakIndexes[i - 1] + 1) or 1
+        local lineBreakIndex <const> = lineBreakIndexes[i]
+        local line = string:sub(lineStartIndex, lineBreakIndex)
+        maxLineWidth = math.max(maxLineWidth, font:getTextWidth(line))
+    end
+    self.imageWidth = maxLineWidth
+    self.imageHeight = self.fontHeight + (#lineBreakIndexes-1)*(self.lineSpacing + self.fontHeight)
+    local emptyImage = gfx.image.new(self.imageWidth, self.imageHeight)
+    self.dialogSprite:setImage(emptyImage)
+
     return lineBreakIndexes
 end
 
 function DialogBox:getDialogImage(index)
-    local imageWidth = -1
-    local imageHeight = 0
     local lines = {}
     for i=1, #self.lineBreakIndexes do
         local lineStartIndex <const> = i > 1 and (self.lineBreakIndexes[i - 1] + 1) or 1
@@ -113,19 +135,22 @@ function DialogBox:getDialogImage(index)
         local exit = index <= lineBreakIndex
         local line = self.string:sub(lineStartIndex, exit and index or lineBreakIndex)
         line = line:gsub("^%s+", "") -- Removing leading spaces
-        imageWidth = math.max(font:getTextWidth(line), imageWidth)
-        imageHeight += self.fontHeight + self.lineSpacing
         table.insert(lines, line)
 
         if exit then
             break
         end
     end
-    local dialogImage = gfx.image.new(imageWidth, imageHeight)
+    local dialogImage = gfx.image.new(self.imageWidth, self.imageHeight)
     gfx.lockFocus(dialogImage)
         local drawY = 0
+        local centerAlignment = kTextAlignment.center
         for i=1, #lines do
-            font:drawText(lines[i], 0, drawY)
+            if self.centerAlign then
+                font:drawTextAligned(lines[i], self.imageWidth/2, drawY, centerAlignment)
+            else
+                font:drawText(lines[i], 0, drawY)
+            end
             drawY += self.fontHeight + self.lineSpacing
         end
     gfx.unlockFocus()
