@@ -69,6 +69,16 @@ function IntroScene:update()
     or pd.buttonJustPressed(pd.kButtonRight) then
         self.dialogBox:progress()
     end
+
+    if pd.buttonIsPressed(pd.kButtonA)
+    or pd.buttonIsPressed(pd.kButtonB)
+    or pd.buttonIsPressed(pd.kButtonDown)
+    or pd.buttonIsPressed(pd.kButtonRight) then
+        self.dialogBox:setSpeedUp(true)
+    else
+        self.dialogBox:setSpeedUp(false)
+    end
+
     self:updateArrowPos()
 end
 

@@ -309,6 +309,15 @@ function WorldSelectScene:update()
             or pd.buttonJustPressed(pd.kButtonRight) then
                 self.storyManager:progress()
             end
+
+            if pd.buttonIsPressed(pd.kButtonA)
+            or pd.buttonIsPressed(pd.kButtonB)
+            or pd.buttonIsPressed(pd.kButtonDown)
+            or pd.buttonIsPressed(pd.kButtonRight) then
+                self.storyManager:setSpeedUp(true)
+            else
+                self.storyManager:setSpeedUp(false)
+            end
         end
         return
     end
