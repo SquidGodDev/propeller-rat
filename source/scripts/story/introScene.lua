@@ -1,7 +1,6 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-local font <const> = FONT
 local planetImagetables = PLANET_IMAGETABLES
 local utilities <const> = Utilities
 local assets <const> = Assets
@@ -10,11 +9,14 @@ assets.preloadImages({
 })
 
 local introLines = {
-    "The year is 23XX. Humans have achieved interstellar travel, but challenges with on-board repairs in the tight spaces around the engine bay have resulted in countless spacecraft failures.",
-    "The energy source powering faster than light travel disrupts nearby transistors, making robots an infeasible solution.",
-    "In response, the interplanetary RODENT (Rats Operating Delicate ENgineering Tasks) academy program was established.",
-    "Every spacecraft is now required to house a RODENT agent who has passed the strict training circuit composed of courses housed in satellites spread across the orbits of 8 different worlds.",
-    "Here, we follow the story of a one such recruit..."
+    "The year is 23XX. Humans have finally achieved interstellar travel.",
+    "However, challenges with on-board repairs in the tight spaces around the engine bay have resulted in rising fatalities.",
+    "The energy source powering the \"Faster Than Light\" engine disrupts nearby transistors, making the use of robots infeasible.",
+    "In response, the interplanetary RODENT (Rats Operating Delicate ENgineering Tasks) Academy was established.",
+    "The Academy is defined by its grueling training - only the most elite recruits pass to become prestigious agents.",
+    "Recruits are trained to manuever around the hazardous engine bay through a series of agility courses set across multiple worlds.",
+    "Rats all across the galaxy gather with their ambitions set on becoming a RODENT agent.",
+    "Here, we follow the story of one such hopeful recruit..."
 }
 
 IntroScene = {}
@@ -51,7 +53,7 @@ function IntroScene:init()
             SceneManager.switchScene(WorldSelectScene)
         end
     end)
-    self.dialogBox:setTypeSFXNote(70)
+    self.dialogBox:setTypeSFXNote(65)
     self.dialogBox:setCenterAlignment()
     pd.timer.performAfterDelay(500, function()
         self.dialogBox:progress()
