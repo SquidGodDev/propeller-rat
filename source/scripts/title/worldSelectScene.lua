@@ -56,8 +56,12 @@ function WorldSelectScene:init()
     self.starfieldSprite = starfield
     self.starfieldSprite:add()
 
-    self.storyManager = StoryManager(1)
-    self.storyManager:animateIn()
+    -- local dialog = DIALOG.intro
+    local dialog = SELECTED_WORLD == 1
+    if dialog then
+        self.storyManager = StoryManager(DIALOG.intro)
+        self.storyManager:animateIn()
+    end
 
     self.unlockingWorld = false
 
@@ -301,23 +305,9 @@ function WorldSelectScene:update()
         return
     end
 
-    if self.storyManager:isActive() then
+    if self.storyManager and self.storyManager:isActive() then
         if self.storyManager:isInputActive() then
-            if pd.buttonJustPressed(pd.kButtonA)
-            or pd.buttonJustPressed(pd.kButtonB)
-            or pd.buttonJustPressed(pd.kButtonDown)
-            or pd.buttonJustPressed(pd.kButtonRight) then
-                self.storyManager:progress()
-            end
-
-            if pd.buttonIsPressed(pd.kButtonA)
-            or pd.buttonIsPressed(pd.kButtonB)
-            or pd.buttonIsPressed(pd.kButtonDown)
-            or pd.buttonIsPressed(pd.kButtonRight) then
-                self.storyManager:setSpeedUp(true)
-            else
-                self.storyManager:setSpeedUp(false)
-            end
+            self.storyManager:update()
         end
         return
     end

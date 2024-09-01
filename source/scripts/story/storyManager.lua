@@ -6,16 +6,66 @@ local font <const> = FONT
 local typeSound = pd.sound.synth.new(pd.sound.kWaveSquare)
 typeSound:setADSR(0.0, 0.02915, 0.006710, 0.0)
 
-local dialog = {
-    -- World 1
-    {
+DIALOG = {
+    intro = {
         "wow. my first day at RODENT academy!",
         "still getting used to this propeller...",
         "i hope the orientation world isn't too rough!"
     },
-    -- World 2
-    {
+    -- INT-RO 1
+    world1complete = {
+        "that wasn't too bad!",
+        "for some reason i'm craving donuts now tho..."
+    },
+    -- Blokiter
+    world2start = {
+        "there's moving stuff now?",
+        "i'm not too confident about this guys..."
+    },
+    world2complete = {
         ""
+    },
+    -- Chipkey
+    world3start = {
+
+    },
+    world3complete = {
+
+    },
+    -- Turretia
+    world4start = {
+
+    },
+    world4complete = {
+
+    },
+    -- LAZ-ER 5
+    world5start = {
+
+    },
+    world5complete = {
+
+    },
+    -- Spinturn
+    world6start = {
+
+    },
+    world6complete = {
+
+    },
+    -- Mixropa
+    world7start = {
+
+    },
+    world7complete = {
+
+    },
+    -- Hazarmede
+    world8start = {
+
+    },
+    gameComplete = {
+
     }
 }
 
@@ -41,6 +91,24 @@ function DialogBox:init(lines, dialogSprite, maxLineLen, lineSpacing, finishCall
     self.speedUp = false
 end
 
+function DialogBox:update()
+    if pd.buttonJustPressed(pd.kButtonA)
+    or pd.buttonJustPressed(pd.kButtonB)
+    or pd.buttonJustPressed(pd.kButtonRight) then
+        self:progress()
+    elseif pd.buttonJustPressed(pd.kButtonDown) then
+        self:progress(true)
+    end
+
+    if pd.buttonIsPressed(pd.kButtonA)
+    or pd.buttonIsPressed(pd.kButtonB)
+    or pd.buttonIsPressed(pd.kButtonRight) then
+        self:setSpeedUp(true)
+    else
+        self:setSpeedUp(false)
+    end
+end
+
 function DialogBox:setCenterAlignment()
     self.centerAlign = true
 end
@@ -53,8 +121,14 @@ function DialogBox:setSpeedUp(speedUp)
     self.speedUp = speedUp
 end
 
-function DialogBox:progress()
+function DialogBox:progress(skip)
     if self.typeTimer then
+        if skip then
+            local curLineString = self.lines[self.curLine]
+            self.typeTimer:remove()
+            self.typeTimer = nil
+            self.dialogSprite:setImage(self:getDialogImage(#curLineString))
+        end
         return
     end
     self.curLine += 1
@@ -166,7 +240,10 @@ end
 StoryManager = {}
 class('StoryManager').extends()
 
-function StoryManager:init(world)
+function StoryManager:init(lines)
+    if not lines then
+        return
+    end
     local gradientImage = gfx.image.new("images/story/gradient")
     self.gradientSprite = gfx.sprite.new(gradientImage)
     self.gradientSprite:setCenter(0, 0)
@@ -214,7 +291,7 @@ function StoryManager:init(world)
 
     local maxDialogLen = 25
     local lineSpacing = 1
-    self.dialogBox = DialogBox(dialog[world], self.dialogSprite, maxDialogLen, lineSpacing, function()
+    self.dialogBox = DialogBox(lines, self.dialogSprite, maxDialogLen, lineSpacing, function()
         self:animateOut()
     end)
 
@@ -257,7 +334,7 @@ function StoryManager:animateIn()
     createAnimation(self.nameSprite, 1000, 1000, 150, nil, function()
         self.inputActive = true
         self.arrowSprite:add()
-        self:progress()
+        self.dialogBox:progress()
     end)
 end
 
@@ -278,10 +355,6 @@ function StoryManager:animateOut()
     end)
 end
 
-function StoryManager:progress()
-    self.dialogBox:progress()
-end
-
-function StoryManager:setSpeedUp(speedUp)
-    self.dialogBox:setSpeedUp(speedUp)
+function StoryManager:update()
+    self.dialogBox:update()
 end
