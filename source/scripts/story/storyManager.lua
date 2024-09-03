@@ -15,57 +15,74 @@ DIALOG = {
     -- INT-RO 1
     world1complete = {
         "that wasn't too bad!",
-        "for some reason i'm craving donuts now tho..."
+        "could go for a snack right about now though",
+        "maybe a donut"
     },
     -- Blokiter
     world2start = {
-        "there's moving stuff now?",
-        "i'm not too confident about this guys..."
+        "i think i see something moving up ahead",
+        "what is that?"
     },
     world2complete = {
-        ""
+        "phew. finally passed the second world!",
+        "giant moving blocks...",
+        "who comes up with these sorts of things?"
     },
     -- Chipkey
     world3start = {
-
+        "someone said they have chips in these levels?",
+        "thank goodness - i was feeling kinda hungry",
+        "i heard they call them crisps in another world",
     },
     world3complete = {
-
+        "those didn't taste anything like the ones back home",
+        "this academy is going to be harder than i thought..."
     },
     -- Turretia
     world4start = {
-
+        "t-t-turrets?",
+        "is that, uh, safe?"
     },
     world4complete = {
-
+        "ow.",
+        "world 4 passed >.<"
     },
     -- LAZ-ER 5
     world5start = {
-
+        "i don't think i can handle any more things firing at me...",
+        "hopefully this next world doesn't have anything like that"
     },
     world5complete = {
-
+        "phew. i think i barely dodged all those lasers",
+        "wait - what's that burning smell?"
     },
     -- Spinturn
     world6start = {
-
+        "oo what is that - a carnival ride?"
     },
     world6complete = {
-
+        "i'm so dizzy...",
+        "world... 6... passed..."
     },
     -- Mixropa
     world7start = {
-
+        "this looks hard...",
+        "i can barely keep up!"
     },
     world7complete = {
-
+        "barely passed that one!",
+        "one more world until i graduate :o",
     },
     -- Hazarmede
     world8start = {
-
+        "the last world...",
+        "you got this dipper!!!"
     },
-    gameComplete = {
-
+    world8complete = {
+        "i did it!!!",
+        "can't wait to tell my mischief that i'm a RODENT agent now!",
+        "maybe i can improve my times in the other worlds",
+        "i'm going to make it to the top of the leaderboards!"
     }
 }
 
@@ -180,15 +197,31 @@ function DialogBox:calculateLineBreakIndexes(string)
     if #string <= maxLineLen then
         table.insert(lineBreakIndexes, #string)
     else
-        for line=1, math.floor((#string - 1) / maxLineLen) do
-            for i=line * maxLineLen, (line - 1) * maxLineLen + 1, -1 do
-                local char = string:sub(i, i)
-                if char == ' ' then
-                    table.insert(lineBreakIndexes, i - 1)
-                    break
-                end
+        local lastSpace = 1
+        local curStringLen = 0
+        local i = 1
+        while i<#string do
+            local char = string:sub(i, i)
+            if char == ' ' then
+                lastSpace = i
             end
+            curStringLen += 1
+            if curStringLen >= maxLineLen then
+                curStringLen = 0
+                i = lastSpace
+                table.insert(lineBreakIndexes, lastSpace)
+            end
+            i += 1
         end
+        -- for line=1, math.floor((#string - 1) / maxLineLen) do
+        --     for i=line * maxLineLen, (line - 1) * maxLineLen + 1, -1 do
+        --         local char = string:sub(i, i)
+        --         if char == ' ' then
+        --             table.insert(lineBreakIndexes, i - 1)
+        --             break
+        --         end
+        --     end
+        -- end
         table.insert(lineBreakIndexes, #string)
     end
 

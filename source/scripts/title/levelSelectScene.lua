@@ -212,6 +212,12 @@ function LevelSelectScene:init(nextLevel)
     self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
 
+    local dialog = DIALOG["world" .. SELECTED_WORLD .. "start"]
+    if dialog then
+        self.storyManager = StoryManager(DIALOG["world" .. SELECTED_WORLD .. "start"])
+        self.storyManager:animateIn()
+    end
+
     local flags = 0
     for _, time in pairs(levelTimes) do
         if time then
@@ -346,6 +352,13 @@ function LevelSelectScene:update()
     end
 
     if self.exitingScene or self.animating then
+        return
+    end
+
+    if self.storyManager and self.storyManager:isActive() then
+        if self.storyManager:isInputActive() then
+            self.storyManager:update()
+        end
         return
     end
 

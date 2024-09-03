@@ -21,7 +21,7 @@ local titleFont = TITLE_FONT
 local planetImagetables = PLANET_IMAGETABLES
 -- cSpell:disable-next-line
 local planetNames = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede"}
-local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 68}
+local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 70}
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
@@ -56,12 +56,8 @@ function WorldSelectScene:init()
     self.starfieldSprite = starfield
     self.starfieldSprite:add()
 
-    -- local dialog = DIALOG.intro
-    local dialog = SELECTED_WORLD == 1
-    if dialog then
-        self.storyManager = StoryManager(DIALOG.intro)
-        self.storyManager:animateIn()
-    end
+    self.storyManager = StoryManager(DIALOG["world" .. SELECTED_WORLD .. "complete"])
+    self.storyManager:animateIn()
 
     self.unlockingWorld = false
 
