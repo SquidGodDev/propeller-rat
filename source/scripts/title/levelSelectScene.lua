@@ -216,7 +216,7 @@ function LevelSelectScene:init(nextLevel)
     local dialog = DIALOG[dialogKey]
     if dialog and not SHOWN_DIALOGS[dialogKey] then
         SHOWN_DIALOGS[dialogKey] = true
-        self.storyManager = StoryManager(DIALOG["world" .. SELECTED_WORLD .. "start"])
+        self.storyManager = StoryManager(dialog)
         self.storyManager:animateIn()
     end
 
