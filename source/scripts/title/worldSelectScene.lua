@@ -56,9 +56,6 @@ function WorldSelectScene:init()
     self.starfieldSprite = starfield
     self.starfieldSprite:add()
 
-    self.storyManager = StoryManager(DIALOG["world" .. SELECTED_WORLD .. "complete"])
-    self.storyManager:animateIn()
-
     self.unlockingWorld = false
 
     local deathCountText = gfx.sprite.spriteWithText(tostring(DEATH_COUNT), 100, 30, nil, nil, nil, nil, font)
@@ -119,6 +116,7 @@ function WorldSelectScene:init()
     local worldY = 200
     self.worlds = {}
     local worldUnlockQueue = {}
+    local completedWorldIndexes = {}
     for i, planetImagetable in ipairs(planetImagetables) do
         local worldX = i * worldGap
         local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
@@ -139,7 +137,10 @@ function WorldSelectScene:init()
             end
         end
         if worldCompleted then
+            completedWorldIndexes[i] = true
             completedWorldsCount += 1
+        else
+            completedWorldIndexes[i] = false
         end
 
         local flagWidth = flagIcon:getSize()
@@ -197,6 +198,24 @@ function WorldSelectScene:init()
         worldY = (worldY + 100) % 340
     end
 
+    if not SHOWN_DIALOGS["opening"] then
+        SHOWN_DIALOGS["opening"] = true
+        self.storyManager = StoryManager(DIALOG.opening)
+    else
+        for i=1,#completedWorldIndexes do
+            local dialogKey = "world" .. i .. "complete"
+            if completedWorldIndexes[i] and not SHOWN_DIALOGS[dialogKey] then
+                SHOWN_DIALOGS[dialogKey] = true
+                self.storyManager = StoryManager(DIALOG[dialogKey])
+                break
+            end
+        end
+    end
+
+    if not self.unlockingWorld and self.storyManager then
+        self.storyManager:animateIn()
+    end
+
     self.selectedWorld = SELECTED_WORLD
 
     local unlockDelay = 900
@@ -207,14 +226,19 @@ function WorldSelectScene:init()
         local worldIndex = unlockData.index
         local curWorldX, curWorldY = unlockData.worldX, unlockData.worldY
         pd.timer.performAfterDelay(curDelay, function()
+            self:updateName()
             self.selectedWorld = worldIndex
             utilities.animatedSprite(curWorldX, curWorldY, lockImagetable, 100, false)
         end)
         pd.timer.performAfterDelay(unlockDelay + curDelay, function()
+            self:updateName()
             SELECTED_WORLD = worldIndex
             audioManager.play(audioManager.sfx.unlocked)
             if i == 1 then
                 self.unlockingWorld = false
+                if self.storyManager then
+                    self.storyManager:animateIn()
+                end
             end
         end)
         curDelay += unlockGapDelay

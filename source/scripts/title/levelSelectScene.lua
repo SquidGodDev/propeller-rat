@@ -212,8 +212,10 @@ function LevelSelectScene:init(nextLevel)
     self.levelsSprite:moveTo(targetX, previewY)
     self.levelsSprite:add()
 
-    local dialog = DIALOG["world" .. SELECTED_WORLD .. "start"]
-    if dialog then
+    local dialogKey = "world" .. SELECTED_WORLD .. "start"
+    local dialog = DIALOG[dialogKey]
+    if dialog and not SHOWN_DIALOGS[dialogKey] then
+        SHOWN_DIALOGS[dialogKey] = true
         self.storyManager = StoryManager(DIALOG["world" .. SELECTED_WORLD .. "start"])
         self.storyManager:animateIn()
     end

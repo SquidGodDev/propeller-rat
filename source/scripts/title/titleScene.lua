@@ -102,7 +102,7 @@ function TitleScene:update()
     end
 
     if pd.buttonJustPressed(pd.kButtonA) and not self.transitioning then
-        if true then
+        if not SHOWN_DIALOGS["intro"] then
             SceneManager.switchScene(IntroScene)
         else
             SceneManager.switchScene(WorldSelectScene)

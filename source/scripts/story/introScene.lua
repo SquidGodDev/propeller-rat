@@ -45,11 +45,12 @@ function IntroScene:init()
         self.arrowSprite:setImage(arrowAnimation:image())
     end
 
-    local maxDialogLen = 35
+    local maxDialogLen = 40
     local lineSpacing = 1
     self.dialogBox = DialogBox(introLines, self.dialogSprite, maxDialogLen, lineSpacing, function()
         if not self.animatingOut then
             self.animatingOut = true
+            SHOWN_DIALOGS["intro"] = true
             SceneManager.switchScene(WorldSelectScene)
         end
     end)

@@ -52,6 +52,7 @@ CUR_MUSIC_VOL = "Med"
 DEATH_COUNT = 0
 SHOW_DEATH_COUNT = false
 GAME_END_SHOWN_1_0_0 = false
+SHOWN_DIALOGS = {}
 
 -- Global Data
 JUST_COMPLETED_LEVEL = nil
@@ -68,6 +69,7 @@ local function loadGameData()
         DEATH_COUNT = gameData.deathCount or DEATH_COUNT
         SHOW_DEATH_COUNT = gameData.showDeathCount or SHOW_DEATH_COUNT
         GAME_END_SHOWN_1_0_0 = gameData.gameEndShown100 or GAME_END_SHOWN_1_0_0
+        SHOWN_DIALOGS = gameData.shownDialogs or SHOWN_DIALOGS
     end
 end
 
@@ -83,7 +85,8 @@ local function saveGameData()
         curMusicVol = CUR_MUSIC_VOL,
         deathCount = DEATH_COUNT,
         showDeathCount = SHOW_DEATH_COUNT,
-        gameEndShown100 = GAME_END_SHOWN_1_0_0
+        gameEndShown100 = GAME_END_SHOWN_1_0_0,
+        shownDialogs = SHOWN_DIALOGS
     }
 
     pd.datastore.write(gameData)

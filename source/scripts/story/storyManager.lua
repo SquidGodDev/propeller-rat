@@ -7,7 +7,7 @@ local typeSound = pd.sound.synth.new(pd.sound.kWaveSquare)
 typeSound:setADSR(0.0, 0.02915, 0.006710, 0.0)
 
 DIALOG = {
-    intro = {
+    opening = {
         "wow. my first day at RODENT academy!",
         "still getting used to this propeller...",
         "i hope the orientation world isn't too rough!"
@@ -330,6 +330,8 @@ function StoryManager:init(lines)
 
     self.active = false
     self.inputActive = false
+
+    self.shown = false
 end
 
 function StoryManager:isActive()
@@ -358,7 +360,12 @@ local function createAnimation(sprite, delay, time, endY, easingFunc, callback)
 end
 
 function StoryManager:animateIn()
+    if self.shown then
+        return
+    end
+
     self.active = true
+    self.shown = true
 
     local _, gradientHeight = self.gradientSprite:getSize()
     createAnimation(self.gradientSprite, 0, 1000, 240 - gradientHeight)
