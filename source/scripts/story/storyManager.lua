@@ -35,7 +35,7 @@ DIALOG = {
         "i heard they call them crisps in another world",
     },
     world3complete = {
-        "those didn't taste anything like the ones back home",
+        "those didn't taste anything like the chips back home",
         "this academy is going to be harder than i thought..."
     },
     -- Turretia
@@ -45,7 +45,7 @@ DIALOG = {
     },
     world4complete = {
         "ow.",
-        "world 4 passed >.<"
+        "world four passed >.<"
     },
     -- LAZ-ER 5
     world5start = {
@@ -62,15 +62,15 @@ DIALOG = {
     },
     world6complete = {
         "i'm so dizzy...",
-        "world... 6... passed..."
+        "world... six... passed..."
     },
     -- Mixropa
     world7start = {
-        "this looks hard...",
-        "i can barely keep up!"
+        "this looks tough...",
+        "i can hardly keep up!"
     },
     world7complete = {
-        "barely passed that one!",
+        "passed that one by a whisker!",
         "one more world until i graduate :o",
     },
     -- Hazarmede
