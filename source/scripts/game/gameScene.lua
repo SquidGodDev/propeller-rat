@@ -191,6 +191,28 @@ function GameScene:recordLevelTime()
         levelTimeText = levelTimeText .. " *NEW*"
     end
 
+    -- Submit to leaderboards
+    local levelTimes = LEVEL_TIMES
+    local timeTotal = 0.0
+    local worldLevelIIDs = LEVEL_IID_BY_WORLD[SELECTED_WORLD]
+    local worldCompleted = true
+    for _, iid in ipairs(worldLevelIIDs) do
+        local curLevelTime = levelTimes[iid]
+        if not curLevelTime then
+            worldCompleted = false
+            break
+        else
+            timeTotal += curLevelTime
+        end
+    end
+
+    if worldCompleted then
+        local scoreboardTime = math.floor(timeTotal * 1000)
+        local scoreboardID = "world" .. SELECTED_WORLD
+        ---@diagnostic disable-next-line: undefined-field
+        pd.scoreboards.addScore(scoreboardID, scoreboardTime)
+    end
+
     self.levelTimeText = levelTimeText
 end
 
