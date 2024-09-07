@@ -10,12 +10,11 @@ assets.preloadImages({
 
 local introLines = {
     "The year is 23XX. Humans have finally achieved interstellar travel.",
-    "However, challenges with on-board repairs in the tight spaces around the engine bay have resulted in rising fatalities.",
+    "However, difficulties with on-board repairs in the tight spaces around the engine bay have made long distance travel challenging.",
     "The energy source powering the \"Faster Than Light\" engine disrupts nearby transistors, making the use of robots infeasible.",
     "In response, the interplanetary RODENT (Rats Operating Delicate ENgineering Tasks) Academy was established.",
-    "The Academy is defined by its grueling training - only the most elite recruits pass to become prestigious agents.",
-    "Recruits are trained to manuever around the hazardous engine bay through a series of agility courses set across multiple worlds.",
-    "Rats all across the galaxy gather with their ambitions set on becoming a RODENT agent.",
+    "Recruits are trained to manuever around the narrow engine bay through a series of agility courses set across multiple worlds.",
+    "Rats all across the galaxy gather with their ambitions set on becoming a prestigious RODENT agent.",
     "Here, we follow the story of one such hopeful recruit..."
 }
 
