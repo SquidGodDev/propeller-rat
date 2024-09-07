@@ -221,7 +221,7 @@ function WorldSelectScene:init()
     local unlockDelay = 900
     local unlockGapDelay = 1300
     local curDelay = 0
-    for i=#worldUnlockQueue, 1, -1 do
+    for i=1, #worldUnlockQueue do
         local unlockData = worldUnlockQueue[i]
         local worldIndex = unlockData.index
         local curWorldX, curWorldY = unlockData.worldX, unlockData.worldY
@@ -232,16 +232,20 @@ function WorldSelectScene:init()
         end)
         pd.timer.performAfterDelay(unlockDelay + curDelay, function()
             self:updateName()
-            SELECTED_WORLD = worldIndex
             audioManager.play(audioManager.sfx.unlocked)
-            if i == 1 then
-                self.unlockingWorld = false
-                if self.storyManager then
-                    self.storyManager:animateIn()
-                end
-            end
         end)
         curDelay += unlockGapDelay
+    end
+
+    if self.unlockingWorld then
+        pd.timer.performAfterDelay(curDelay + 500, function()
+            self.selectedWorld = SELECTED_WORLD
+            self:updateName()
+            self.unlockingWorld = false
+            if self.storyManager then
+                self.storyManager:animateIn()
+            end
+        end)
     end
 
     self.nameSprite = gfx.sprite.new(gfx.image.new(200, 120))
