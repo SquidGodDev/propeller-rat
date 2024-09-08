@@ -32,6 +32,8 @@ local lightMoonPlanet = gfx.imagetable.new("images/decoration/lightMoonPlanet")
 local sunPlanet = gfx.imagetable.new("images/decoration/sunPlanet")
 local gasPlanet = gfx.imagetable.new("images/decoration/gasPlanet")
 PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, cloudPlanet, lightMoonPlanet, sunPlanet, gasPlanet}
+-- cSpell:disable-next-line
+PLANET_NAMES = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede"}
 
 FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
@@ -148,6 +150,7 @@ import "scripts/title/titleScene"
 import "scripts/title/levelSelectScene"
 import "scripts/title/worldSelectScene"
 import "scripts/title/gameCompletedScene"
+import "scripts/title/scoreboardScene"
 
 -- Story
 import "scripts/story/storyManager"

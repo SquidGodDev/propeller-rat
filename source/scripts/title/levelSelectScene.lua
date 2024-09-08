@@ -193,6 +193,11 @@ function LevelSelectScene:init(nextLevel)
     stars:moveTo(200, 120)
     stars:add()
 
+    local systemMenu = pd.getSystemMenu()
+    systemMenu:addMenuItem("Leaderboard", function()
+        SceneManager.switchSceneOverride(ScoreboardScene)
+    end)
+
     local worldIndex = SELECTED_WORLD
     self.worldIndex = worldIndex
     utilities.animatedSprite(365, 45, planetImagetables[worldIndex], 100, true)

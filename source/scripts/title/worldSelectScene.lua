@@ -19,8 +19,7 @@ local font = FONT
 local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
--- cSpell:disable-next-line
-local planetNames = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede"}
+local planetNames = PLANET_NAMES
 local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 70}
 
 assets.preloadImages({
@@ -86,6 +85,9 @@ function WorldSelectScene:init()
             deathCountText:remove()
             playerIconSprite:remove()
         end
+    end)
+    systemMenu:addMenuItem("Leaderboard", function()
+        SceneManager.switchSceneOverride(ScoreboardScene)
     end)
 
     local levelTimes = LEVEL_TIMES
