@@ -30935,90 +30935,6 @@
 							"fieldInstances": []
 						},
 						{
-							"__identifier": "Laser",
-							"__grid": [14,7],
-							"__pivot": [0.5,0.5],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "561e6b90-4ce0-11ef-913b-6d28634dd9de",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [232,120],
-							"fieldInstances": [
-								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 14, "cy": 21 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["14,21"]
-								}] },
-								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
-							]
-						},
-						{
-							"__identifier": "Laser",
-							"__grid": [18,7],
-							"__pivot": [0.5,0.5],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "61553570-4ce0-11ef-913b-b3552c6981fe",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [296,120],
-							"fieldInstances": [
-								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 18, "cy": 21 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["18,21"]
-								}] },
-								{ "__identifier": "delay", "__type": "Int", "__value": 200, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [200] }] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
-							]
-						},
-						{
-							"__identifier": "Laser",
-							"__grid": [26,7],
-							"__pivot": [0.5,0.5],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "64974110-4ce0-11ef-913b-1b3d14638c09",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [424,120],
-							"fieldInstances": [
-								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 26, "cy": 21 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["26,21"]
-								}] },
-								{ "__identifier": "delay", "__type": "Int", "__value": 600, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [600] }] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
-							]
-						},
-						{
-							"__identifier": "Laser",
-							"__grid": [30,7],
-							"__pivot": [0.5,0.5],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "65dcb960-4ce0-11ef-913b-39678838be85",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [488,120],
-							"fieldInstances": [
-								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 30, "cy": 21 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["30,21"]
-								}] },
-								{ "__identifier": "delay", "__type": "Int", "__value": 800, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [800] }] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
-							]
-						},
-						{
 							"__identifier": "Key",
 							"__grid": [22,11],
 							"__pivot": [0.5,0.5],
@@ -31157,27 +31073,6 @@
 							"defUid": 197,
 							"px": [520,280],
 							"fieldInstances": []
-						},
-						{
-							"__identifier": "Laser",
-							"__grid": [22,7],
-							"__pivot": [0.5,0.5],
-							"__tags": ["Hazard"],
-							"__tile": null,
-							"__smartColor": "#B700FF",
-							"iid": "d1a36710-4ce0-11ef-913b-6f8deca8f2cd",
-							"width": 16,
-							"height": 16,
-							"defUid": 175,
-							"px": [360,120],
-							"fieldInstances": [
-								{ "__identifier": "tail", "__type": "Point", "__value": { "cx": 22, "cy": 21 }, "__tile": null, "defUid": 178, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["22,21"]
-								}] },
-								{ "__identifier": "delay", "__type": "Int", "__value": 400, "__tile": null, "defUid": 180, "realEditorValues": [{ "id": "V_Int", "params": [400] }] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
-							]
 						}
 					]
 				}
@@ -31657,7 +31552,7 @@
 									"params": ["14,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						},
 						{
@@ -31678,7 +31573,7 @@
 									"params": ["10,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						},
 						{
@@ -31699,7 +31594,7 @@
 									"params": ["26,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						},
 						{
@@ -31720,7 +31615,7 @@
 									"params": ["18,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						},
 						{
@@ -31741,7 +31636,7 @@
 									"params": ["34,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						},
 						{
@@ -31762,7 +31657,7 @@
 									"params": ["30,21"]
 								}] },
 								{ "__identifier": "delay", "__type": "Int", "__value": 0, "__tile": null, "defUid": 180, "realEditorValues": [] },
-								{ "__identifier": "interval", "__type": "Int", "__value": 1000, "__tile": null, "defUid": 181, "realEditorValues": [] }
+								{ "__identifier": "interval", "__type": "Int", "__value": 2000, "__tile": null, "defUid": 181, "realEditorValues": [{ "id": "V_Int", "params": [2000] }] }
 							]
 						}
 					]
