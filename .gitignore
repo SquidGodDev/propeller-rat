@@ -4,3 +4,4 @@ builds
 closeSim.ps1
 copyLuaLevels.ps1
 *.pdx
+.luarc.json

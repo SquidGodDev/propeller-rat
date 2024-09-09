@@ -209,7 +209,7 @@ function GameScene:recordLevelTime()
     if worldCompleted then
         local scoreboardTime = math.floor(timeTotal * 1000)
         local scoreboardID = "world" .. SELECTED_WORLD
-        ---@diagnostic disable-next-line: undefined-field
+        ---@diagnostic disable-next-line: missing-parameter
         pd.scoreboards.addScore(scoreboardID, scoreboardTime)
     end
 
