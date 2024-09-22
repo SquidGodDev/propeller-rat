@@ -1,6 +1,12 @@
 # Propeller Rat
 Source code for my Playdate game "Propeller Rat", a game where you pilot a propeller-strapped rat through increasingly challenging, hazard-filled worlds with crank-based movement! Features a total of 80 action packed levels spread across 8 different worlds, and leaderboards to compete for the fastest times in each world! You can get it [on Catalog](https://play.date/games/propeller-rat), or on [Itch IO](https://squidgod.itch.io/propeller-rat).
 
+![5XmqNL](https://github.com/user-attachments/assets/22681be5-72bf-43ad-bec0-1d249f12f181)
+![Pvizp6](https://github.com/user-attachments/assets/7108e9ce-0862-4f1f-80e5-fdc2811a9ab0)
+![8Vn9WA](https://github.com/user-attachments/assets/8f300b6e-6a39-45bd-90fa-1488bba71798)
+![jJMUZo](https://github.com/user-attachments/assets/4e4bc5e2-32cd-496b-8c90-b7b34fda7835)
+
+
 ## Project Structure
 - `mockups/`: contains all the .aseprite files used in the project
 - `source/`: contains all the source code and assets
