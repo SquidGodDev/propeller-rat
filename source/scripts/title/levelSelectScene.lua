@@ -342,6 +342,7 @@ function LevelSelectScene:init(nextLevel)
     self.crankTracker = CrankTracker(120)
 
     -- Force submit all scores again to make sure it's updated
+    local scoreboardRequests = {}
     for i=1, #planetImagetables do
         local timeTotal = 0.0
         local worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
@@ -359,13 +360,27 @@ function LevelSelectScene:init(nextLevel)
         if worldCompleted then
             local scoreboardTime = math.floor(timeTotal * 1000)
             local scoreboardID = "world" .. i
-            ---@diagnostic disable-next-line: missing-parameter
-            pd.scoreboards.addScore(scoreboardID, scoreboardTime, function(status, result)
-                printTable(status)
-                printTable(result)
-            end)
+            table.insert(scoreboardRequests, {
+                id = scoreboardID,
+                time = scoreboardTime
+            })
         end
     end
+    local function submitNextScore()
+        if #scoreboardRequests <= 0 then
+            return
+        end
+        local scoreboardData = table.remove(scoreboardRequests)
+        local scoreboardID = scoreboardData.id
+        local scoreboardTime = scoreboardData.time
+        printTable(scoreboardData)
+        pd.scoreboards.addScore(scoreboardID, scoreboardTime, function(status, result)
+            printTable(status)
+            printTable(result)
+            submitNextScore()
+        end)
+    end
+    submitNextScore()
 end
 
 function LevelSelectScene:update()
