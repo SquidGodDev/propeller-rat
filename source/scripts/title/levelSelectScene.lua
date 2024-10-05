@@ -381,6 +381,7 @@ function LevelSelectScene:init(nextLevel)
         end)
     end
     submitNextScore()
+    SAVE_GAME_DATA()
 end
 
 function LevelSelectScene:update()
