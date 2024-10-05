@@ -7,6 +7,8 @@ local setLineWidth <const> = gfx.setLineWidth
 local drawLine <const> = gfx.drawLine
 local setImage <const> = gfx.sprite.setImage
 local querySpritesAlongLine <const> = gfx.sprite.querySpritesAlongLine
+local setPattern <const> = gfx.setPattern
+local ditherPattern <const> = {0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA}
 
 local function easeOutExpo(x)
     return x == 1 and 1 or 1 - 2^(-10 * x)
@@ -21,7 +23,7 @@ local laserImagetableLength = #laserImagetable
 
 local laserFrameTime = 100 -- ms
 local activateTime = 300.0
-local beamWidth = 8.0
+local beamWidth = 6.0
 local fireTime = 1000.0 -- ms
 
 local tableInsert = table.insert
@@ -150,10 +152,10 @@ function LaserManager:update(dt)
                 local activated = laserInterval[i] - currentInterval >= activateTime
                 if not activated and animationIndex ~= 1 then
                     -- Draw preparation laser
-                    if animationIndex == 2 or flashActive or reduceFlashing then
-                        setLineWidth(1)
-                        drawLine(headX, headY, tailX, tailY)
-                    end
+                    setLineWidth(1)
+                    setPattern(ditherPattern)
+                    drawLine(headX, headY, tailX, tailY)
+                    setColor(kColorWhite)
                 elseif activated then
                     -- Fire laser
                     if not laserFired[i] then
@@ -175,9 +177,14 @@ function LaserManager:update(dt)
                     laserFireTime[i] = remainingFireTime
                     if remainingFireTime > 0 then
                         local laserWidth = (1 - easeOutExpo(1 - remainingFireTime/fireTime)) * beamWidth
-                        if laserWidth > 1 then
+                        if laserWidth > 3 then
                             setLineWidth(laserWidth)
                             drawLine(headX, headY, tailX, tailY)
+                        elseif laserWidth > 1 then
+                            setPattern(ditherPattern)
+                            setLineWidth(laserWidth)
+                            drawLine(headX, headY, tailX, tailY)
+                            setColor(kColorWhite)
                         end
                     end
                 end
