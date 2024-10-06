@@ -77,7 +77,7 @@ end
 
 loadGameData()
 
-local function saveGameData()
+function SAVE_GAME_DATA()
     local gameData = {
         curLevel = CUR_LEVEL,
         selectedWorld = SELECTED_WORLD,
@@ -95,11 +95,11 @@ local function saveGameData()
 end
 
 function pd.gameWillTerminate()
-    saveGameData()
+    SAVE_GAME_DATA()
 end
 
 function pd.deviceWillSleep()
-    saveGameData()
+    SAVE_GAME_DATA()
 end
 
 -- Level IDs

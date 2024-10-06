@@ -98,10 +98,8 @@ end
 
 function LaserManager:update(dt)
     setColor(kColorWhite)
-    local reduceFlashing = pd.getReduceFlashing()
     local stopped = self.stopped
     self.flashCounter += 1
-    local flashActive = self.flashCounter % 3 == 0
     for i=#laserHeadX, 1, -1 do
         -- Check if laser has starting delay 
         local delay = laserDelay[i]
