@@ -143,7 +143,7 @@ function TurretManager:update(dt)
             turretStartDelay[i] = startDelay
         end
 
-        if startDelay <= 0 and not stopped then
+        if startDelay <= 0 then
             local animationIndex = turretCurFrame[i]
 
             local currentTime = turretCurTime[i]
@@ -176,7 +176,9 @@ function TurretManager:update(dt)
                 local x, y = turretX[i], turretY[i]
                 -- If animation is being reset, that means it's time to fire the projectile
                 if animationIndex == 1 then
-                    playSfx(shootSfx)
+                    if not stopped then
+                        playSfx(shootSfx)
+                    end
                     for idx=1, maxProjectileCount do
                         if projectileTurretIndex[idx] == -1 then
                             projectileX[idx] = x - turretProjectileHalfWidth
@@ -198,29 +200,29 @@ function TurretManager:update(dt)
         if turretIndex ~= -1 then
             local x, y = projectileX[i], projectileY[i]
             local destroy = false
-            if not stopped then
-                local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
+            local xSpeed, ySpeed = turretXSpeed[turretIndex], turretYSpeed[turretIndex]
 
-                x += xSpeed * dt
-                y += ySpeed * dt
+            x += xSpeed * dt
+            y += ySpeed * dt
 
-                if collisionCheckCount == 0 then
-                    local collidedSprites = querySpritesInRect(x + projectileBorder, y + projectileBorder, projectileHitboxSize, projectileHitboxSize)
-                    for spriteIdx=1, #collidedSprites do
-                        local sprite = collidedSprites[spriteIdx]
-                        local collisionTag = getTag(sprite)
-                        if collisionTag == playerTag then
-                            ---@diagnostic disable-next-line: undefined-field
-                            sprite:collide()
-                        elseif collisionTag == wallTag or collisionTag == hazardTag then
-                            destroy = true
-                        end
+            if collisionCheckCount == 0 then
+                local collidedSprites = querySpritesInRect(x + projectileBorder, y + projectileBorder, projectileHitboxSize, projectileHitboxSize)
+                for spriteIdx=1, #collidedSprites do
+                    local sprite = collidedSprites[spriteIdx]
+                    local collisionTag = getTag(sprite)
+                    if collisionTag == playerTag then
+                        ---@diagnostic disable-next-line: undefined-field
+                        sprite:collide()
+                    elseif collisionTag == wallTag or collisionTag == hazardTag then
+                        destroy = true
                     end
                 end
             end
 
             if destroy then
-                playSfx(smashSfx)
+                if not stopped then
+                    playSfx(smashSfx)
+                end
                 local projectileBreakSprite = tableRemove(projectileBreakSprites)
                 if projectileBreakSprite then
                     projectileBreakSprite.animationLoop.frame = 1

@@ -22,7 +22,7 @@ local laserImagetable = gfx.imagetable.new("images/hazards/laser")
 local laserImagetableLength = #laserImagetable
 
 local laserFrameTime = 100 -- ms
-local activateTime = 300.0
+local activateTime = 500.0
 local beamWidth = 6.0
 local fireTime = 1000.0 -- ms
 
@@ -108,7 +108,7 @@ function LaserManager:update(dt)
             laserDelay[i] = delay
         end
 
-        if delay <= 0 and not stopped then
+        if delay <= 0 then
             local animationIndex = laserAnimationIndex[i]
 
             -- Update laser interval time
@@ -157,15 +157,17 @@ function LaserManager:update(dt)
                 elseif activated then
                     -- Fire laser
                     if not laserFired[i] then
-                        playSfx(laserSfx)
                         laserFired[i] = true
                         laserFireTime[i] = fireTime
-                        local intersectedSprites = querySpritesAlongLine(headX, headY, tailX, tailY)
-                        for spriteIdx=1, #intersectedSprites do
-                            local sprite = intersectedSprites[spriteIdx]
-                            if sprite:getTag() == TAGS.player then
-                                ---@diagnostic disable-next-line: undefined-field
-                                sprite:collide()
+                        if not stopped then
+                            playSfx(laserSfx)
+                            local intersectedSprites = querySpritesAlongLine(headX, headY, tailX, tailY)
+                            for spriteIdx=1, #intersectedSprites do
+                                local sprite = intersectedSprites[spriteIdx]
+                                if sprite:getTag() == TAGS.player then
+                                    ---@diagnostic disable-next-line: undefined-field
+                                    sprite:collide()
+                                end
                             end
                         end
                     end

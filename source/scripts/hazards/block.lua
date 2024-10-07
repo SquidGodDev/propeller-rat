@@ -67,10 +67,6 @@ function Block:collisionResponse(other)
 end
 
 function Block:updateHazard(dt)
-    if self.stopped then
-       return
-    end
-
     local _actualX, _actualY, collisions, length = self:moveWithCollisions(self.x + self.xSpeed * dt, self.y + self.ySpeed * dt)
 
     local bounceNormal
@@ -93,7 +89,9 @@ function Block:updateHazard(dt)
     end
 
     if bounceCollision then
-        audioManager.play(audioManager.sfx.bounce)
+        if not self.stopped then
+            audioManager.play(audioManager.sfx.bounce)
+        end
         if bounceNormal.x ~= 0 then
             self.xSpeed = -self.xSpeed
         end
