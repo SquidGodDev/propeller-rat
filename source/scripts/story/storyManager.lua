@@ -82,7 +82,8 @@ DIALOG = {
         "i did it!!!",
         "can't wait to tell my mischief that i'm a RODENT agent now!",
         "maybe i can improve my times in the other worlds",
-        "i'm going to make it to the top of the leaderboards!"
+        "i'm going to make it to the top of the leaderboards!",
+        "or maybe i'll try out the new bonus levels?"
     }
 }
 

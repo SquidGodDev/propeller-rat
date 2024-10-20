@@ -119,11 +119,11 @@ function WorldSelectScene:init()
     self.worlds = {}
     local worldUnlockQueue = {}
     local completedWorldIndexes = {}
+    local gameCompleted = true
     for i, planetImagetable in ipairs(planetImagetables) do
-        local worldX = i * worldGap
-        local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
-        table.insert(self.worlds, planetSprite)
-
+        if i > FINAL_WORLD_INDEX and not gameCompleted then
+            break
+        end
         local worldLevelIIDs = LEVEL_IID_BY_WORLD[i]
         local timeTotal = 0.0
         local worldCompleted = true
@@ -143,7 +143,14 @@ function WorldSelectScene:init()
             completedWorldsCount += 1
         else
             completedWorldIndexes[i] = false
+            if i <= FINAL_WORLD_INDEX then
+                gameCompleted = false
+            end
         end
+
+        local worldX = i * worldGap
+        local planetSprite = utilities.animatedSprite(worldX, worldY, planetImagetable, 100, true)
+        table.insert(self.worlds, planetSprite)
 
         local flagWidth = flagIcon:getSize()
         if i ~= 1 and not UNLOCK_ALL_WORLDS then
@@ -206,7 +213,7 @@ function WorldSelectScene:init()
     else
         for i=1,#completedWorldIndexes do
             local dialogKey = "world" .. i .. "complete"
-            if completedWorldIndexes[i] and not SHOWN_DIALOGS[dialogKey] then
+            if completedWorldIndexes[i] and not SHOWN_DIALOGS[dialogKey] and i <= FINAL_WORLD_INDEX then
                 SHOWN_DIALOGS[dialogKey] = true
                 self.storyManager = StoryManager(DIALOG[dialogKey])
                 break
@@ -219,6 +226,10 @@ function WorldSelectScene:init()
     end
 
     self.selectedWorld = SELECTED_WORLD
+    if not gameCompleted and self.selectedWorld > FINAL_WORLD_INDEX then
+        SELECTED_WORLD = FINAL_WORLD_INDEX
+        self.selectedWorld = FINAL_WORLD_INDEX
+    end
 
     local unlockDelay = 900
     local unlockGapDelay = 1300
@@ -281,10 +292,11 @@ function WorldSelectScene:init()
 
     local progressBarEmpty = assets.getImage("images/levelSelect/progressBarEmpty"):copy()
     local progressBarSeparator = assets.getImage("images/levelSelect/progressBarSeparator")
-    local separatorSpace = 320 / #planetImagetables
+    local worldCount = gameCompleted and #planetImagetables or FINAL_WORLD_INDEX
+    local separatorSpace = 320 / worldCount
     gfx.pushContext(progressBarEmpty)
         local drawX, drawY = 6+separatorSpace, 4
-        for _=1,#planetImagetables-1 do
+        for _=1,worldCount-1 do
             progressBarSeparator:draw(drawX - 4, drawY)
             drawX += separatorSpace
         end
