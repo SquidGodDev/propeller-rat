@@ -34,7 +34,7 @@ local gasPlanet = gfx.imagetable.new("images/decoration/gasPlanet")
 FINAL_WORLD_INDEX = 8
 PLANET_IMAGETABLES = {earthPlanet, lightPlanet, darkPlanet, moonPlanet, cloudPlanet, lightMoonPlanet, sunPlanet, gasPlanet, gasPlanet}
 -- cSpell:disable-next-line
-PLANET_NAMES = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede", "Bonus: Hazarmede+"}
+PLANET_NAMES = {"INT-RO 1", "Blokiter", "Chipkey", "Turretia", "LAZ-ER 5", "Spinturn", "Mixropa", "Hazarmede", "Hazarmede+"}
 
 FONT = gfx.font.new("data/fonts/m6x11-12")
 TITLE_FONT = gfx.font.new("data/fonts/m6x11-26")
