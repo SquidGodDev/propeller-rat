@@ -20,7 +20,7 @@ local titleFont = TITLE_FONT
 
 local planetImagetables = PLANET_IMAGETABLES
 local planetNames = PLANET_NAMES
-local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 70}
+local flagRequirements = {0, 8, 16, 24, 32, 40, 58, 70, 80}
 
 assets.preloadImages({
     "images/levelSelect/arrowLeft",
