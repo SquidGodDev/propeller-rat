@@ -45,7 +45,7 @@ Source code for my Playdate game "Propeller Rat", a game where you pilot a prope
   - `main.lua`: only imports globals and sets the starting scene
 
 ## License
-All code under `source/scripts` is under the MIT License, except the libraries `LDtk.lua` and `Assets.lua`. All the assets that are not code and outside of the scripts folder (e.g. sound, images, etc.) are *not* under the MIT License.
+All code under `source/scripts` is under the MIT License, except the libraries `LDtk.lua` and `Assets.lua`. All assets (e.g. sound, images, etc.) are *not* under the MIT License.
 ```
 "/source/scripts/libraries"
 LDtk.lua by Nic Magnier
