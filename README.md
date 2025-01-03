@@ -45,4 +45,4 @@ Source code for my Playdate game "Propeller Rat", a game where you pilot a prope
   - `main.lua`: only imports globals and sets the starting scene
 
 ## License
-All code is under the MIT License, with the exception of the `Assets.lua` library by Shaun Inman. The `LDtk.lua` library by Nic Magnier is licensed under the MIT license. 
+All code is licensed under the terms of the MIT license, with the exception of the `Assets.lua` library by Shaun Inman.
